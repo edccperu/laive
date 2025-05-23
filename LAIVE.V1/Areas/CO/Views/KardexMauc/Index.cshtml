@@ -1,0 +1,694 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Kardex Corrección MAUC";
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;    
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+    .contentMauc {
+        width: 100%;    
+        top: 8px;
+        position: relative;
+        font-family: Tahoma; 
+        font-size: 10px;
+    }
+</style>
+<table cellspacing="0" class="searchMauc">
+    <tr>
+        <td style="width:28px;">
+            Año
+        </td>
+        <td style="width:90px;">
+            <input type="text" class="text-box" id="txtPeriodo" style=" width:80px" />
+        </td>
+        <td style="width:28px;">
+            Mes
+        </td>
+        <td style="width:70px;">
+            <input type="text" class="text-box" id="txtMes" style=" width:60px" />
+        </td>
+        <td style="width:50px;">
+            Articulo
+        </td>
+        <td style="width:105px;">
+            <input type="text" class="text-box" id="txtArticulo" style=" width:100px;text-transform: uppercase;" maxlength="9" size="9" />
+        </td>
+        <td>
+
+        </td>
+        <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="searchKardexMauc();">
+                <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+                <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" class="contentMauc">
+    <tr>
+        <td colspan="7">
+            <ul id="tbKardex" class="tabs">
+                <li class="active" rel="PanelKardex1">Movimiento Almacen</li>
+                <li rel="PanelKardex2">Corrección Movimiento Almacen</li>
+                <li rel="PanelKardex3">Kadex DCA</li>
+                <li rel="PanelKardex4">Diferencias</li>
+            </ul>
+            <div id="divtbKardex" class="tab_container">
+                <div id="PanelKardex1" class="tab_content">
+                    <table id="grdKdxActual"></table>
+                </div>
+                <div id="PanelKardex2" class="tab_content">
+                    <table id="grdKdxProcesado"></table>
+                </div>
+                <div id="PanelKardex3" class="tab_content">
+                    <table id="grdKdxDCA"></table>
+                </div>
+                <div id="PanelKardex4" class="tab_content">
+                    <table id="grdKdxDiferencia"></table>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<div id="PopupUnidad">
+    <div id="lblheaderPopup" class="headerGroup">
+        Datos Ingreso
+    </div>
+    <div class="HBox">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Cantidad
+        </div>
+        <div class="samnetEditorEmty" style="width:110px;">
+            <input class="txtDecimal" type="text" id="txtCantidad" style="width:98px;" disabled="disabled"/>
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input class="txtDecimal" type="text" id="txtCantidadEdit" style="width:98px;" />
+        </div>
+    </div>
+    <div class="HBox">
+        <div class="samnetLabelEmty" style="width:100px;">
+            Costo Unitario
+        </div>
+        <div class="samnetEditorEmty" style="width:110px;">
+            <input class="txtDecimal" type="text" id="txtCostoUnitario" style="width:98px;" disabled="disabled" />
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input class="txtDecimal" type="text" id="txtCostoUnitarioEdit" style="width:98px;" />
+        </div>
+    </div>
+    <div class="HBox">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Costo Total
+        </div>
+        <div class="samnetEditorEmty" style="width:110px;">
+            <input class="txtDecimal" type="text" id="txtCostoTotal" style="width:98px;" disabled="disabled" />
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input class="txtDecimal" type="text" id="txtCostoTotalEdit" style="width:98px;" disabled="disabled" />
+        </div>
+    </div>
+    <div class="HBox" style="height:30px;">
+
+    </div>
+    <table style=" width:100%;">
+        <tr>
+            <td style=" width:100px;">
+                <input id="btnAcepta" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style=" width:100px;">
+                <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div id="PopupUpload">
+    <div class="HBox" style="height:30px;">
+
+    </div>
+    <div class="HBox" style="height:30px;">
+        <center><input type="file" id="FileUpload" /></center>
+    </div>
+    <table style=" width:100%;">
+        <tr>
+            <td style=" width:100px;">
+                <input id="btnAceptaUpload" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style=" width:100px;">
+                <input id="btnCancelarUpload" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    /* Variables Globales*/
+    var _idRowKdxActual = 0;
+    var _idTipoOpera = '';
+    var _TypoArticulo = 0;
+    var _TotalKdxActual = 0;
+
+    /*Como Ajax son llamadas asincronas, debemos estar seguros de que tanto la grila modificado como kardex DCA esten completamente cargados*/
+    var _BanderaModificado = false;
+    var _BanderaDCA = false;
+
+
+    var _dataColumnActual = [
+                            { display: 'Nº', name: 'RowNumber', width: 30 },
+                            { display: 'Tipo Transacción', name: 'GlosaTransaccion', width: 160, sortable: true, align: 'left' },
+                            { display: 'Tipo Orden', name: 'GlosaMovimiento', width: 120, sortable: true },
+                            { display: 'Orden', name: 'Orden', width: 60, sortable: true },
+                            { display: 'Fecha', name: 'FechaTransaccion', width: 120, sortable: true },
+                            { display: 'Alm.', name: 'CodigoAlmacen', width: 20, sortable: true },
+                            { display: 'Mov.', name: 'TipoMovimiento', hide: true },
+                            { display: 'MAUC', name: 'Mauc', width: 50, sortable: true, align: 'right' },
+                            { display: '<center>INGRESOS</br>Cantidad</center>', name: 'CantidadIngreso', width: 80, sortable: true, align: 'right' },
+                            { display: '<center>INGRESOS</br>Unitario</center>', name: 'UnitarioIngreso', width: 60, sortable: true, align: 'right' },
+                            { display: '<center>INGRESOS</br>Costo</center>', name: 'CostoIngreso', width: 60, sortable: true, align: 'right' },
+                            { display: '<center>EGRESOS</br>Cantidad</center>', name: 'CantidadEgreso', width: 80, sortable: true, align: 'right' },
+                            { display: '<center>EGRESOS</br>Unitario</center>', name: 'UnitarioEgreso', width: 60, sortable: true, align: 'right' },
+                            { display: '<center>EGRESOS</br>Costo</center>', name: 'CostoEgreso', width: 60, sortable: true, align: 'right' },
+                            { display: '<center>SALDO</br>Cantidad</center>', name: 'CantidadSaldo', width: 80, sortable: true, align: 'right' },
+                            { display: '<center>SALDO</br>Costo</center>', name: 'CostoSaldo', width: 60, sortable: true, align: 'right' },
+                            { display: '', name: 'TypoArticulo', hide: true },
+                            { display: '', name: 'CodigoMovimiento', hide: true }
+    ];
+
+    var _dataColumnProcesado = [
+                            { display: 'Nº', name: 'RowNumber', width: 30 },
+                            { display: 'Tipo Transacción', name: 'GlosaTransaccion', width: 160, sortable: true, align: 'left' },
+                            { display: 'Tipo Orden', name: 'GlosaMovimiento', width: 120, sortable: true },
+                            { display: 'Orden', name: 'Orden', width: 60, sortable: true },
+                            { display: 'Fecha', name: 'FechaTransaccion', width: 120, sortable: true },
+                            { display: 'Alm.', name: 'CodigoAlmacen', width: 20, sortable: true },
+                            { display: 'Mov.', name: 'TipoMovimiento', hide: true },
+                            { display: 'MAUC', name: 'Mauc', width: 50, sortable: true, align: 'right' },
+                            { display: '<center>INGRESOS</br>Cantidad</center>', name: 'CantidadIngreso', width: 80, sortable: true, align: 'right' },
+                            { display: '<center>INGRESOS</br>Unitario</center>', name: 'UnitarioIngreso', width: 60, sortable: true, align: 'right' },
+                            { display: '<center>INGRESOS</br>Costo</center>', name: 'CostoIngreso', width: 60, sortable: true, align: 'right' },
+                            { display: '<center>EGRESOS</br>Cantidad</center>', name: 'CantidadEgreso', width: 80, sortable: true, align: 'right' },
+                            { display: '<center>EGRESOS</br>Unitario</center>', name: 'UnitarioEgreso', width: 60, sortable: true, align: 'right' },
+                            { display: '<center>EGRESOS</br>Costo</center>', name: 'CostoEgreso', width: 60, sortable: true, align: 'right' },
+                            { display: '<center>SALDO</br>Cantidad</center>', name: 'CantidadSaldo', width: 80, sortable: true, align: 'right' },
+                            { display: '<center>SALDO</br>Costo</center>', name: 'CostoSaldo', width: 60, sortable: true, align: 'right' },
+                            { display: '', name: 'State', hide: true },
+    ];
+
+    var _dataColumnDCA = [
+                           { display: 'Nº', name: 'RowNumber', width: 30 },
+                           { display: 'Tipo Transacción', name: 'GlosaTransaccion', width: 160, sortable: true, align: 'left' },
+                           { display: 'Tipo Orden', name: 'GlosaMovimiento', width: 120, sortable: true },
+                           { display: 'Orden', name: 'Orden', width: 60, sortable: true },
+                           { display: 'Fecha', name: 'FechaTransaccion', width: 120, sortable: true },
+                           { display: 'Alm.', name: 'CodigoAlmacen', width: 20, sortable: true },
+                           { display: 'Mov.', name: 'TipoMovimiento', hide: true },
+                           { display: 'MAUC', name: 'Mauc', width: 50, sortable: true, align: 'right' },
+                           { display: '<center>INGRESOS</br>Cantidad</center>', name: 'CantidadIngreso', width: 80, sortable: true, align: 'right' },
+                           { display: '<center>INGRESOS</br>Unitario</center>', name: 'UnitarioIngreso', width: 60, sortable: true, align: 'right' },
+                           { display: '<center>INGRESOS</br>Costo</center>', name: 'CostoIngreso', width: 60, sortable: true, align: 'right' },
+                           { display: '<center>EGRESOS</br>Cantidad</center>', name: 'CantidadEgreso', width: 80, sortable: true, align: 'right' },
+                           { display: '<center>EGRESOS</br>Unitario</center>', name: 'UnitarioEgreso', width: 60, sortable: true, align: 'right' },
+                           { display: '<center>EGRESOS</br>Costo</center>', name: 'CostoEgreso', width: 60, sortable: true, align: 'right' },
+                           { display: '<center>SALDO</br>Cantidad</center>', name: 'CantidadSaldo', width: 80, sortable: true, align: 'right' },
+                           { display: '<center>SALDO</br>Costo</center>', name: 'CostoSaldo', width: 60, sortable: true, align: 'right' }
+    ];
+
+    var _dataColumnDiferencia = [
+                         { display: 'Nº', name: 'RowNumber', width: 30 },
+                         { display: 'Tipo Transacción', name: 'GlosaTransaccion', width: 160, sortable: true, align: 'left' },
+                         { display: 'Tipo Orden', name: 'GlosaMovimiento', width: 120, sortable: true },
+                         { display: 'Orden', name: 'Orden', width: 60, sortable: true },
+                         { display: 'Fecha', name: 'FechaTransaccion', width: 120, sortable: true },
+                         { display: 'Alm.', name: 'CodigoAlmacen', width: 20, sortable: true },
+                         { display: 'Mov.', name: 'TipoMovimiento', hide: true },
+                         { display: '<center>MODIFICADO</br>Mauc</center>', name: 'MaucModificado', width: 50, sortable: true, align: 'right' },
+                         { display: '<center>MODIFICADO</br>Ingreso</br>Cantidad</center>', name: 'IngresoCantidadMod', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>MODIFICADO</br>Ingreso</br>Unitario</center>', name: 'IngresoUnitarioMod', width: 60, sortable: true, align: 'right' },
+                         { display: '<center>MODIFICADO</br>Ingreso</br>Costo</center>', name: 'IngresoCostoMod', width: 60, sortable: true, align: 'right' },
+                         { display: '<center>MODIFICADO</br>Egreso</br>Cantidad</center>', name: 'EgresoCantidadMod', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>MODIFICADO</br>Egreso</br>Unitario</center>', name: 'EgresoUnitarioMod', width: 60, sortable: true, align: 'right' },
+                         { display: '<center>MODIFICADO</br>Egreso</br>Costo</center>', name: 'EgresoCostoMod', width: 60, sortable: true, align: 'right' },
+                         { display: '<center>MODIFICADO</br>Cantidad</br>Saldo</center>', name: 'CantidadSaldoModificado', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>MODIFICADO</br>Costo</br>Saldo</center>', name: 'CostoSaldoModificado', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>MAUC</center>', name: 'MaucDCA', width: 50, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>Ingreso</br>Cantidad</center>', name: 'IngresoCantidadDCA', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>Ingreso</br>Unitario</center>', name: 'IngresoUnitarioDCA', width: 60, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>Ingreso</br>Costo</center>', name: 'IngresoCostoDCA', width: 60, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>Egreso</br>Cantidad</center>', name: 'EgresoCantidadDCA', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>Egreso</br>Unitario</center>', name: 'EgresoUnitarioDCA', width: 60, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>Egreso</br>Costo</center>', name: 'EgresoCostoDCA', width: 60, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>Cantidad</br>Saldo</center>', name: 'CantidadSaldoDCA', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>DCA</br>Costo</br>Saldo</center>', name: 'CostoSaldoDCA', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>DIFERENCIA</br>Cantidad</br>Saldo</center>', name: 'DiferenciaCantidadSaldo', width: 80, sortable: true, align: 'right' },
+                         { display: '<center>DIFERENCIA</br>Costo</br>Saldo</center>', name: 'DiferenciaCostoSaldo', width: 80, sortable: true, align: 'right' }
+    ];
+
+    /* Construir text de tipo decimal*/
+    $("#txtPeriodo").inputmask({ mask: '9{4}', greedy: false });
+    $("#txtMes").inputmask({ mask: '9{2}', greedy: false });
+
+    /* Funcion para redimiencionar la grilla */
+    function functionOnResize() {
+        $('#PanelKardex1').width(0);
+        $('#PanelKardex2').width(0);
+        $('#PanelKardex3').width(0);
+        $('#PanelKardex4').width(0);
+        var widthGrid = $('#divtbKardex').width();
+        $('#PanelKardex1').width(widthGrid);
+        $('#PanelKardex2').width(widthGrid);
+        $('#PanelKardex3').width(widthGrid);
+        $('#PanelKardex4').width(widthGrid);
+    }
+
+    /* Funcion para buscar el kardex de un Año y Mes determinado */
+    function searchKardexMauc() {
+        var validate = true;
+        validate = validate && SamControlEsValido("txtPeriodo", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtMes", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtArticulo", "Se Requiere este dato.");
+        if (!validate)
+            return false;
+
+        _BanderaModificado = false;
+        _BanderaDCA = false;
+
+        $('#grdKdxActual').flexOptions({
+            query: document.getElementById("txtPeriodo").value + ',' +
+                   ('0' + document.getElementById("txtMes").value.replace("_","")).substr(-2) + ',' +
+                   document.getElementById("txtArticulo").value.toUpperCase()
+        }).flexReload();
+
+        $('#grdKdxProcesado').flexOptions({
+            query: document.getElementById("txtPeriodo").value + ',' +
+                   ('0' + document.getElementById("txtMes").value.replace("_","")).substr(-2) + ',' +
+                   document.getElementById("txtArticulo").value.toUpperCase()
+        }).flexReload();
+
+        $('#grdKdxDCA').flexOptions({
+            query: document.getElementById("txtPeriodo").value + ',' +
+                   ('0' + document.getElementById("txtMes").value.replace("_","")).substr(-2) + ',' +
+                   document.getElementById("txtArticulo").value.toUpperCase()
+        }).flexReload();
+    }
+
+    /*Funcion mostrar popup modificar datos.*/
+
+    function fn_ShowModificarDatos() {
+         if (_TotalKdxActual == 0) {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"No se encontraron datos para ejecutar esta opción.");
+            return false;
+         }
+
+         if (_TypoArticulo != 1) {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Esta Opción no se encuentra habilitada para este tipo de Articulo");
+            return false;
+         }
+
+        var rows = $('#grdKdxActual').selectedRows();
+        if (rows.length == 0) {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+            return false;
+        }
+        _idRowKdxActual = rows[0][0].Value;
+        _idTipoOpera = rows[0][6].Value.toString().trim();
+        switch (_idTipoOpera) {
+            case 'I':
+                document.getElementById("txtCantidad").value = rows[0][8].Value.toString().trim().replace(",","");
+                document.getElementById("txtCostoUnitario").value = rows[0][9].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCostoTotal").value = rows[0][10].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCantidadEdit").value = rows[0][8].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCostoUnitarioEdit").value = rows[0][9].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCostoTotalEdit").value = rows[0][10].Value.toString().trim().replace(",", "");
+                break;
+            case 'E':
+                document.getElementById("txtCantidad").value = rows[0][11].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCostoUnitario").value = rows[0][12].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCostoTotal").value = rows[0][13].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCantidadEdit").value = rows[0][11].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCostoUnitarioEdit").value = rows[0][12].Value.toString().trim().replace(",", "");
+                document.getElementById("txtCostoTotalEdit").value = rows[0][13].Value.toString().trim().replace(",","");
+                break;
+            case 'S':
+                MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Los Saldos no pueden Modificarse");
+                return false;
+                break;
+
+        }
+        
+        if (stringToInt(rows[0][17].Value.toString()) == 4) {
+           $("#txtCostoUnitarioEdit").prop("disabled", false);
+        }
+        else {
+           $("#txtCostoUnitarioEdit").prop("disabled", true);
+        }
+
+
+        $('#PopupUnidad').dialog('open');
+                
+    }
+
+    /*Funcion Grid Procesar Kardex*/
+
+    function fn_PreCreation_GrdKdxProcesado(com, grid) {
+        $("#grdKdxProcesado tr").each(function () {
+            var st = $(this).find("td:nth(16)").text()
+            if (st == "1") {
+                $(this).attr("class", "FGBgRowRojo");
+            }
+        });
+
+        $("#grdKdxProcesado .trSelected").removeClass("trSelected");
+        var index = $("#grdKdxActual .trSelected").index();
+        var vartr = $("#grdKdxProcesado tbody tr:eq(" + index + ")");
+        if (vartr.length > 0)
+            vartr[0].classList.add("trSelected");
+
+        _BanderaModificado = true;
+        if (_BanderaModificado == true && _BanderaDCA == true)
+            $('#grdKdxDiferencia').flexReload();
+    }
+
+    function fn_PreCreation_GrdKdxDCA(com, grid) {
+        _BanderaDCA = true;
+        if (_BanderaModificado == true && _BanderaDCA == true)
+            $('#grdKdxDiferencia').flexReload();
+    }
+    
+    function fn_onClickRow_GrdKdxActual(valtr) {
+        $("#grdKdxProcesado .trSelected").removeClass("trSelected");
+        var index = $("#grdKdxActual .trSelected").index();
+        var vartr = $("#grdKdxProcesado tbody tr:eq(" + index + ")");
+        if (vartr.length > 0)
+            vartr[0].classList.add("trSelected");
+    }
+
+    function fn_onClickRow_GrdProcesado(valtr) {
+        $("#grdKdxActual .trSelected").removeClass("trSelected");
+        var index = $("#grdKdxProcesado .trSelected").index();
+        var vartr = $("#grdKdxActual tbody tr:eq(" + index + ")");
+        if (vartr.length > 0)
+            vartr[0].classList.add("trSelected");
+    }
+
+    function fn_PreCreation_GrdKdxActual(JsonData) {
+       _TotalKdxActual = JsonData.total;
+       if (JsonData.rows != null && JsonData.rows.length > 0)
+         _TypoArticulo = stringToInt(JsonData.rows[0].cell[16].toString());
+       return JsonData;
+    }
+
+    function fn_ExportarExcelKdxActual(valtr) {
+        ExportToExcel(_dataColumnActual, "grdKdxActual");
+    }
+
+    function fn_ExportarExcelKdxProcesado(valtr) {
+        ExportToExcel(_dataColumnProcesado, "grdKdxProcesado");
+    }
+
+    function fn_ExportarExcelKdxDCA(valtr) {
+        ExportToExcel(_dataColumnDCA, "grdKdxDCA");
+    }
+       
+    function fn_ExportarExcelKdxDiferencia(valtr) {
+        ExportToExcel(_dataColumnDiferencia, "grdKdxDiferencia");
+    }
+
+    function fn_UploadKdxActual(valtr) {
+       if (_TotalKdxActual == 0)
+       {
+          MsgAlert(@MsgAlertTypeConstant.INFORMATION,"No se encontraron datos para ejecutar esta opción.");
+          return false;
+       }
+
+       if (_TypoArticulo != 2)
+       {
+          MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Esta Opción no se encuentra habilitada para este tipo de Articulo");
+          return false;
+       }
+        $('#PopupUpload').dialog('open');
+    }
+
+    function fn_SaveKdxProcesado(valtr) {
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("SaveKardex", "KardexMauc", new { area = "CO"})',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (result) {
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    MsgAlert(@MsgAlertTypeConstant.SUCCESS,result);
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+    }
+
+    /* Iniciando obetos js */
+    $(document).ready(function () {
+       
+        $('#divtbKardex').height(getHeightForGrid(75));
+        CreateTab("tbKardex", "divtbKardex");
+        var _heightGrid = getHeightForGrid(160);
+        var widthGrid = $('#divtbKardex').width() - 3;
+        $('#PanelKardex1').width(widthGrid);
+        $('#PanelKardex2').width(widthGrid);
+        $('#PanelKardex3').width(widthGrid);
+        $('#PanelKardex4').width(widthGrid);
+
+        /* iniciando grid grdKdxActual*/
+        $('#grdKdxActual').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetDataGrdKdxActual", "KardexMauc", new {area = "CO" })',
+            dataType: 'json',
+            colModel: _dataColumnActual,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: _heightGrid,
+            resizable: false,
+            buttons: [
+                       { name: 'Modificar Datos', bclass: 'edit', onpress: fn_ShowModificarDatos },
+                       { name: 'Exportar a Excel', bclass: 'FileExcel', onpress: fn_ExportarExcelKdxActual },
+                       { name: 'Importar Modificaciones', bclass: 'UploadFile', onpress: fn_UploadKdxActual }
+            ],
+            preProcess: fn_PreCreation_GrdKdxActual,
+            onClickRow: fn_onClickRow_GrdKdxActual
+        });
+
+        /* iniciando grid grdKdxActual*/
+        $('#grdKdxProcesado').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetDataGrdKdxCalculado", "KardexMauc", new { area = "CO"})' ,
+            dataType: 'json',
+            autoload: false,
+            colModel: _dataColumnProcesado,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: _heightGrid,
+            resizable: false,
+            buttons: [
+                     { name: 'Exportar a Excel', bclass: 'FileExcel', onpress: fn_ExportarExcelKdxProcesado },
+                     { name: 'Guardar Cambios', bclass: 'Save', onpress: fn_SaveKdxProcesado }
+            ],
+            onSuccess: fn_PreCreation_GrdKdxProcesado,
+            onClickRow: fn_onClickRow_GrdProcesado
+        });
+
+
+        /* iniciando grid grdKdxDCA*/
+        $('#grdKdxDCA').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetDatagrdKdxDCA", "KardexMauc", new { area = "CO" })',
+            dataType: 'json',
+            autoload: false,
+            colModel: _dataColumnDCA,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: _heightGrid,
+            resizable: false,
+            buttons: [
+                     { name: 'Exportar a Excel', bclass: 'FileExcel', onpress: fn_ExportarExcelKdxDCA }
+            ],
+            onSuccess: fn_PreCreation_GrdKdxDCA
+        });
+
+        /* iniciando grid grdKdxDiferencia*/
+        $('#grdKdxDiferencia').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetDataGrdKdxDiferencia", "KardexMauc", new { area = "CO" })',
+            dataType: 'json',
+            autoload: false,
+            colModel: _dataColumnDiferencia,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: (_heightGrid - 15),
+            resizable: false,
+            buttons: [
+                     { name: 'Exportar a Excel', bclass: 'FileExcel', onpress: fn_ExportarExcelKdxDiferencia }
+            ]
+        });
+
+        /* Iniciar Popup*/
+        $("#PopupUnidad").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 420,
+            title: "Datos de Registro Kardex",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+        /* Iniciar Popup Upload*/
+        $("#PopupUpload").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 420,
+            title: "Importar desde Excel",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+        /* Evento Click boton btnCancelar de Popup*/
+        $("#btnAcepta").click(function () {
+
+            if (($("#txtCantidad").val() == $("#txtCantidadEdit").val()) && ($("#txtCostoUnitario").val() == $("#txtCostoUnitarioEdit").val()) && ($("#txtCostoTotal").val() == $("#txtCostoTotalEdit").val())) {
+                MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- No se encontraron cambios.");
+            }
+            else {
+       
+                var vardata;
+                if (!$.isNumeric(document.getElementById("txtCantidadEdit").value))
+                {
+                    MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- La cantidad ingresada no es un número");
+                    return false;
+                }
+                if (!$.isNumeric(document.getElementById("txtCostoUnitarioEdit").value)) {
+                    MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- La costo unitario no es un número");
+                    return false;
+                }
+               var mtCantidad = stringToDecimal(document.getElementById("txtCantidadEdit").value.trim().replace(",", ""));
+               var mtUnitario = stringToDecimal(document.getElementById("txtCostoUnitarioEdit").value.trim().replace(",", ""));
+                
+                switch (_idTipoOpera) {
+                    case 'I':
+                        vardata = { RowNumber: _idRowKdxActual, CantidadIngreso: mtCantidad, UnitarioIngreso: mtUnitario };
+                        break;
+                    case 'E':
+                        vardata = { RowNumber: _idRowKdxActual, CantidadEgreso: mtCantidad, UnitarioEgreso: mtUnitario };
+                        break;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url:'@Url.Action("UpdateKardex", "KardexMauc", new { area = "CO" })',
+                    contentType: "application/json; charset=utf-8",
+                    data:JSON.stringify(vardata),
+                    dataType: "html",
+                    success: function (result) {
+                        if (IsLoginRedirect(result))
+                            window.location.href = "/Login";
+                        else {
+                            MsgAlert(@MsgAlertTypeConstant.SUCCESS,'Carga de Ordenes de Venta, Satisfactoria.');
+                            _BanderaModificado = false;
+                            $('#grdKdxProcesado').flexOptions({query: ''}).flexReload();
+
+                            $('#PopupUnidad').dialog('close');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+                    }
+                });
+            }
+        });
+
+
+        $("#btnAceptaUpload").click(function () {
+            var formData = new FormData();
+            var totalFiles = document.getElementById("FileUpload").files.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("FileUpload").files[i];
+
+                formData.append("FileUpload", file);
+            }
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("UploadFile", "KardexMauc", new { area = "CO"})',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                   debugger;
+                    MsgAlert(@MsgAlertTypeConstant.SUCCESS,'El Archivo se Cargo Correctamente.');
+                    $('#PopupUpload').dialog('close');
+                    $('#grdKdxProcesado').flexOptions({query: '' }).flexReload();
+                },
+                error: function (xhr, status, error) {
+                    debugger;
+                    MsgAlert(@MsgAlertTypeConstant.ERROR,"Error al Subir el Archivo");
+                }
+            });
+        });
+
+        /* Evento Click boton btnCancelar de Popup*/
+        $("#btnCancelar").click(function () {
+            $('#PopupUnidad').dialog('close');
+        });
+
+        $("#btnCancelarUpload").click(function () {
+            $('#PopupUpload').dialog('close');
+        });
+
+    });
+</script>

@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BADC58F3-5A5D-4672-A9FF-410E102C67A9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Laive.DOMnt.Bi</RootNamespace>
+    <AssemblyName>Laive.DOMnt.Bi.v1</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CanalComercial.cs" />
+    <Compile Include="CostosUnitarios.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SolidoLeche.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Laive.Core.Data.v1\Laive.Core.Data.v1.csproj">
+      <Project>{966dcfd4-b5ba-49a6-9b87-1ff466bd5d5e}</Project>
+      <Name>Laive.Core.Data.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.DOMnt.Sy.v1\Laive.DOMnt.Sy.v1.csproj">
+      <Project>{1a635836-5387-4872-9c7e-f8f13dc92867}</Project>
+      <Name>Laive.DOMnt.Sy.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Entity.Bi.v1\Laive.Entity.Bi.v1.csproj">
+      <Project>{7b7b0cb2-13eb-48d8-816b-c3f0b15db50e}</Project>
+      <Name>Laive.Entity.Bi.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Entity.Sy.v1\Laive.Entity.Sy.v1.csproj">
+      <Project>{1a214798-925a-4e91-b331-0d5b762434b4}</Project>
+      <Name>Laive.Entity.Sy.v1</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

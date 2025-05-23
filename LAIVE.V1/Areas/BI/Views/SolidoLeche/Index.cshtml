@@ -1,0 +1,411 @@
+﻿@using Laive.Core.Common
+@{
+   ViewBag.Title = "Solido Leche";
+}
+<div id="idSearch" class="ContentPageSearch">
+   <table cellspacing="0" style="width:100%">
+      <tr>
+         <td style="width:200px;">
+            <select id="searchColumnLaive" class="selectLaive"></select>
+         </td>
+         <td style="width:150px;">
+            <select id="searchOperadorLaive" class="selectLaive">
+               <option value="like">Contiene</option>
+               <option value="=">Igual que</option>
+               <option value="<">Menor que</option>
+               <option value="<=">Menor Igual que</option>
+               <option value=">">Mayor que</option>
+               <option value=">=">Mayor Igual que</option>
+            </select>
+         </td>
+         <td>
+            <input id="searchValueLaive" type="text" style="width:100%;box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;" />
+         </td>
+         <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="addFilterLaive();">
+               <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+               <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+         </td>
+         <td style="width:114px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="clearFilter();">
+               <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Borrar Filtros" />
+               <div class="ContentPageMenuPanelText">Borrar Filtros</div>
+            </a>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="5">
+            <input id="idTextFilterControl" type="text" />
+         </td>
+      </tr>
+   </table>
+
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+   <table id="GridBandeja"></table>
+</div>
+<div id="idPopupEdit">
+   <table cellpadding="0" cellspacing="2" style="width:100%;">
+      <tr>
+         <td>Articulo</td>
+         <td><input id="txtArticulo" class="text-box" type="text" style="width:100px" /></td>
+         <td style="width:10px;"></td>
+         <td colspan="2"></td>
+      </tr>
+      <tr>
+         <td>
+            Glosa
+         </td>
+         <td colspan="4">
+            <input id="txtGlosaArticulo" class="text-box" type="text" style="width:361px;" />
+         </td>
+      </tr>
+      <tr>
+         <td>
+            Fecha Ingreso
+         </td>
+         <td>
+            <input id="txtFechaIngreso" type="text" class="text-box" style="width: 100px;" />
+         </td>
+         <td style="width:10px;"></td>
+         <td>
+            Area
+         </td>
+         <td>
+            @Html.DropDownList("ddlArea", new SelectList(ViewBag.ListaArea, "value", "text"), new { @class = "text-box", @style = "width:106px;" })
+         </td>
+      </tr>
+      <tr>
+         <td>
+            SLNG
+         </td>
+         <td>
+            <input id="txtSLNG" class="text-box" type="text" style="width:100px;text-align:right;" />
+         </td>
+         <td style="width:10px;"></td>
+         <td>
+            SLG
+         </td>
+         <td>
+            <input id="txtSLG" class="text-box" type="text" style="width:100px;text-align:right;" />
+         </td>
+      </tr>
+      <tr>
+         <td>
+            SSD
+         </td>
+         <td>
+            <input id="txtSSD" class="text-box" type="text" style="width:100px;text-align:right;" />
+         </td>
+         <td style="width:10px;"></td>
+         <td>
+            SLT
+         </td>
+         <td>
+            <input id="txtSLT" class="text-box" onblur="fn_blurtxtSLT(this);" type="text" style="width:100px;text-align:right;background: #FFF58E;" />
+         </td>
+      </tr>
+      <tr>
+         <td>SLT Diluido</td>
+         <td><input id="txtSLTDiluido" class="text-box" type="text" style="width:100px;text-align:right;" disabled="disabled" /></td>
+         <td style="width:10px;"></td>
+         <td>Factor Rendimiento</td>
+         <td><input id="txtFactorRendimiento" class="text-box" type="text" style="width:100px;text-align:right;" disabled="disabled" /></td>
+      </tr>
+      <tr>
+         <td colspan="5">
+            &nbsp;
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <input id="btnGuardar" type="button" value="Guardar" class="btnClassButton" style="width:100px;" onclick="AddRegisterButtonClick();" />
+         </td>
+         <td colspan="3"></td>
+         <td>
+            <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEdit').dialog('close');" />
+         </td>
+      </tr>
+   </table>
+</div>
+<script type="text/javascript">
+   /*VARIABLES GLOBALES*/
+   var _popupEntityState = SamGetStateUnchanged();
+   var _codigoSolidoLeche = 0;
+   var _isCaducate = '0';
+
+
+   /*CONTENEDOR DE FILTROS*/
+   $(document).ready(function () {
+      $("#idTextFilterControl").tokenInput("", { theme: "facebook" ,onDelete: function (item) {
+         var vartoken = $("#idTextFilterControl").tokenInput("get");
+         $('#GridBandeja').flexOptions({ query: JSON.stringify(vartoken) }).flexReload();
+      }});
+
+      $("#txtSLNG").inputmask('decimal', { rightAlign: false,digits:4});
+      $("#txtSLG").inputmask('decimal', { rightAlign: false,digits:4 });
+      $("#txtSSD").inputmask('decimal', { rightAlign: false,digits:4});
+      $("#txtSLT").inputmask('decimal', { rightAlign: false,digits:4 });
+      $("#txtSLTDiluido").inputmask('decimal', { rightAlign: false,digits:4});
+      $("#txtFactorRendimiento").inputmask('decimal', { rightAlign: false,digits:8});
+
+      $('#txtFechaIngreso').Zebra_DatePicker({format:'d/m/Y'});
+   });
+
+   jQuery(document).ready(function ($) {
+      showTitleSystem('@ViewBag.Title');
+
+      var heightGrid = getHeightForGrid(100);
+      var varColumn = [
+                       { isfilter:true, display: 'Código', name: 'CodigoSolidoLeche',hide: true},
+                       { isfilter:true, display: 'Código', name: 'CodigoArticulo', width: 70},
+                       { isfilter:true, display: 'Articulo', name: 'GlosaArticulo', width: 160},
+                       { isfilter:false, display: '', name: 'CodigoArea',hide: true },
+                       { isfilter:true, display: 'Area', name: 'GlosaArea',width: 40},
+                       { isfilter:false, display: 'Fecha Ingreso', name: 'FechaIngreso', width: 75},
+                       { isfilter:false, display: 'Fecha Caduca', name: 'FechaCaduca',hide: true},
+                       { isfilter:false, display: 'SLNG', name: 'Slng', width: 60, align: 'right'},
+                       { isfilter:false, display: 'SLG', name: 'Slg', width: 60, align: 'right'},
+                       { isfilter:false, display: 'SSD', name: 'Ssd', width: 60, align: 'right'},
+                       { isfilter:false, display: 'SLT', name: 'Slt', width: 60, align: 'right'},
+                       { isfilter:false, display: 'SLT Diluido', name: 'SltDiluido', width: 60, align: 'right'},
+                       { isfilter:false, display: 'Factor Rendimiento', name: 'FactorRendimiento', width: 75, align: 'right'},
+                       { isfilter:false, display: '', name: 'Estado', hide: true }
+      ];
+
+      var varColumnHistorico = [
+                       { isfilter:true, display: 'Código', name: 'CodigoSolidoLeche',hide: true},
+                       { isfilter:true, display: 'Código', name: 'CodigoArticulo', width: 70},
+                       { isfilter:false, display: '', name: 'CodigoArea',hide: true },
+                       { isfilter:true, display: 'Area', name: 'GlosaArea',width: 40},
+                       { isfilter:false, display: 'Fecha Ingreso', name: 'FechaIngreso', width: 75},
+                       { isfilter:false, display: 'Fecha Caduca', name: 'FechaCaduca', width: 75},
+                       { isfilter:false, display: 'SLNG', name: 'Slng', width: 60, align: 'right'},
+                       { isfilter:false, display: 'SLG', name: 'Slg', width: 60, align: 'right'},
+                       { isfilter:false, display: 'SSD', name: 'Ssd', width: 60, align: 'right'},
+                       { isfilter:false, display: 'SLT', name: 'Slt', width: 60, align: 'right'},
+                       { isfilter:false, display: 'SLT Diluido', name: 'SltDiluido', width: 60, align: 'right'},
+                       { isfilter:false, display: 'Factor Rendimiento', name: 'FactorRendimiento', width: 95, align: 'right'},
+                       { isfilter:false, display: '', name: 'Estado', hide: true }
+      ];
+
+      varColumn.forEach(function (item) {
+         if (item.isfilter)
+            $("#searchColumnLaive").append($("<option>", { value: item.name, text: item.display }));
+      });
+
+      $('#GridBandeja').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetBandeja", "SolidoLeche", new { area = "BI"})',
+         dataType: 'json',
+         colModel: varColumn,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         resizable: false,
+         height: heightGrid,
+         buttons: [
+                     { name: 'Nuevo', bclass: 'add', onpress: AddRegister },
+                     { name: 'Editar', bclass: 'edit', onpress: EditRegister },
+                     { name: 'Caducar Articulo', bclass: 'Plantilla', onpress: CaducarRegister }
+         ]
+      });
+
+      $("#idPopupEdit").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 520,
+         height: 240,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+
+      $("#btnGuardar").click(function () {
+
+         var validate = true;
+         validate = validate && SamControlEsValido("txtArticulo", "Ingrese el Codigo del Articulo");
+         validate = validate && SamControlEsValido("ddlArea", "Seleccione el Area.");
+         validate = validate && SamControlEsValido("txtSLNG", "Ingrese el SLNG.");
+         validate = validate && SamControlEsValido("txtSLG", "Ingrese el SLG.");
+         validate = validate && SamControlEsValido("txtSSD", "Ingrese el SSD.");
+         validate = validate && SamControlEsValido("txtSLT", "Ingrese el SLT.");
+         validate = validate && SamControlEsValido("txtSLTDiluido", "Ingrese el SLTDiluido.");
+         validate = validate && SamControlEsValido("txtFactorRendimiento", "Ingrese el Factor Rendimiento.");
+
+         if (validate == false)
+            return false;
+
+         if(_popupEntityState == SamGetStateAdded())
+         {
+            var rows = $('#GridBandeja').selectedRows();
+            @*if (rows.length > 0){
+               var existArticulo = false;
+               rows.forEach(function (item) {
+                  if(item[1].Value == $('#txtArticulo').val())
+                  {
+                     existArticulo = true;
+                     return;
+                  }
+               });
+
+               if(existArticulo){
+                  MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- El articulo ya se encuentra registrado.");
+                  return false;
+               }
+            }*@
+         }
+
+         var _data = {
+            EntityState: _popupEntityState,
+            CodigoSolidoLeche:_codigoSolidoLeche,
+            CodigoArticulo: document.getElementById("txtArticulo").value,
+            CodigoArea: document.getElementById("ddlArea").value,
+            FechaIngreso:document.getElementById("txtFechaIngreso").value,
+            Slng:stringToInt(document.getElementById("txtSLNG").value),
+            Slg:stringToInt(document.getElementById("txtSLG").value),
+            Ssd:stringToDecimal(document.getElementById("txtSSD").value),
+            Slt:stringToDecimal(document.getElementById("txtSLT").value),
+            SltDiluido:stringToDecimal(document.getElementById("txtSLTDiluido").value),
+            FactorRendimiento :stringToDecimal(document.getElementById("txtFactorRendimiento").value),
+            IsCaducate : _isCaducate
+         };
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateModel", "SolidoLeche", new { area = "BI"})',
+            data:JSON.stringify(_data),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+               if (IsLoginRedirect(result.toString()))
+                  window.location.href = "/Login";
+               else {
+
+                  switch(result.Status){
+                     case 'success':
+                        $('#idPopupEdit').dialog('close');
+                        $('#GridBandeja').flexReload();
+                        MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                        break;
+                     case 'information':
+                        MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                        break;
+                     case 'invalid':
+                         MsgAlert(@MsgAlertTypeConstant.ERROR,result.Message);
+                         break;
+                   }
+
+                }
+             },
+             error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+
+      });
+
+
+   });
+
+   /*END READY*/
+
+   function AddRegister() {
+      _codigoSolidoLeche = 0;
+      _popupEntityState = SamGetStateAdded();
+      _isCaducate = '0';
+      SamClearControl("txtArticulo", false);
+      SamClearControl("txtGlosaArticulo", true);
+      SamClearControl("ddlArea", false);
+      SamClearControl("txtFechaIngreso", false);
+
+      $('#txtSLNG').val(0);
+      $('#txtSLG').val(0);
+      $('#txtSSD').val(0);
+      $('#txtSLT').val(0);
+      $('#txtSLTDiluido').val(11.4);
+      $('#txtFactorRendimiento').val(0);
+      
+      $("#idPopupEdit").dialog({ title: "Agregar Articulo" });
+      $('#idPopupEdit').dialog('open');
+   }
+
+   function EditRegister(com, grid) {
+      debugger;
+      var rows = $('#GridBandeja').selectedRows();
+      var message = "";
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un registro");
+         return false;
+      }
+
+      fn_EditarOCaducar(grid,false)
+
+   }
+
+
+   function CaducarRegister(com, grid) {
+      debugger;
+      var rows = $('#GridBandeja').selectedRows();
+      var message = "";
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un registro");
+         return false;
+      }
+
+      fn_EditarOCaducar(grid,true)
+
+   }
+
+   function fn_EditarOCaducar(grid,isCaducate){
+
+
+      var items = $('.trSelected', grid);
+      if (items != null && items.length > 0) {
+         var item = items[0];
+         _codigoSolidoLeche = item.cells[0].innerText || item.cells[0].textContent;
+         _popupEntityState = SamGetStateModified();
+         _isCaducate = isCaducate ? '1' : '0';
+
+         SamSetInputValue("txtArticulo", item,1, true);
+         SamSetInputValue("txtGlosaArticulo", item,2, true);
+         SamSetInputValue("ddlArea", item , 3, false);
+
+         $("#txtFechaIngreso").val('@DateTime.Now.ToString("dd/MM/yyyy")');
+         document.getElementById('txtFechaIngreso').disabled = true;
+
+         SamSetInputValue("txtSLNG", item, 7, false);
+         SamSetInputValue("txtSLG", item , 8, false);
+         SamSetInputValue("txtSSD", item , 9, false);
+         SamSetInputValue("txtSLT", item , 10, false);
+         SamSetInputValue("txtSLTDiluido", item , 11, true);
+         SamSetInputValue("txtFactorRendimiento", item , 12, true);
+
+         $("#idPopupEdit").dialog({ title: "Caducar Articulo" });
+         $('#idPopupEdit').dialog('open');
+
+      }
+      else {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+      }
+   }
+
+   function fn_blurtxtSLT(control){
+      
+      $('#txtFactorRendimiento').val( (stringToDecimal(control.value) / stringToDecimal($('#txtSLTDiluido').val())).toFixed(8));
+   }
+
+</script>

@@ -1,0 +1,1634 @@
+﻿@using Laive.Entity.Di;
+@using Laive.Core.Common
+@{
+   switch ((int)ViewBag.TipoAsignacion)
+   {
+      case 1:
+         ViewBag.Title = "Priorización de Pedido AL";
+         break;
+      case 2:
+         ViewBag.Title = "Priorización de Pedido DEL";
+         break;
+   }
+}
+<style type="text/css">
+   .contentMauc {
+      width: 100%;
+      position: relative;
+      top: 8px;
+      font-family: Tahoma;
+      font-size: 10px;
+   }
+</style>
+<div class="contentMauc">
+   <ul id="tbPedido" class="tabs">
+      <li class="active" rel="PanelPedido1">Pedido Pendiente</li>
+      <li rel="PanelPedido2" onclick="fn_LoadGridPriorizacion()">Prioridad de Pedidos</li>
+      <li rel="PanelPedido3">Resultado Asignación Pedidos</li>
+   </ul>
+   <div id="divtbPedido" class="tab_container">
+      <div id="PanelPedido1" class="tab_content">
+         <div id="PanelPedido1Left" style="height:100%;float:left;margin:2px;">
+            <div style="background:#ffd800; text-align:center; width:100%;font-size: 10px;font-weight: bold;">
+               PEDIDO CONSOLIDADO POR ARTICULO
+            </div>
+            <div style="background: #EBEBEB;border: 1px solid #ccc;border-bottom:none;min-height:21px;">
+               <div id="lblHeadPedidos" style="font-size: 11px; padding: 4px;"></div>
+            </div>
+            <div style="padding: 2px 0px;background: #EBEBEB;border: 1px solid #ccc;border-bottom:none;">
+               <table cellpadding="0" cellspacing="0" style="width:100%;">
+                  <tr>
+                     <td style="width:3px;"></td>
+                     <td>
+                        <input type="text" id="txtBusquedaPedidoCo" class="text-box" style="width: 100%;left: 3px;" />
+                     </td>
+                     <td style="width:10px;"></td>
+                     <td>
+                        <button id="btnBuscaPedidoCo" type="button" class="btnClassButton" style="padding: 1px;">
+                           <img src="~/Content/images/search.png" />
+                        </button>
+                     </td>
+                     <td style="width:4px;"></td>
+                     <td style="width:25px;">
+                        <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_ShowFilterArticulo();"><img src="~/Content/images/EditFilterLaive.png" /></button>
+                     </td>
+                     <td style="width:4px;"></td>
+                     <td style="width:94px;">
+                        <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_PriorizarFiltro();">
+                           <img src="~/Content/images/ListCheck.png" /><div style="display: inline;position: relative;top: -3px;">Priorizar Filtro</div>
+                        </button>
+                     </td>
+                     <td style="width:3px;"></td>
+                  </tr>
+               </table>
+            </div>
+            <table id="grdArticulos"></table>
+         </div>
+         <div id="PanelPedido1Right" style="height:100%;float:left;margin:2px;">
+            <div style="background:#f5e915;text-align:center; width:100%;font-size: 10px;font-weight: bold;">
+               PARTNER
+            </div>
+            <table id="grdPartner"></table>
+            <div style="height:3px;width:100%;"></div>
+            <div style="background:#f5e915;text-align:center; width:100%;font-size: 10px;font-weight: bold;">
+               STOCK
+            </div>
+            <table id="grdStock"></table>
+         </div>
+      </div>
+      <div id="PanelPedido2" class="tab_content">
+         <div style="background:#f5e915;text-align:center; width:100%;font-size: 10px;font-weight: bold;">
+            PRIORIZACIÓN DE PEDIDO
+         </div>
+         <table id="grdPriorizacion"></table>
+      </div>
+      <div id="PanelPedido3" class="tab_content">
+         <div style="background:#ffd800;text-align:center; width:100%;font-size: 10px;font-weight: bold;">
+            RESULTADO
+         </div>
+          <div style="padding: 2px 0px;background: #EBEBEB;border: 1px solid #ccc;border-bottom:none;">
+               <table cellpadding="0" cellspacing="0" style="width:100%;">
+                  <tr>
+                     <td style="width:3px;"></td>
+                     <td>
+                        <input type="text" id="txtBusquedaResultado" class="text-box" style="width: 100%;left: 3px;" />
+                     </td>
+                     <td style="width:10px;"></td>
+                     <td style="width:85px;">
+                        <input id="btnBuscaResultado" type="button" value="Buscar" class="btnClassButton" style="width:100%;" />
+                     </td>
+                     <td style="width:4px;"></td>
+                     <td style="width:25px;">
+                        <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_ShowFilterResultado();"><img src="~/Content/images/EditFilterLaive.png" /></button>
+                     </td>
+                     <td style="width:3px;"></td>
+                  </tr>
+               </table>
+            </div>
+         <table id="grdResultado"></table>
+      </div>
+   </div>
+</div>
+
+<div id="PopupImportarOrden">
+   <table id="tblRango" style=" width:100%;">
+      <tr>
+         <td>
+            Almacen
+         </td>
+         <td>
+            Serie
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            Desde:
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            Hasta:
+         </td>
+      </tr>
+      <tr>
+         <td>
+            @Html.DropDownList("ddlidAlmacen", new SelectList(ViewBag.ListAlmacen, "CodigoAlmacen", "GlosaAlmacen"),"", new { @class = "text-box", @style = "width:110px;", @onchange = "fn_onChangeIdAlmacen(this);" })
+         </td>
+         <td>
+            <input id="ddlidAlmacenSerie" class="text-box" type="text" style="width:60px" readonly="readonly" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input type="text" id="txtOrdenDesde" style="width: 105px;text-transform: uppercase;" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input type="text" id="txtOrdenHasta" style="width: 105px;text-transform: uppercase;" />
+         </td>
+      </tr>
+   </table>
+   <table style=" width:100%;">
+      <tr>
+         <td colspan="3">
+            <div id="idLoadingImport" style=" display:none; width:100%; text-align:center;">
+               <img alt="|" src="../../Content/animation/loadingPanel9.GIF" />
+            </div>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <div id="lblImportMessage" style=" width:100%; text-align:center;"></div>
+         </td>
+      </tr>
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptarImpOrden" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelarImpOrden" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+<input id="txtPrimeraOrden" type="hidden" />
+
+<div id="PopupFiltroArticulo">
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td>Categoria</td>
+         <td>
+            <input id="IdCategoria" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('IdCategoria','b.codigoCategoria');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Marca</td>
+         <td>
+            <input id="IdMarca" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('IdMarca','b.codigoMarca');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>SubMarca</td>
+         <td>
+            <input id="IdSubMarca" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('IdSubMarca','b.codigoSubMarca');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Presentación</td>
+         <td>
+            <input id="IdPresentacion" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('IdPresentacion','b.codigoPresentacion');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Articulo</td>
+         <td>
+            <input id="CodigoArticulo" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('CodigoArticulo','a.codigoArticulo');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Partner</td>
+         <td>
+            <input id="IdPartner" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('IdPartner','a.codigoPartner');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Canal Baan</td>
+         <td>
+            <input id="IdCanalBaan" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('IdCanalBaan','d.codigoCanal');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Canal Comercial</td>
+         <td>
+            <input id="IdCanalComercial" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('IdCanalComercial','f.codigo');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      @*<tr>
+         <td>Nivel Comercial</td>
+         <td>
+            <input id="IdCanalComercialNivel" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilter('IdCanalComercialNivel','e.codigoNivel');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>*@
+      <tr>
+         <td colspan="3"></td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <input id="txtFiltroArticulo" type="text" style="height:80px;" />
+         </td>
+      </tr>
+   </table>
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptarFArticulo" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelarFArticulo" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+
+<div id="PopupFiltroResultado">
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td>Tipo Resultado</td>
+         <td>
+            <input id="IdTipoResultado" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdTipoResultado','a.codigoResultado');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Categoria</td>
+         <td>
+            <input id="IdCategoriaResultado" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdCategoriaResultado','b.codigoCategoria');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Marca</td>
+         <td>
+            <input id="IdMarcaResultado" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdMarcaResultado','b.codigoMarca');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>SubMarca</td>
+         <td>
+            <input id="IdSubMarcaResultado" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdSubMarcaResultado','b.codigoSubMarca');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Presentación</td>
+         <td>
+            <input id="IdPresentacionResultado" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdPresentacionResultado','b.codigoPresentacion');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Articulo</td>
+         <td>
+            <input id="CodigoArticuloResultado" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('CodigoArticuloResultado','a.codigoArticulo');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Partner</td>
+         <td>
+            <input id="IdPartnerResultado" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdPartnerResultado','a.codigoPartner');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Canal Baan</td>
+         <td>
+            <input id="IdCanalBaanResultado" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdCanalBaanResultado','h.codigoCanal');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="3"></td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <input id="txtFiltroResultado" type="text" style="height:80px;" />
+         </td>
+      </tr>
+   </table>
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptarFResul" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelarFResul" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+<div id="PopupPriorizaPorcentual">
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td>Cantidad Stock</td>
+         <td>
+            <input id="txtCantStock" class="txtDecimal" type="text" style="width:100px" value="0" readonly="readonly" />
+         </td>
+         <td>
+         </td>
+         <td></td>
+      </tr>
+      <tr>
+         <td>Cantidad Pedido</td>
+         <td>
+            <input id="txtCantPedido" class="txtDecimal" type="text" style="width:100px" value="0" readonly="readonly" />
+         </td>
+         <td>Cantidad a Priorizar</td>
+         <td>
+            <input id="txtCantPriorizar" class="txtDecimal" type="text" style="width:100px" value="0" />
+         </td>
+      </tr>
+      <tr>
+         <td colspan="3" style="height:30px;"></td>
+      </tr>
+   </table>
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptarPriorizaPorcen" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelarPriorizaPorcen" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+
+
+<script type="text/javascript">
+   var _height;
+   var _widthGrid;
+   var _checkState = false;
+   var _checkStateArticulo = false;
+   var _varRowsAlmacen = @Html.Raw(ViewBag.ListAlmacenString);
+   var _ordenPrioridad = [];
+   var _ordenPrioridadIncompleto = [];
+   var _messageShelfLife = "";
+   var _messageStock = "";
+   var _isFirstPriorizacion = false;
+   var _isFirstResultado = false;
+
+   var _dataListPartner = @Html.Raw(ViewBag.ListaPartner);
+
+   var _dataListCategorias = [@Html.Raw(ViewBag.Categorias)];
+   var _dataListMarcas = [@Html.Raw(ViewBag.Marcas)];
+   var _dataListSubMarcas = [@Html.Raw(ViewBag.SubMarcas)];
+   var _dataListPresentaciones = [@Html.Raw(ViewBag.Presentaciones)];
+   var _dataListCanalBaan = [@Html.Raw(ViewBag.CanalBaan)];
+   var _dataListTipoResultado = [@Html.Raw(ViewBag.TipoResultados)];
+   var _dataListArticulo = [@Html.Raw(ViewBag.ListaArticulo)];
+   var _dataListCanalComercial = [@Html.Raw(ViewBag.ListaCanalComercial)];
+   @*var _dataListNivelComercial = [@Html.Raw(ViewBag.ListaNivelComercial)];*@
+
+   var _FactorUndVta2Base = 0;
+   var _UndEmpaqueCapacidad = 0;
+   var _UndEmpaquePeso = 0;
+
+   var _colResultadoAsignacion = [
+                      { display: 'Fecha Proceso', name: 'FechaProceso', width: 100},
+                      { display: '', name: 'CodigoResultado', hide : true},
+                      { display: 'Resultado', name: 'GlosaResultado', width: 115},
+                      { display: 'Cod. Art.', name: 'CodigoArticulo', width: 65},
+                      { display: 'Descripción Articulo', name: 'DsArticulo', width: 150},
+                      { display: 'Canal', name: 'Canal', width: 85},
+                      { display: 'Cod.Partner', name: 'CodigoPartner', width: 70},
+                      { display: 'Clave Partner', name: 'ClavePartner', width: 160},
+                      { display: 'Dpto', name: 'Dpto', width: 55},
+                      { display: 'IdRuta', name: 'IdRuta', hide : true},
+                      { display: 'Orden', name: 'Orden', width: 65},
+                      { display: 'Linea', name: 'Linea', width: 65},
+                      { display: 'SubLinea', name: 'SubLinea', hide : true},
+                      { display: 'Und. Pedido', name: 'UnidadPedido', width: 65},
+                      { display: 'Cantidad', name: 'CantidadPedido', width: 65,align: 'right'},
+                      { display: 'Kilos Asignado', name: 'Peso', width: 65,align: 'right'},
+                      { display: 'IdUserProceso', name: 'IdUserProceso', hide : true},
+                      { display: 'Usuario', name: 'Usuario', width: 95}
+   ];
+
+   var _colPartner = [
+                      { display: 'Canal', name: 'GlosaCanal', width: 65,sortable: true},
+                      { display: 'Cod.Partner', name: 'CodigoPartner', width: 65,sortable: true},
+                      { display: 'Clave Partner', name: 'ClavePartner', width: 150,sortable: true},
+                      { display: 'Dpto', name: 'Departamento', width: 45,sortable: true},
+                      { display: 'IdRuta', name: 'IdRuta', hide : true},
+                      { display: 'Orden', name: 'Orden', width: 60,sortable: true},
+                      { display: 'Linea', name: 'Linea', hide : true},
+                      { display: 'SubLinea', name: 'SubLinea', hide : true},
+                      { display: 'Und.', name: 'UnidadPedido', hide : true},
+                      { display: 'Cantidad', name: 'CantidadPedido', width: 55,align: 'right',sortable: true},
+                      { display: 'Kilos Neto', name: 'KilosNeto', width: 55,align: 'right',sortable: true},
+                      { display: '<span title="Shelf Life">SL</span>', name: 'ShelfLife', width: 25,align: 'center',sortable: true},
+                      { display: '<span title="Dias Adicionales">DA</span>', name: 'DiasAdicionales', width: 25,align: 'center',sortable: true},
+                      { display: '<span title="Shelf Life Final">SLF</span>', name: 'ShelfLifeFinal', width: 25,align: 'center',sortable: true},
+                      { display: 'Kilos Bruto', name: 'KilosBruto', hide : true},
+                      { display: 'Importe Pedido', name: 'ImportePedido', hide : true},
+                      { display: '<span title="Fecha Orden">F. Orden</span>', name: 'Orden', width: 60,sortable: true}
+   ];
+
+   var _colStock = [
+                      { display: 'Articulo', name: 'CodigoArticulo', width: 75,sortable: true},
+                      { display: 'Fecha Producción', name: 'FechaProduccion', width: 85,sortable: true},
+                      { display: 'Fecha Vncto', name: 'FechaVencimiento', width: 85,sortable: true},
+                      { display: 'Dias Vncto', name: 'DiasVencimiento', width: 70,sortable: true},
+                      { display: 'TVU', name: 'Shelflife', width: 40,sortable: true},
+                      { display: 'Consistencia', name: 'Consistencia', hide : true},
+                      { display: 'Und.', name: 'UnidadVenta', width: 30,sortable: true},
+                      { display: 'Cant.WMS', name: 'Stock', width: 55,align: 'right',sortable: true},
+                      { display: 'Cant.U.Venta', name: 'CantidadUndVenta', width: 55,align: 'right',sortable: true},
+                      { display: 'Kilos', name: 'Kilos', width: 55,align: 'right',sortable: true}
+   ];
+
+   var _colPriorizacion = [
+                      { display: 'Cod. Art.', name: 'CodigoArticulo', width: 65},
+                      { display: 'Descripción Articulo', name: 'DsArticulo', width: 150},
+                      { display: 'Canal', name: 'Canal', width: 85},
+                      { display: 'Cod.Partner', name: 'CodigoPartner', width: 70},
+                      { display: 'Clave Partner', name: 'ClavePartner', width: 160},
+                      { display: 'Dpto', name: 'Dpto', width: 55},
+                      { display: 'IdRuta', name: 'IdRuta', hide : true},
+                      { display: 'Orden', name: 'Orden', width: 65},
+                      { display: 'Lin', name: 'Linea', width: 25},
+                      { display: 'SLin', name: 'Sublinea', hide : true},
+                      { display: 'Consistencia', name: 'Consistencia',width: 65},
+                      { display: 'Und.', name: 'UnidadVenta', width: 30},
+                      { display: 'Cantidad', name: 'Cantidad', width: 65,align: 'right'},
+                      { display: 'Kilos Neto', name: 'Peso', width: 65,align: 'right'},
+                      { display: 'FechaVencimiento', name: 'FechaVencimiento', hide : true},
+                      { display: '', name: 'Estado', hide : true},
+                      { display: 'Estado', name: 'DsEstado', width: 30}
+   ];
+
+
+   var _colArticulos = [
+                      { display: 'Cod. Art.', name: 'CodigoArticulo', width: 65},
+                      { display: 'Descripción Articulo', name: 'DsArticulo', width: 150},
+                      { display: 'Und.', name: 'UnidadMedida', width: 25},
+                      { display: 'Cantidad', name: 'CantidadPedido', width: 55,align: 'right'},
+                      { display: 'Kilos Neto', name: 'PesoNeto', width: 55,align: 'right'},
+                      { display: 'TipoProducto', name: 'TipoProducto', hide: true},
+                      { display: 'FactorUndVta2Base', name: 'FactorUndVta2Base', hide: true},
+                      { display: 'UndEmpaqueCapacidad', name: 'UndEmpaqueCapacidad', hide: true},
+                      { display: 'UndEmpaquePeso', name: 'UndEmpaquePeso', hide: true},
+                      { display: 'Estado', name: 'Estado', hide: true}
+
+
+   ];
+
+
+
+   /* Iniciando obetos js */
+   $(document).ready(function () {
+      /*Titulo*/
+      showTitleSystem('@ViewBag.Title - @ViewBag.fechaDespacho');
+      $(".txtDecimal").inputmask('decimal', { rightAlign: false,digits:2 });
+
+      _height = getHeightForGrid(40);
+      $('#divtbPedido').height(_height);
+      CreateTab("tbPedido", "divtbPedido");
+
+      _widthGrid = $('#divtbPedido').width();
+      $('#PanelPedido1').width(_widthGrid);
+      $('#PanelPedido2').width(_widthGrid);
+      $('#PanelPedido1Left').width((_widthGrid * 0.4) - 4);
+      $('#PanelPedido1Right').width((_widthGrid * 0.6) - 4);
+
+      /*Filtro Articulos*/
+      $("#txtFiltroArticulo").tokenInput("", { theme: "facebook"});
+      $("#txtFiltroResultado").tokenInput("", { theme: "facebook"});
+   
+      /*Combos para Articulos*/
+      $('#IdCategoria').immybox({choices: _dataListCategorias});
+      $('#IdMarca').immybox({choices: _dataListMarcas});
+      $('#IdSubMarca').immybox({choices: _dataListSubMarcas});
+      $('#IdPresentacion').immybox({choices: _dataListPresentaciones});
+      $('#IdPartner').immybox({choices: _dataListPartner});
+      $('#IdCanalBaan').immybox({choices: _dataListCanalBaan});
+      $('#CodigoArticulo').immybox({choices:_dataListArticulo});
+      $('#IdCanalComercial').immybox({choices:_dataListCanalComercial});
+      //$('#IdCanalComercialNivel').immybox({choices:_dataListNivelComercial});
+
+      /*Combos para resultado*/
+      $('#IdCategoriaResultado').immybox({choices: _dataListCategorias});
+      $('#IdMarcaResultado').immybox({choices: _dataListMarcas});
+      $('#IdSubMarcaResultado').immybox({choices: _dataListSubMarcas});
+      $('#IdPresentacionResultado').immybox({choices: _dataListPresentaciones});
+      $('#IdPartnerResultado').immybox({choices: _dataListPartner});
+      $('#IdCanalBaanResultado').immybox({choices: _dataListCanalBaan});
+      $('#IdTipoResultado').immybox({choices: _dataListTipoResultado});
+      $('#CodigoArticuloResultado').immybox({choices:_dataListArticulo});
+      /* ------------------- grdArticulos----------------------------------*/
+      $('#ddlidAlmacenSerie').immybox({fnOnClick: fn_onClickAlmacenSerie});
+
+      $('#grdArticulos').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataArticulos", "AsignacionPedido", new { area = "DI" })',
+         dataType: 'json',
+         colModel: _colArticulos,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: (_height - 145),
+         onSuccess: fn_OnSuccess_GridBandeja,
+         resizable: false,
+         onClickRow: fn_onClickRow_GrdArticulos,
+         buttons: [
+           { name: 'Importar Ordenes', bclass: 'Import', onpress: fn_ImportarOrdenes },
+           { name: 'Asignar Pedidos', bclass: 'Assign', onpress: fn_AsignarPedidos },
+           { name: 'Sel.Mul.', bclass: 'CheckBox', onpress: fn_SelMultiArticulo },
+           { name: 'Eliminar', bclass: 'delete', onpress: fn_EliminarArticulo},
+           { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdArticulos }
+         ]
+      });
+
+      /* ------------------- grdPartner----------------------------------*/
+      $('#grdPartner').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataPartner", "AsignacionPedido", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colPartner,
+         preProcess: fn_PreCreation_GrdPartner,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: (((_height - 140)/2) - 22),
+         resizable: false,
+         buttons: [
+            { name: 'Sel.Todo', bclass: 'CheckBox', onpress: fn_SelecAll },
+            { name: 'Eliminar', bclass: 'delete', onpress: fn_EliminarPartner},
+            { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdPartner },
+            { name: 'Quiebre de Stock', bclass: 'ListCheck', onpress: fn_PriorizarPorcentual }
+         ]
+      });
+
+
+      /* ------------------- grdStock----------------------------------*/
+      $('#grdStock').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataStock", "AsignacionPedido", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colStock,
+         preProcess: fn_PreCreation_GrdStock,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: (((_height - 140)/2) - 25),
+         resizable: false,
+         buttons: [
+                     { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdStock }
+         ]
+      });
+
+      /* ------------------- grdPriorizacion----------------------------------*/
+      $('#grdPriorizacion').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataPriorizacion", "AsignacionPedido", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colPriorizacion,
+         preProcess: fn_PreCreation_GrdPriorizacion,
+         singleSelect: false,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: (_height - 100),
+         resizable: false,
+         buttons: [
+                     { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdPriorizacion },
+                     { name: 'Eliminar Priorización', bclass: 'delete', onpress: fn_EliminarPriorizacion}
+         ]
+      });
+
+
+      /* ------------------- grdPriorizacion----------------------------------*/
+      $('#grdResultado').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            debugger;
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataResultado", "AsignacionPedido", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colResultadoAsignacion,
+         preProcess: fn_PreCreation_GrdResultado,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: (_height - 125),
+         resizable: false,
+         buttons: [
+                     { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdResultado }
+         ]
+      });
+
+      /* POPUP IMPORTAR ORDEN */
+      $("#PopupImportarOrden").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 480,
+         title: "Ingrese los Números de Orden",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /* POPUP FILTRO ARTICULO*/
+      $("#PopupFiltroArticulo").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 420,
+         title: "Filtros",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /* POPUP FILTRO ARTICULO*/
+      $("#PopupFiltroResultado").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 420,
+         title: "Filtros",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /* POPUP FILTRO ARTICULO*/
+      $("#PopupPriorizaPorcentual").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 420,
+         title: "Quiebre de Stock",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+
+      $("#btnCancelarImpOrden").click(function () {
+         $('#PopupImportarOrden').dialog('close');
+      });
+
+      $("#btnAceptarImpOrden").click(function () {
+
+         var validate = true;
+         validate = validate && SamControlEsValido("ddlidAlmacen", "Se Requiere este dato.");
+         if(validate == false)
+            return false;
+         validate = validate && SamControlEsValido("ddlidAlmacenSerie", "Se Requiere este dato.");
+         if(validate == false)
+            return false;
+         validate = validate && SamControlEsValido("txtOrdenDesde", "Se Requiere este dato.");
+         if(validate == false)
+            return false;
+         validate = validate && SamControlEsValido("txtOrdenHasta", "Se Requiere este dato.");
+         if(validate == false)
+            return false;
+
+         var _ordenDesde = document.getElementById("txtOrdenDesde").value;
+         var _ordenHasta = document.getElementById("txtOrdenHasta").value;
+         var _primeraOrden = document.getElementById("txtPrimeraOrden").value;
+
+         if(stringToInt(_ordenDesde.substring(3,9)) < stringToInt(_primeraOrden.substring(3,9)))
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"La primera Orden ingresada (Desde) debe ser posterior a la orden " + _primeraOrden);
+            return false;
+         }
+
+         if(stringToInt(_ordenDesde.substring(3,9)) > stringToInt(_ordenHasta.substring(3,9)))
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"La primera Orden ingresada (Desde) debe ser anterior a la segunda Orden (Hasta).");
+            return false;
+         }
+
+         document.getElementById("idLoadingImport").style.display = 'block';
+         document.getElementById("lblImportMessage").innerHTML = 'Procesando...';
+
+         $("#txtOrdenDesde").attr('disabled','disabled');
+         $("#txtOrdenHasta").attr('disabled','disabled');
+         $("#btnAceptarImpOrden").attr('disabled','disabled');
+         $("#btnCancelarImpOrden").attr('disabled','disabled');
+         $(".ui-dialog-titlebar-close").attr('disabled','disabled');
+
+         var _Choise = $('#ddlidAlmacenSerie').immybox('getChoice');
+
+         var vardata = {
+            IdAlmacen: document.getElementById("ddlidAlmacen").value,
+            IdAlmacenSerie : _Choise[0].value,
+            IdOrdenDesde: document.getElementById("txtOrdenDesde").value,
+            IdOrdenHasta: document.getElementById("txtOrdenHasta").value,
+         };
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("ImportarOrdenVenta", "AsignacionPedido", new { area = "DI"})',
+            data: vardata,
+            dataType: "html",
+            success: function (result) {
+               if (IsLoginRedirect(result))
+                  window.location.href = "/Login";
+               else {
+                  MsgAlert(@MsgAlertTypeConstant.SUCCESS,'Carga de Ordenes de Venta, Satisfactoria.');
+                  document.getElementById("idLoadingImport").style.display = 'none';
+                  document.getElementById("lblImportMessage").innerHTML = '';
+
+                  $("#txtOrdenDesde").removeAttr('disabled');
+                  $("#txtOrdenHasta").removeAttr('disabled');
+                  $("#btnAceptarImpOrden").removeAttr('disabled');
+                  $("#btnCancelarImpOrden").removeAttr('disabled');
+                  $(".ui-dialog-titlebar-close").removeAttr('disabled');
+                  document.getElementById("txtOrdenDesde").value = '';
+                  document.getElementById("txtOrdenHasta").value = '';
+
+                  //_varRowsAlmacen = JSON.parse(result);
+                  //fn_onChangeIdAlmacen();
+                  $('#grdArticulos').flexReload();
+                  $('#grdPartner').flexOptions({ query: ''}).flexReload();
+                  $('#grdStock').flexOptions({ query: ''}).flexReload();
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+               document.getElementById("idLoadingImport").style.display = 'none';
+               document.getElementById("lblImportMessage").innerHTML = 'Error al Importar Ordenes';
+               $("#txtOrdenDesde").removeAttr('disabled');
+               $("#txtOrdenHasta").removeAttr('disabled');
+               $("#btnAceptarImpOrden").removeAttr('disabled');
+               $("#btnCancelarImpOrden").removeAttr('disabled');
+               $(".ui-dialog-titlebar-close").removeAttr('disabled');
+            }
+         });
+
+      });
+
+      $("#btnCancelarPriorizaPorcen").click(function () {
+         $('#PopupPriorizaPorcentual').dialog('close');
+      });
+
+      $("#btnAceptarPriorizaPorcen").click(function () {
+
+         var validate = true;
+         validate = validate && SamControlEsValido("txtCantStock", "No existe Stock.");
+         if(validate == false)
+            return false;
+         validate = validate && SamControlEsValido("txtCantPriorizar", "Ingrese la cantidad a Priorizar.");
+         if(validate == false)
+            return false;
+
+         if(stringToDecimal($('#txtCantStock').val()) == 0)
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,'No existe Stock.');
+            return false;
+         }
+
+         if(stringToDecimal($('#txtCantPriorizar').val()) == 0)
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,'Ingrese la cantidad a Priorizar.');
+            return false;
+         }
+
+         if(stringToDecimal($('#txtCantPriorizar').val()) > stringToDecimal($('#txtCantPedido').val()))
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,'La cantidad a Priorizar no puede ser mayor a la cantidad del Pedido.');
+            return false;
+         }
+
+
+         var rows = $('#grdArticulos').selectedRows();
+         var rowsStock = $('#grdStock').GetDataRows();
+         var _diasVencimiento = 0;
+         var _kilosStock = 0;
+         var _cantidadStock = 0;
+         var _cantidadPedido = 0;
+         var _shelfLifePartner = 0;
+         var _factorPrecio = 0;
+         var _totalPedido = $('#txtCantPedido').val();
+         var _newTotalPedido = $('#txtCantPriorizar').val();
+
+         var rowsPartner;
+         rowsPartner = $('#grdPartner').selectedRows();
+         if (rowsPartner.length == 0){
+            rowsPartner = $('#grdPartner').GetDataRows();
+         }
+
+         _messageShelfLife = "";
+         _messageStock = "";
+         _messageEmpaque = "";
+         _ordenPrioridad = [];
+         _ordenPrioridadIncompleto = [];
+         var _cantidadNOPriorizada = 0;
+         var j = 0;
+         rowsPartner.forEach(function (item) {
+             debugger;
+            _cantidadPedido = (stringToDecimal(item[9].Value) * _newTotalPedido)/_totalPedido;
+
+            if(_cantidadPedido < _UndEmpaqueCapacidad)
+            {
+                _cantidadNOPriorizada += _cantidadPedido;
+                _messageEmpaque += "<br/>* Partner : " + item[1].Value + " Orden : " + item[5].Value;
+                return;
+            }
+
+            if(_cantidadNOPriorizada > 0)
+            {
+                _cantidadPedido += _cantidadNOPriorizada;
+                _cantidadNOPriorizada = 0;
+            }
+
+             //se halla el multiplo entero de la unidad empaque capacidad
+            _cantidadPedido = _cantidadPedido - (_cantidadPedido % _UndEmpaqueCapacidad);
+
+
+            _factorPrecio = stringToDecimal(item[15].Value) / stringToDecimal(item[9].Value);
+            j++;
+            var i = 0;
+            rowsStock.forEach(function (itemStock) {
+               debugger;
+               _diasVencimiento = stringToInt(itemStock[3].Value);
+               _CantidadStock = stringToDecimal(itemStock[8].Value);
+               _pedidoShelflife = stringToInt(item[13].Value);
+               i++;
+               if(_cantidadPedido == 0){
+                  return;
+               }
+
+               if(_pedidoShelflife > _diasVencimiento)
+               {
+                  _messageShelfLife += "<br/>* Registro " + i + " del Stock, Partner : " + item[1].Value + " Orden : " + item[5].Value;
+               }
+               else if(_CantidadStock > 0)
+               {
+                  if(_cantidadPedido < _CantidadStock)
+                  {
+                     _ordenPrioridad.push({
+                        Prioridad : i,
+                        CodigoPartner : item[1].Value,
+                        IdRuta : item[4].Value,
+                        Orden : item[5].Value,
+                        Linea : item[6].Value,
+                        SubLinea : item[7].Value,
+                        CodigoArticulo : itemStock[0].Value,
+                        Consistencia : itemStock[5].Value,
+                        CantidadPedido : _cantidadPedido,
+                        KilosNeto : _cantidadPedido * _FactorUndVta2Base,
+                        KilosBruto : _cantidadPedido * _FactorUndVta2Base + ((_UndEmpaqueCapacidad == 0? 0 : (_cantidadPedido/_UndEmpaqueCapacidad))* _UndEmpaquePeso),
+                        ImportePedido : _cantidadPedido * _factorPrecio,
+                        FechaVencimiento : itemStock[2].Value
+                     })
+
+                     itemStock[8].Value = stringToDecimal(itemStock[8].Value) - _cantidadPedido;
+                     _cantidadPedido = 0;
+                     return;
+                  }
+                  else{
+                     _ordenPrioridadIncompleto.push({
+                        Prioridad : i,
+                        CodigoPartner : item[1].Value,
+                        IdRuta : item[4].Value,
+                        Orden : item[5].Value,
+                        Linea : item[6].Value,
+                        SubLinea : item[7].Value,
+                        CodigoArticulo : itemStock[0].Value,
+                        Consistencia : itemStock[5].Value,
+                        CantidadPedido : _cantidadPedido,
+                        KilosNeto : _CantidadStock * _FactorUndVta2Base,
+                        KilosBruto : _CantidadStock * _FactorUndVta2Base + ((_UndEmpaqueCapacidad == 0? 0 : (_CantidadStock/_UndEmpaqueCapacidad))* _UndEmpaquePeso),
+                        ImportePedido : _CantidadStock * _factorPrecio,
+                        FechaVencimiento : itemStock[2].Value
+                     })
+                     itemStock[8].Value = stringToDecimal(itemStock[8].Value) - _CantidadStock;
+                     _cantidadPedido = _cantidadPedido - _CantidadStock;
+                     return;
+                  }
+               }
+               else
+               {
+                  _messageStock += "<br/>* Registro " + i + " del Stock, Partner : " + item[1].Value + " Orden : " + item[5].Value;
+               }
+
+            });
+         });
+
+         if(_ordenPrioridadIncompleto.length > 0)
+         {
+            $('#idlblConfirmarAccion').text('Los Kilos pedidos en la Orden ' + _ordenPrioridadIncompleto[0].Orden + ' son MAYOR al STOCK . Desea Asignar el Stock como parte del Pedido?');
+
+            $("#btnAceptarCA").one("click",function () {
+               $('#idConfirmarAccion').dialog('close');
+               fn_AgregarOrdenesDePriorizacion(_ordenPrioridad.concat(_ordenPrioridadIncompleto));
+            });
+
+            $("#btnCancelarCA").one("click",function () {
+               $('#idConfirmarAccion').dialog('close');
+            });
+
+            $('#idConfirmarAccion').dialog('open');
+         }
+         else if(_ordenPrioridad.length>0) {
+            fn_AgregarOrdenesDePriorizacion(_ordenPrioridad);
+         }
+         else{
+
+            if(_messageShelfLife != "")
+               MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Las Siguientes Ordenes no cumplen las exigencias de ShelfLife : <br/>" + _messageShelfLife);
+            if(_messageStock != "")
+               MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Las Siguientes Ordenes no se asignaron por falta de Stock : <br/>" + _messageStock);
+             if(_messageEmpaque != "")
+                 MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Las Siguientes Ordenes no se asignaron por que la cantidad calculada es menor a la capacidad del empaque : <br/>" + _messageEmpaque);
+
+
+
+            return false;
+         }
+
+      });
+
+      $("#btnCancelarFArticulo").click(function () {
+         $('#PopupFiltroArticulo').dialog('close');
+      });
+
+      $("#btnAceptarFArticulo").click(function () {
+         var vartoken = $("#txtFiltroArticulo").tokenInput("get");
+         $('#grdArticulos').flexOptions({ query: JSON.stringify(vartoken)}).flexReload();
+         $('#grdPartner').flexOptions({ query: ''}).flexReload();
+         $('#grdStock').flexOptions({ query: ''}).flexReload();
+         $('#PopupFiltroArticulo').dialog('close');
+      });
+
+      $("#btnCancelarFResul").click(function () {
+         $('#PopupFiltroResultado').dialog('close');
+      });
+
+      $("#btnAceptarFResul").click(function () {
+         var vartoken = $("#txtFiltroResultado").tokenInput("get");
+         $('#grdResultado').flexOptions({ query: JSON.stringify(vartoken)}).flexReload();
+         $('#PopupFiltroResultado').dialog('close');
+      });
+
+   });
+
+
+   /* Redimencionar Tabs */
+   function functionOnResize() {
+      $('#PanelPedido1').width(0);
+      $('#PanelPedido2').width(0);
+      var _widthGrid = $('#divtbPedido').width();
+      $('#PanelPedido1').width(_widthGrid);
+      $('#PanelPedido2').width(_widthGrid);
+      $('#PanelPedido1Left').width((_widthGrid * 0.4) - 4);
+      $('#PanelPedido1Right').width((_widthGrid * 0.6) - 4);
+
+   }
+
+   function fn_onClickRow_GrdArticulos(valtr) {
+
+      var codigoArticulo;
+      var tipoArticulo;
+      debugger;
+      var rows = $('#grdArticulos').selectedRows();
+      if (rows.length == 1) {
+         codigoArticulo = valtr.cells[0].firstChild.innerHTML;
+         tipoArticulo = valtr.cells[4].firstChild.innerHTML;
+         _FactorUndVta2Base = stringToDecimal(valtr.cells[6].firstChild.innerHTML);
+         _UndEmpaqueCapacidad = stringToDecimal(valtr.cells[7].firstChild.innerHTML);
+         _UndEmpaquePeso = stringToDecimal(valtr.cells[8].firstChild.innerHTML);
+
+         $('#lblHeadPedidos').html('<b>ARTICULO:</b> ' + codigoArticulo + ' - ' + valtr.cells[1].firstChild.innerHTML);
+      }
+      else{
+         codigoArticulo = '';
+         tipoArticulo = '';
+         _FactorUndVta2Base = 0;
+         _UndEmpaqueCapacidad = 0;
+         _UndEmpaquePeso = 0;
+         $('#lblHeadPedidos').html('');
+      }
+
+      var vartoken = $("#txtFiltroArticulo").tokenInput("get");
+
+      $('#grdPartner').flexOptions({ query: codigoArticulo + ";" + JSON.stringify(vartoken)}).flexReload();
+      $('#grdStock').flexOptions({ query: codigoArticulo + "," + tipoArticulo}).flexReload();
+
+   }
+
+   function fn_SelecAll(valtr){
+      if(_checkState){
+         $('#flexigrid-grdPartner').find(".UnCheckBox").addClass("CheckBox").removeClass("UnCheckBox");
+         $("#flexigrid-grdPartner").find('tr').removeClass("trSelected");
+         _checkState = false;
+      }else{
+         $('#flexigrid-grdPartner').find(".CheckBox").addClass("UnCheckBox").removeClass("CheckBox");
+         $("#flexigrid-grdPartner").find('tr').addClass("trSelected");
+         _checkState = true;
+      }
+   }
+
+
+   function fn_SelMultiArticulo(valtr){
+      if(_checkStateArticulo){
+         $('#flexigrid-grdArticulos').find(".UnCheckBox").addClass("CheckBox").removeClass("UnCheckBox");
+         $("#grdArticulos").flexOptions({singleSelect: true});
+         _checkStateArticulo = false;
+      }else{
+         $('#flexigrid-grdArticulos').find(".CheckBox").addClass("UnCheckBox").removeClass("CheckBox");
+         $("#grdArticulos").flexOptions({singleSelect: false});
+         _checkStateArticulo = true;
+      }
+   }
+
+   function fn_PriorizarPorcentual(valtr){
+      $('#txtCantPriorizar').val('0');
+      $('#PopupPriorizaPorcentual').dialog('open');
+   }
+
+   function fn_AgregarOrdenesDePriorizacion(data){
+
+      AppAjaxString('POST','json','@Url.Action("AsignarPrioridadPedido", "AsignacionPedido", new { area = "DI" })',data,"",true,true,function (response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdArticulos').flexReload();
+            $('#grdPartner').flexReload();
+            $('#grdStock').flexReload();
+            $('#PopupPriorizaPorcentual').dialog('close');
+            
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+
+         }
+      });
+
+   }
+
+   function fn_ImportarOrdenes(valtr){
+      $('#PopupImportarOrden').dialog('open');
+      $('#ddlidAlmacen').val('');
+      $('#ddlidAlmacenSerie').immybox('setValue','');
+      $('#txtOrdenDesde').val('');
+      $('#txtOrdenHasta').val('');
+      //fn_onChangeIdAlmacen();
+   }
+
+   function fn_AsignarPedidos(valtr){
+
+      $('#idlblConfirmarAccion').text('Esta Seguro de Asignar los Pedidos?');
+
+      $("#btnAceptarCA").attr("onclick","fn_OnclickAsignarPedidos()");
+
+      $("#btnCancelarCA").click(function () {
+         $('#idConfirmarAccion').dialog('close');
+      });
+
+      $('#idConfirmarAccion').dialog('open');
+   }
+
+
+   function fn_OnclickAsignarPedidos(){
+
+      AppAjaxString('POST','json','@Url.Action("AsignarPedidos", "AsignacionPedido", new { area = "DI" })',null,"",true,true,function (response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdArticulos').flexReload();
+            $('#grdPartner').flexOptions({query: ''}).flexReload();
+            $('#grdStock').flexOptions({query: ''}).flexReload();
+            $('#grdPriorizacion').flexReload();
+
+            var vartoken = $("#txtFiltroResultado").tokenInput("get");
+            $('#grdResultado').flexOptions({ query: JSON.stringify(vartoken)}).flexReload();
+
+            $('#idConfirmarAccion').dialog('close');
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+         }
+      });
+
+   }
+
+
+   function fn_onChangeIdAlmacen(control) {
+      var data = { idAlmacen: control.value || 0};
+      AppAjax("POST","json",'@Url.Action("GetAlmacenSerie", "AsignacionPedido", new { area = "DI" })', data, "", false, false, function(response){
+         if (typeof response != "undefined") {
+            $('#ddlidAlmacenSerie').immybox("setChoices",response);
+            $('#txtOrdenDesde').val("");
+            $('#txtOrdenHasta').val("");
+         }
+         else {
+            MsgAlert(@MsgAlertTypeConstant.ERROR, response.message);
+         }
+      });
+
+   }
+
+   function fn_onClickAlmacenSerie(elem){
+
+
+      document.getElementById("txtOrdenDesde").value = elem.ultimaOrden;
+      document.getElementById("txtPrimeraOrden").value = elem.primeraOrden;
+      var _prefix = elem.ultimaOrden.toString().substring(0, 3).replace('9','\\9') + '999999';
+      document.getElementById("txtOrdenHasta").value = '';
+
+      $("#txtOrdenDesde").inputmask({ mask: _prefix, greedy: false });
+      $("#txtOrdenHasta").inputmask({ mask: _prefix, greedy: false });
+   }
+
+
+   /* ANTES DE RENDEREAR LA GRILLA PROGRAMACION */
+   function fn_PreCreation_GrdResultado(JsonData) {
+      if (JsonData.rows == null)
+         return JsonData;
+
+      JsonData.rows.forEach(function (item) {
+
+         switch(item.cell[1]){
+            case "1":
+               item.cell[2] = '<div class="bgVerde">' + item.cell[2] + '</div>';
+               break;
+            case "2":
+               item.cell[2] = '<div class="bgRojo">' + item.cell[2] + '</div>';
+               break;
+            case "3":
+               item.cell[2] = '<div class="bgAzul">' + item.cell[2] + '</div>';
+               break;
+            case "4":
+               item.cell[2] = '<div class="bgVerde">' + item.cell[2] + '</div>';
+               break;
+         }
+
+      });
+      return JsonData;
+   };
+
+   function fn_EliminarPartner(vartr){
+      var rowsPartner = $('#grdPartner').selectedRows();
+      if (rowsPartner.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione al menos un Partner");
+         return false;
+      }
+
+
+      var _data = [];
+      rowsPartner.forEach(function (item) {
+         _data.push({
+            Orden : item[5].Value,
+            Linea : item[6].Value,
+            Sublinea : item[7].Value
+         });
+      });
+
+
+      AppAjaxString('POST','json','@Url.Action("EliminarPartner", "AsignacionPedido", new { area = "DI" })',_data,"",true,true,function (response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdArticulos').flexReload();
+            $('#grdPartner').flexReload();
+            $('#grdStock').flexReload();
+            $('#grdPriorizacion').flexReload();
+            var vartoken = $("#txtFiltroResultado").tokenInput("get");
+            $('#grdResultado').flexOptions({ query: JSON.stringify(vartoken)}).flexReload();
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+         }
+      });
+
+
+
+   };
+
+   function fn_EliminarArticulo(valtr){
+
+      var rows = $('#grdArticulos').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione al menos un Articulo");
+         return false;
+      }
+
+      $('#idlblConfirmarAccion').text('Esta Seguro de Eliminar los Articulos seleccionados?');
+      $("#btnAceptarCA").attr("onclick","fn_AceptarCAEliminarArticulo()");
+      $("#btnCancelarCA").click(function () {
+         $('#idConfirmarAccion').dialog('close');
+      });
+
+      $('#idConfirmarAccion').dialog('open');
+
+   };
+
+
+   function fn_EliminarPriorizacion(vartr){
+      var rows = $('#grdPriorizacion').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione al menos un Partner");
+         return false;
+      }
+
+      var _data = [];
+
+      rows.forEach(function (item) {
+         if(item[15].Value == "001")
+            _data.push({
+               CodigoPartner : item[3].Value,
+               IdRuta : item[6].Value,
+               Orden : item[7].Value,
+               Linea : item[8].Value,
+               SubLinea : item[9].Value,
+               Consistencia : item[10].Value,
+               FechaVencimiento : item[14].Value
+            });
+      });
+
+      if(_data.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,'No se encontraron registros para eliminar, Solo Pueden ser eliminados los registros en estado 1.');
+         return false;
+      }
+
+      AppAjaxString('POST','json','@Url.Action("EliminarPriorizacion", "AsignacionPedido", new { area = "DI" })',_data,"",true,true,function (response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdPriorizacion').flexReload();
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+         }
+      });
+
+   };
+
+   function fn_AceptarCAEliminarArticulo(){
+      var rows = $('#grdArticulos').selectedRows();
+
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un registro");
+         return false;
+      }
+
+
+      var _data = [];
+      rows.forEach(function (item) {
+         _data.push(item[0].Value);
+      });
+      debugger;
+      AppAjaxString('POST','json','@Url.Action("EliminarArticulo", "AsignacionPedido", new { area = "DI" })',_data,"",true,true,function (response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdArticulos').flexReload();
+            $('#grdPartner').flexReload();
+            $('#grdStock').flexReload();
+            $('#idConfirmarAccion').dialog('close');
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+         }
+      });
+   }
+
+   function fn_LoadGridPriorizacion(){
+      if(!_isFirstPriorizacion){
+         $('#grdPriorizacion').flexReload();
+         _isFirstPriorizacion = true;
+      }
+   }
+
+   //function fn_LoadGridResultado(){
+   //   if(!_isFirstResultado){
+   //      $('#grdResultado').flexReload();
+   //      _isFirstResultado = true;
+   //   }
+   //}
+
+   function fn_ExpExcelGrdResultado(valtr) {
+      ExportToExcel(_colResultadoAsignacion, "grdResultado");
+   }
+
+   function fn_ExpExcelGrdStock(valtr) {
+      ExportToExcel(_colStock, "grdStock");
+   }
+
+   function fn_ExpExcelGrdPartner(valtr) {
+      ExportToExcel(_colPartner, "grdPartner");
+   }
+
+   function fn_ExpExcelGrdArticulos(valtr) {
+      ExportToExcel(_colArticulos, "grdArticulos");
+   }
+
+   function fn_ExpExcelGrdPriorizacion(valtr) {
+      ExportToExcel(_colPriorizacion, "grdPriorizacion");
+   }
+
+   function fn_ShowFilterArticulo(){
+
+      $('#IdCategoria').immybox('setValue','');
+      $('#IdMarca').immybox('setValue','');
+      $('#IdSubMarca').immybox('setValue','');
+      $('#IdPresentacion').immybox('setValue','');
+      $('#IdPartner').immybox('setValue','');
+      $('#IdCanalBaan').immybox('setValue','');
+      $('#CodigoArticulo').immybox('setValue','');
+      $('#PopupFiltroArticulo').dialog('open');
+   }
+
+   function fn_ShowFilterResultado(){
+
+      $('#IdTipoResultado').immybox('setValue','');
+      $('#IdCategoriaResultado').immybox('setValue','');
+      $('#IdMarcaResultado').immybox('setValue','');
+      $('#IdSubMarcaResultado').immybox('setValue','');
+      $('#IdPresentacionResultado').immybox('setValue','');
+      $('#CodigoArticuloResultado').immybox('setValue','');
+      $('#IdPartnerResultado').immybox('setValue','');
+      $('#IdCanalBaanResultado').immybox('setValue','');
+
+      $('#PopupFiltroResultado').dialog('open');
+   }
+
+   function fn_AddFilter(control,campo){
+
+      var _Choise = $('#' + control).immybox('getChoice');
+      if(_Choise.toString() == ""){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un Item.");
+         return false;
+      }
+      $("#txtFiltroArticulo").tokenInput("add", {
+         id: _VARIDFILTER,
+         foperator: false,
+         fvalue: _Choise[0].value,
+         fcampo: campo,
+         fconector: "=",
+         fname: _Choise[0].text
+      });
+      _VARIDFILTER++;
+      return false;
+   }
+
+   function fn_AddFilterResultado(control,campo){
+
+      var _Choise = $('#' + control).immybox('getChoice');
+      if(_Choise.toString() == ""){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un Item.");
+         return false;
+      }
+      $("#txtFiltroResultado").tokenInput("add", {
+         id: _VARIDFILTER,
+         foperator: false,
+         fvalue: _Choise[0].value,
+         fcampo: campo,
+         fconector: "=",
+         fname: _Choise[0].text
+      });
+      _VARIDFILTER++;
+      return false;
+   }
+
+   function fn_PriorizarFiltro(){
+      var vartoken = $("#txtFiltroArticulo").tokenInput("get");
+
+      if(vartoken.length == 0)
+      {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"No se agregaron filtros.");
+         return false;
+      }
+
+
+      var _data = {
+         filter : JSON.stringify(vartoken)
+      }
+
+      AppAjaxString('POST','json','@Url.Action("PriorizarPedido", "AsignacionPedido", new { area = "DI" })',_data,"",true,true,function (response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            var vartoken = $("#txtFiltroArticulo").tokenInput("get");
+            $('#grdArticulos').flexOptions({ query: JSON.stringify(vartoken)}).flexReload();
+            $('#grdPartner').flexOptions({ query: ''}).flexReload();
+            $('#grdStock').flexOptions({ query: ''}).flexReload();
+            $('#grdPriorizacion').flexOptions({ query: ''}).flexReload();
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+         }
+      });
+
+   };
+
+   function fn_PreCreation_GrdPartner(JsonData) {
+
+      if(JsonData.rows == null)
+         return JsonData;
+
+      var _cantPartner = 0;
+      JsonData.rows.forEach(function (item) {
+         _cantPartner += stringToDecimal(item.cell[9]);
+      });
+
+      $('#txtCantPedido').val(_cantPartner);
+
+      return JsonData;
+   };
+
+   function fn_PreCreation_GrdStock(JsonData) {
+
+      if(JsonData.rows == null)
+         return JsonData;
+
+      var _cantStock = 0;
+      JsonData.rows.forEach(function (item) {
+         _cantStock += stringToDecimal(item.cell[8]);
+      });
+
+      $('#txtCantStock').val(_cantStock);
+
+      return JsonData;
+   };
+
+   function fn_PreCreation_GrdPriorizacion(JsonData) {
+
+      if(JsonData.rows == null)
+         return JsonData;
+
+      JsonData.rows.forEach(function (item) {
+
+         switch(item.cell[15]){
+            case '001':
+               item.cell[16] = '<div class="bgPr"><div class="ValPrV" style="width:100%;">1</div></div>';
+               break;
+            case '002':
+               item.cell[16] = '<div class="bgPr"><div class="ValPrAZUL" style="width:100%;">2</div></div>';
+               break;
+         }
+
+      });
+
+      return JsonData;
+   };
+
+   function fn_OnSuccess_GridBandeja(){
+      
+       $('#grdArticulos').find('tr').each(function() {
+           debugger;
+           if(this.cells[9].textContent == "999" || this.cells[9].textContent == "999")
+           {
+               this.style.color = "#FF0000";
+           }
+
+       });
+
+   }
+
+</script>

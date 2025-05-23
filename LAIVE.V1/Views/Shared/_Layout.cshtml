@@ -1,0 +1,230 @@
+﻿@using Laive.Core.Common;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/baseScript")
+    @Scripts.Render("~/bundles/plugins")
+</head>
+<body>
+    <div id="idHeader" class="ui-layout-north">
+        <div class="div-home-header">
+            <img class="img-logo-samnet" src="../../Content/themes/base/images/Laive_Vive_Mas_2.png"
+                 alt="SAM.NET" />
+            <div class="div-user-content">
+                <img class="img-header-sep" src="../../Content/themes/base/images/header-separator.png"
+                    alt="|" />
+                <div class="div-user-logon no-select-text">
+                   @Session[ConstSessionVar.PERIODO].ToString()
+                </div>
+                <img class="img-header-sep" src="../../Content/themes/base/images/header-separator.png"
+                    alt="|" />
+                <div class="div-user-logon no-select-text">
+                   @ViewBag.User
+                </div>
+                <div class="smallipop img-navigate-down" style="width: 16px;">
+                    <div class="linesIcon"></div>
+                    <div class="smallipopHint">
+                        <div class="opcion-menu-session">
+                            <a class="a-menu-session" href="#">Cambiar Periodo</a>
+                        </div>
+                        <div class="separator-menu-session">
+                        </div>
+                        <div class="opcion-menu-session">
+                            <a class="a-menu-session" href="@Url.Action("LogOut","LoginLaive")">Salir</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="samTituloSystema" class="classTitulo"><label id="idlblTituloSystema"></label></div>
+        </div>
+    </div>
+    <div class="ui-layout-west" style="background: #F6F6F6;">
+         @{Html.RenderAction("MainMenu", "Menu");}
+    </div>
+    <div id="idContentPage" class="ui-layout-center">
+        <div id="idContentPageAjax" class="ContentPage">
+            @RenderBody()
+        </div>
+        <div id="samLoading"></div>
+    </div>
+    @*BUSCADOR*@
+    <div id="popupFilter">
+        <div class="bodybuscador">
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetEditor" style=" height: 30px;">
+                    <select id="selectcolumnbuscador" class="text-box" style="width: 100%;">
+                    </select>
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetEditor" style=" height: 30px;">
+                    <select id="selectbuscador" class="text-box" style="width: 100%;">
+                        <option value="like">Contiene</option>
+                        <option value="=">Igual que</option>
+                        <option value="<">Menor que</option>
+                        <option value="<=">Menor Igual que</option>
+                        <option value=">">Mayor que</option>
+                        <option value=">=">Mayor Igual que</option>
+                    </select>
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetEditor">
+                    <input id="inputbuscador" type="text" class="text-box" style="width: 324px;" />
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%; height:20px;">
+            </div>
+            <div class="HBox" style=" width:100%;">
+                <input id="button" onclick="addFilter();" type="button" value="Agregar" class="btnClassButton" />
+            </div>
+        </div>
+    </div>
+    @*BUSCADOR*@
+    <div id="idConfirmarAccion">
+        <div class="HBox" style=" width:100%; height:49px;">
+            <div class="samnetLabel" style=" width:49px;">
+                <img src="../../Content/images/question.png" alt="question" />
+            </div>
+            <div class="samnetEditor" style=" width:230px; vertical-align:middle;">
+                <label id="idlblConfirmarAccion"></label>
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%; height:10px;">
+        </div>
+        <div class="HBox" style=" width:100%;">
+                <div class="samnetSpacer">
+                </div>
+                <div class="samnetButton" style=" text-align:right;">
+                    <input id="btnAceptarCA" type="button" value="Aceptar" class="btnClassButton" style="width:100px;"/>
+                    <input id="btnCancelarCA" type="button" value="Cancelar" class="btnClassButton" style="width:100px;"/>
+                </div>
+        </div>
+    </div>
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+        /*COMBOBOX*/
+    
+
+        /* iniciar popup de usuario */
+        $('.smallipop').smallipop({
+            theme: 'white',
+            popupDistance: 0,
+            popupYOffset: -30,
+            popupAnimationSpeed: 100,
+            triggerOnClick: true,
+            hideOnPopupClick: false,
+            hideOnTriggerClick: false,
+            windowPadding: 4
+        });
+
+        var myLayout;
+
+        $(document).ready(function () {
+           
+            /*MENU*/
+            $("#menuSamNet").navgoco({
+                caret: '<span class="caret"></span>',
+                accordion: false,
+                openClass: 'open',
+                save: true,
+                cookie: {
+                    name: 'navgoco',
+                    expires: false,
+                    path: '/'
+                },
+                slide: {
+                    duration: 400,
+                    easing: 'swing'
+                },
+                onClickAfter: function (e, submenu) {
+                    e.preventDefault();
+                    $('#menuSamNet').find('li').removeClass('active');
+
+                    var li = $(this).parent();
+                    /*var lis = li.parents('li');*/
+                    li.addClass('active');
+                    /*lis[lis.length - 1].classList.add('active');*/
+
+                }
+            });
+
+            /* iniciar frames*/
+            myLayout = $('body').layout({
+                west__showOverflowOnHover: false
+			    , north__spacing_open: 0
+                , west__size: 225
+                , center__onresize: function () {
+                    if (typeof functionOnResize !== "undefined") {
+                        functionOnResize();
+                    }
+                }
+            });
+
+            /*iniciar controles de sistema*/
+            $(".input-samnet-decimal").inputmask('decimal', { rightAlign: false, digits: 2 });
+
+            $("#popupFilter").dialog({
+                autoOpen: false,
+                modal: true,
+                draggable: false,
+                resizable: false,
+                width: 360,
+                show: {
+                    effect: "drop",
+                    duration: 250
+                },
+                hide: {
+                    effect: "drop",
+                    duration: 250,
+                    direction: "right"
+                }
+            });
+
+            $("#idConfirmarAccion").dialog({
+                dialogClass: "no-close",
+                autoOpen: false,
+                modal: true,
+                draggable: false,
+                resizable: false,
+                width: 360,
+                show: {
+                    effect: "fade",
+                    duration: 500
+                },
+                hide: {
+                    effect: "fade",
+                    duration: 500
+                }
+            });
+
+
+
+            getNumRegMenu();
+
+
+
+        });
+        
+
+        function getNumRegMenu() {
+
+           AppAjax('POST', 'json', '@Url.Action("GetTotalesXMenu", "Menu")', null, "", false, false, function (response) {
+
+
+              response.forEach(function (item) {
+                 $('#' + item.IdDOM).text(item.NumRegistros);
+              });
+              
+           });
+
+        }
+
+    </script>
+    
+</body>
+</html>

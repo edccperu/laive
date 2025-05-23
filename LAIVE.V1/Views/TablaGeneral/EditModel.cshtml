@@ -1,0 +1,279 @@
+﻿@using Laive.Entity.Mg;
+@using Laive.Core.Common
+@model ETablaGen
+@{
+   if (@Model.EntityState == Laive.Core.Data.EntityState.Added)
+   { ViewBag.Title = "Tabla General - Nuevo"; }
+   else
+   { ViewBag.Title = "Tabla General - Modificar"; }
+}
+<div id="idMenu" class="ContentPageMenuPanel">
+   <a href="javascript:void(0)" onclick="javascript:SaveUpdateModel();">
+      <div class="ContentPageMenuPanelImg">
+         <img src="../../Content/images/MenuSave.png" alt="Guardar" title="Guardar" />
+         <div class="ContentPageMenuPanelText">Guardar</div>
+      </div>
+   </a>
+   <a href="javascript:void(0)" onclick="samlinkajax('@Url.Action("Index","TablaGeneral")',null, 'idContentPageAjax',true,true);">
+      <div class="ContentPageMenuPanelImg">
+         <img src="../../Content/images/MenuBack.png" alt="Regresar" title="Regresar" />
+         <div class="ContentPageMenuPanelText">Regresar</div>
+      </div>
+   </a>
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+   <div id="EditPanelMaster" class="EditPanelMaster">
+      <div class="HBox" style=" width:30%;">
+         <div class="samnetLabel">
+            @Html.LabelFor(model => Model.IdTabla)
+         </div>
+         <div class="samnetEditor">
+            @Html.TextBoxFor(model => Model.IdTabla, new { @readonly = "true", @class = "text-box" })
+         </div>
+      </div>
+      <div class="HBox" style=" width:30%;">
+         <div class="samnetLabel">
+            @Html.LabelFor(model => Model.DsTabla)
+         </div>
+         <div class="samnetEditor">
+            @Html.TextBoxFor(model => Model.DsTabla, new { @style = "width:350px;" })
+         </div>
+      </div>
+   </div>
+   <br />
+   <table id="GridDetalle"></table>
+   <div id="idPopupEdit">
+      <div>
+         <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+               Codigo
+            </div>
+            <div class="samnetEditor">
+               <input class="text-box" id="IdCodigo" type="text" style="width:250px" readonly="true" />
+            </div>
+         </div>
+         <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+               Descripción
+            </div>
+            <div class="samnetEditor" style=" height:38px;">
+               <textarea class="text-box" id="DsDescrip" style="width:250px; height:25px;" draggable="false" cols="1" rows="4" />
+            </div>
+         </div>
+         <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+               Abreviación
+            </div>
+            <div class="samnetEditor">
+               <input class="text-box" id="DsAbrev" type="text" style="width:250px;" />
+            </div>
+         </div>
+         <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+               Cod. Equivalente
+            </div>
+            <div class="samnetEditor">
+               <input class="text-box" id="IdCodAlter" type="text" style="width:150px;" />
+            </div>
+         </div>
+         <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+               Valor
+            </div>
+            <div class="samnetEditor">
+               <input class="input-samnet-decimal" id="MtValor" type="text" style="width:150px;" />
+            </div>
+         </div>
+         <div class="HBox" style=" width:100%; height:20px;">
+         </div>
+         <div class="HBox" style=" width:100%;">
+            <div class="samnetSpacer">
+            </div>
+            <div class="samnetButton" style=" text-align:right;">
+               <input id="btnAceptar" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" onclick="AddRegisterButtonClick();" />
+               <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEdit').dialog('close');" />
+            </div>
+         </div>
+      </div>
+   </div>
+   <input type="hidden" id="EntityState" value="@ViewBag.EntityState" />
+   <input type="hidden" id="idPopupEditState" />
+   <script type="text/javascript">
+   jQuery(document).ready(function ($) {
+      /*-inizializando Popupeditor*/
+      $("#idPopupEdit").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: false,
+         resizable: false,
+         width: 380,
+         height: 235,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /*-inizializando grilla*/
+      var heightGrid = getHeightForGrid(80);
+
+      $('#GridDetalle').flexigrid({
+         url:'@Url.Action("GetEditModelDetails", "TablaGeneral")',
+         dataType: 'json',
+         colModel: [
+                 { display: 'Codigo', name: 'IdCodigo', width: 150, sortable: true, align: 'left' },
+                 { display: 'Descripcion', name: 'DsDescrip', width: 150, sortable: true, align: 'left' },
+                 { display: 'Abreviacion', name: 'DsAbrev', width: 150, sortable: true, align: 'left' },
+                 { display: 'Codigo Equivalente', name: 'IdCodAlter', width: 150, sortable: true, align: 'left' },
+                 { display: 'Valor', name: 'MtValor', width: 150, sortable: true, align: 'left' },
+                 { display: 'StAnulado', name: 'StAnulado', width: 150, sortable: false, align: 'left', hide: true }
+         ],
+
+         buttons: [
+                 { name: 'Agregar', bclass: 'add', onpress: AddRegister },
+                 { separator: true },
+                 { name: 'Modificar', bclass: 'edit', onpress: EditRegister },
+                 { separator: true },
+                 { name: 'Eliminar', bclass: 'delete', onpress: DelRegister }
+         ],
+
+         singleSelect: true,
+         onSuccess: flexi_colorGridRows,
+         query: '@(Model == null ? "000" : Model.IdTabla)',
+         showTableToggleBtn: true,
+         height: heightGrid
+      });    // flexigrid
+   });
+
+   function AddRegister(com, grid) {
+
+      SamClearControl("IdCodigo", true);
+      SamClearControl("DsDescrip", false);
+      SamClearControl("DsAbrev", false);
+      SamClearControl("IdCodAlter", false);
+      SamClearControl("MtValor", false);
+      SamStateAdded("idPopupEditState");
+      $("#idPopupEdit").dialog({ title: "Agregar Item" });
+      $('#idPopupEdit').dialog('open');
+   }
+   function EditRegister(com, grid) {
+      var items = $('.trSelected', grid);
+      if (items != null && items.length > 0) {
+         var item = items[0];
+         var state = item.cells[5].innerText || item.cells[5].textContent;
+         if (state == "1")
+         { MsgAlert(@MsgAlertTypeConstant.INFORMATION,"El Registro se encuentra eliminado no puede realizar ninguna modificación."); return false; }
+
+         SamSetInputValue("IdCodigo", item, 0, true);
+         SamSetInputValue("DsDescrip", item, 1, false);
+         SamSetInputValue("DsAbrev", item, 2, false);
+         SamSetInputValue("IdCodAlter", item, 3, false);
+         SamSetInputValue("MtValor", item, 4, false);
+         SamStateModified("idPopupEditState");
+         $("#idPopupEdit").dialog({ title: "Modificar Item" });
+         $('#idPopupEdit').dialog('open');
+
+      }
+      else {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+      }
+   }
+   function DelRegister(com, grid) {
+
+      var items = $('.trSelected', grid);
+      if (items != null && items.length > 0) {
+         var item = items[0];
+         var state = item.cells[5].innerText || item.cells[5].textContent;
+         if (state == "1")
+         { MsgAlert(@MsgAlertTypeConstant.INFORMATION,"El Registro se encuentra eliminado no puede realizar ninguna modificación."); return false; }
+
+         SamSetInputValue("IdCodigo", item, 0, true);
+         SamSetInputValue("DsDescrip", item, 1, true);
+         SamSetInputValue("DsAbrev", item, 2, true);
+         SamSetInputValue("IdCodAlter", item, 3, true);
+         SamSetInputValue("MtValor", item, 4, true);
+         SamStateDeleted("idPopupEditState");
+         $("#idPopupEdit").dialog({ title: "Eliminar Item" });
+         $('#idPopupEdit').dialog('open');
+
+      }
+      else {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+      }
+
+   }
+
+   function flexi_colorGridRows() {
+      $("tr").each(function () {
+         var st = $(this).find("td:nth(5)").text()
+         if (st == "1") {
+            $(this).attr("class", $(this).attr("class") == "erow" ? "erowFlexiGridColRojo" : "FlexiGridColRojo");
+         }
+      });
+   };
+
+   function AddRegisterButtonClick() {
+
+      var validate = true;
+      validate = validate && SamControlEsValido("DsDescrip", "Se Requiere este dato.");
+      validate = validate && SamControlEsValido("DsAbrev", "Se Requiere este dato.");
+      if (!validate)
+         return false;
+
+      var datalink = {
+         IdTabla: document.getElementById("IdTabla").value,
+         IdCodigo: document.getElementById("IdCodigo").value,
+         DsDescrip: document.getElementById("DsDescrip").value,
+         DsAbrev: document.getElementById("DsAbrev").value,
+         IdCodAlter: document.getElementById("IdCodAlter").value,
+         MtValor: document.getElementById("MtValor").value,
+         EntityState: document.getElementById("idPopupEditState").value
+      };
+
+      if (SamGetStateDeleted() == document.getElementById("idPopupEditState").value) {
+
+         document.getElementById("idlblConfirmarAccion").innerHTML = "Esta Seguro de Eliminar el Item?";
+
+         $('#idConfirmarAccion').dialog('open');
+
+         $("#btnAceptarCA").one("click", function () {
+            ajaxForUpdateGrid('@Url.Action("UpdateModelDetail", "TablaGeneral")', datalink, 'GridDetalle');
+               $('#idConfirmarAccion').dialog('close');
+            });
+
+            $("#idConfirmarAccion").one("dialogclose", function () {
+               $('#idPopupEdit').dialog('close');
+            });
+
+            $("#btnCancelarCA").one("click", function () {
+               $('#idConfirmarAccion').dialog('close');
+            });
+
+         }
+         else
+         {
+            ajaxForUpdateGrid('@Url.Action("UpdateModelDetail", "TablaGeneral")', datalink, 'GridDetalle');
+            $('#idPopupEdit').dialog('close');
+         }
+      }
+
+      jQuery(document).ready(function ($) {
+         showTitleSystem('@ViewBag.Title');
+   });
+
+   function SaveUpdateModel() {
+      var DataModel = {
+         IdTabla: document.getElementById("IdTabla").value,
+         DsTabla: document.getElementById("DsTabla").value,
+         EntityState: document.getElementById("EntityState").value
+      };
+      samlinkajaxUpdateModel('@Url.Action("UpdateModel", "TablaGeneral")', DataModel, "IdTabla", true, true);
+   }
+   </script>
+</div>

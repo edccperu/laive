@@ -1,0 +1,341 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Consulta Comprobantes Proveedores";
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;
+    }
+</style>
+
+<table cellspacing="0" class="searchMauc">
+    <tr>
+        
+        <td style="width:58px;">
+            Ejercicio
+        </td>
+        <td style="width:40px;">
+            @*<input type="text" class="text-box" id="txtEjercicio" style=" width:60px" />*@
+            <select id="txtEjercicio" class="text-box" style=" width:100px">
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+            </select>
+        </td>
+        <td style="width:70px;">
+            Periodo
+        </td>
+        <td style="width:70px;">
+            @*<input type="text" class="text-box" id="txtPeriodo" style=" width:60px" />*@
+            <select id="txtPeriodo" class="text-box" style=" width:100px">
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+        </td>
+      
+        <td></td>
+        <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="searchKardexMauc();">
+                <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+                <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" class="contentMauc">
+    <tr>
+        <td colspan="7">
+            <table id="grdConsulta"></table>
+
+        </td>
+    </tr>
+</table>
+
+<div id="PopupProcesar">
+    <div id="lblheaderPopup" class="headerGroup">
+        Datos Ingreso
+    </div>
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Ejercicio
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            @*<input type="text" class="text-box" id="txtEjerciciop" style=" width:100px" />*@
+
+            <select id="txtEjerciciop" class="text-box" style=" width:100px">
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Periodo
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <select id="txtPeriodop" class="text-box" style=" width:100px">
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+
+            
+        </div>
+    </div>
+
+
+    <table style=" width:100%;">
+        <tr>
+            <td style=" width:100px;">
+                <input id="btnAceptaProcesar" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style=" width:100px;">
+                <input id="btnCancelarProcesar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    debugger;
+
+
+    var d = new Date();
+    var nperiodo = d.getFullYear();
+
+    var month = new Array();
+    month[0] = "01";
+    month[1] = "02";
+    month[2] = "03";
+    month[3] = "04";
+    month[4] = "05";
+    month[5] = "06";
+    month[6] = "07";
+    month[7] = "08";
+    month[8] = "09";
+    month[9] = "10";
+    month[10] = "11";
+    month[11] = "12";
+    var nmes = month[d.getMonth()];
+
+    //$("#txtEjercicio").inputmask({ mask: '9{4}', greedy: false });
+    //$("#txtPeriodo").inputmask({ mask: '9{2}', greedy: false });
+
+
+
+    document.getElementById("txtEjercicio").value = nperiodo;
+    document.getElementById("txtEjerciciop").value = nperiodo;
+
+
+    var heightGrid = getHeightForGrid(245);
+
+    var varColumn = [
+                         { display: 'Pre-Impreso', name: 'preImpreso', width: 90, align: 'center' },
+                         { display: 'Nro. Baan', name: 'numBaan', width: 90, align: 'center' },
+                         { display: 'Partner', name: 'codigoPartnerProveedor', width: 70, align: 'center' },
+                         { display: 'Razon Social', name: 'glosaPartner', width: 190, align: 'left' },
+                         { display: 'Mon', name: 'moneda', width: 70, align: 'center' },
+                         { display: 'Importe Original', name: 'importeOriginal', width: 80, align: 'right' },
+                         { display: 'Importe Soles', name: 'importeSoles', width: 80, align: 'right' },
+                         { display: '% Detrac.', name: 'codigoPorcDetraccion', width: 40, align: 'center' },
+                         { display: 'Detrac. Soles.', name: 'importeDetraccion', width: 80, align: 'right' },
+                         { display: 'Fecha Pago', name: 'fechaPago', width: 70, align: 'center', hide: true },
+                         { display: 'Lote Detrac.', name: 'loteDetraccion', width: 80, align: 'center', hide: true },
+                         { display: '5to Dia', name: 'pagoQuintoDia', width: 40, align: 'center', hide: true },
+                         { display: 'Constancia Pago', name: 'constanciaSunat', width: 90, align: 'center', hide: true },
+                         { display: 'Tipo', name: 'codigoOperacion', width: 40, align: 'center' },
+                         { display: 'Bien Servicio', name: 'codigoBienServicio', width: 60, align: 'center' }
+    ]
+
+    $("#PopupProcesar").dialog({
+        appendTo: "#idContentPageAjax",
+        autoOpen: false,
+        modal: true,
+        draggable: true,
+        resizable: false,
+        width: 350,
+        title: "Procesar Lote Pago",
+        show: {
+            effect: "drop",
+            duration: 250
+        },
+        hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+        }
+    });
+
+
+    $(document).ready(function () {
+
+        document.getElementById("txtPeriodo").value = parseInt(nmes);
+
+
+        $('#grdConsulta').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetBandeja", "ConsultaComprobanteProveedor", new { area = "FI" })',
+            dataType: 'json',
+            colModel: varColumn,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: heightGrid + 90,
+            resizable: false,
+            buttons: [
+                       { name: 'Cargar Comprobantes', bclass: 'Concilacion', onpress: fn_ProcesarLotePagoDetraccion },
+                       { name: 'Exportar Excel', bclass: 'FileExcel', onpress: fn_ProcesarLotePago }
+            ]
+
+        });
+
+
+
+    });
+
+    $("#btnAceptaProcesar").click(function () {
+
+        debugger;
+        var validate = true;
+        //validate = validate && SamControlEsValido("txtEjerciciop", "Se Requiere este dato.");
+        //validate = validate && SamControlEsValido("txtPeriodop", "Se Requiere este dato.");
+
+
+        if (!validate)
+            return false;
+
+        var _vardata = {
+            vEjercicio : parseInt(document.getElementById("txtEjerciciop").value),
+            vPeriodo : parseInt(document.getElementById("txtPeriodop").value),
+        };
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateConcilacion", "ProcesarDetraccion", new { area = "FI" })',
+            data: _vardata,
+            dataType: 'json',
+            success: function (response) {
+                debugger;
+                MsgAlert(@MsgAlertTypeConstant.SUCCESS,'El Proceso se Ejecuto Correctamente.');
+                $('#PopupProcesar').dialog('close');
+                //$('#grdCostos').flexOptions({query: '' }).flexReload();
+                $('#grdConsulta').flexReload();
+            },
+            error: function (xhr, status, error) {
+                debugger;
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"Error al Procesar la Informacion");
+            }
+        });
+    });
+
+    $("#btnCancelarProcesar").click(function () {
+        $('#PopupProcesar').dialog('close');
+    });
+
+    function searchKardexMauc() {
+
+        debugger;
+        var validate = true;
+        //validate = validate && SamControlEsValido("txtEjercicio", "Se Requiere este dato.");
+        //validate = validate && SamControlEsValido("txtPeriodo", "Se Requiere este dato.");
+
+        if (!validate)
+            return false;
+
+        var _vardata = {
+            vEjercicio : parseInt(document.getElementById("txtEjercicio").value),
+            vPeriodo : parseInt(document.getElementById("txtPeriodo").value),
+
+        };
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("GetDetraccionComprobantesProv", "ConsultaComprobanteProveedor", new { area = "FI" })',
+            data: _vardata,
+            dataType: "json",
+            success: function (result) {
+
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    debugger;
+                    $("#grdConsulta").flexAddData(result);
+
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+    };
+
+    function fn_ProcesarLotePago(){
+
+        ExportToExcel(varColumn, "grdConsulta");
+    }
+
+    function fn_ProcesarLotePagoDetraccion(valtr) {
+
+        $("#txtEjerciciop").inputmask({ mask: '9{4}', greedy: false });
+        // $("#txtPeriodop").inputmask({ mask: '9{2}', greedy: false });
+
+        $('#PopupProcesar').dialog('open');
+    }
+</script>

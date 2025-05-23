@@ -1,0 +1,420 @@
+﻿@using Laive.Core.Common
+@{
+   ViewBag.Title = "Importar Cheques";
+}
+<style type="text/css">
+   .searchMauc {
+      width: 100%;
+      border: 1px solid #ccc;
+      top: 5px;
+      position: relative;
+      background: #ECECEC;
+      padding: 1px 4px;
+      font-size: 12px;
+   }
+
+   .contentMauc {
+      width: 100%;
+      top: 8px;
+      position: relative;
+      font-family: Tahoma;
+      font-size: 10px;
+   }
+</style>
+<table cellspacing="0" class="searchMauc">
+   <tr>
+      <td style="width:58px;">
+         Banco
+      </td>
+      <td style="width:280px;">
+         <input id="IdBanco" class="text-box" type="text" style="width:280px"/>
+     </td>
+       <td style="width:20px;"></td>
+       <td style="width:50px;">
+           Ejercicio
+       </td>
+       <td style="width:38px;">
+           <input type="text" class="text-box" id="txtejercicio" maxlength="4" style=" width:60px" />
+       </td>
+      <td style="width:20px;"></td>
+      <td style="width:110px;">
+         Nº Cheque Inicial
+      </td>
+      <td style="width:38px;">
+         <input type="text" class="text-box" id="txtidChequeInicial" style=" width:80px"/>
+      </td>
+      <td style="width:20px;"></td>
+      <td style="width:90px;">
+         Nº Cheque Final
+      </td>
+      <td style="width:38px;">
+         <input type="text" class="text-box" id="txtidChequeFinal" style=" width:80px" />
+      </td>
+      <td style="width:20px;"></td>
+      <td>
+         <a class="urlButtom" href="javascript:void(0)" onclick="fn_addBanco();">
+            <img src="~/Content/images/add.png" alt="*" title="Agregar Banco" />
+            <div class="ContentPageMenuPanelText">Agregar Banco</div>
+         </a>
+      </td>
+   </tr>
+</table>
+<table cellspacing="0" class="contentMauc">
+   <tr>
+      <td colspan="7">
+         <ul id="tbKardex" class="tabs">
+            <li class="active" rel="PanelKardex1">Bancos a Importar</li>
+            <li rel="PanelKardex2">Cheques con Inconsitencias</li>
+         </ul>
+         <div id="divtbKardex" class="tab_container">
+            <div id="PanelKardex1" class="tab_content">
+               <table id="grdImportBancos"></table>
+            </div>
+            <div id="PanelKardex2" class="tab_content">
+               <table id="grdChequesInconsistentes"></table>
+            </div>
+         </div>
+      </td>
+   </tr>
+</table>
+
+<script>
+   /* Variables Globales */
+
+   var _data = { page: 0, total: 0, rows: [] };
+   var _dataChequesConError = { page: 0, total: 0, rows: [] };
+   var _dataListBancos = [@Html.Raw(ViewBag.Bancos)];
+   var _checkStateArticulo = false;
+    /* Construir text de tipo decimal*/
+
+
+   $("#txtidChequeInicial").inputmask('Regex', { regex: "[0-9]*" });
+   $("#txtidChequeFinal").inputmask('Regex', { regex: "[0-9]*" });
+
+   /* Redimencionar Tabs */
+   function functionOnResize() {
+      $('#PanelKardex1').width(0);
+      $('#PanelKardex2').width(0);
+      var widthGrid = $('#divtbKardex').width();
+      $('#PanelKardex1').width(widthGrid);
+      $('#PanelKardex2').width(widthGrid);
+   }
+
+   /*Funcion mostrar popup modificar datos.*/
+
+   function fn_ImportarBancos() {
+      if (_data.total == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Agregue al menos un Banco para Importar");
+         return false;
+      }
+
+      _data.rows.forEach(function (item) {
+         debugger;
+         var DataImport = {
+            Ejercicio: item.cell[5],
+            IdBanco: item.cell[0],
+            ChequeInicial: item.cell[2],
+            ChequeFinal: item.cell[3],
+            IdGrid : item.id
+         }
+
+         item.cell[4] = "<img alt='|' src='@Url.Content("~/Content/animation/loadingPanel9.GIF")'/>Procesando...";
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("ImportarBancosBaan", "ImportarCheque", new { area = "FI"})',
+            data: DataImport,
+            dataType: "json",
+            success: function (result) {
+               debugger;
+               if(result.Status == 'success'){
+                  _data.rows.forEach(function (item) {
+                     if(result.Data == item.id){
+                        item.cell[4] = "<div class='ValPrV' style='width:100%'>"+result.Message+"</div>";
+                     }
+                  });
+
+                  $("#grdImportBancos").flexAddData(_data);
+                  $('#grdChequesInconsistentes').flexReload();
+               }
+               else{
+                  _data.rows.forEach(function (item) {
+                     if (result.Data == item.id)
+                        item.cell[4] = "<div class='ValPrR' style='width:100%'>ERROR AL IMPORTAR DATOS</div>";
+                  });
+                  $("#grdImportBancos").flexAddData(_data);
+                  $('#grdChequesInconsistentes').flexReload();
+               }
+
+            },
+
+            error: function (xhr, status, error) {
+               debugger;
+               _data.rows.forEach(function (item) {
+                  if (result.Data == item.id)
+                     item.cell[4] = "<div class='ValPrR' style='width:100%'>ERROR AL IMPORTAR DATOS</div>";
+               });
+               $("#grdImportBancos").flexAddData(_data);
+               $('#grdChequesInconsistentes').flexReload();
+            }
+         });
+
+
+      });
+      _data.total = _data.rows.length;
+
+      $("#grdImportBancos").flexAddData(_data);
+   }
+
+   function setSuccessProcess(data,id,message) {
+      message = JSON.parse(message);
+      data.rows.forEach(function (item) {
+         if(id == item.id)
+            item.cell[4] = message.Status == "success" ? "<div class='ValPrV' style='width:100%'>" + message.Message + "</div>" : "<div class='ValPrR' style='width:100%'>" + message.Message + "</div>";
+      });
+
+      data.total = data.rows.length;
+
+      $("#grdImportBancos").flexAddData(data);
+   }
+
+   function fn_ImportarChequeInco() {
+      var rows = $('#grdChequesInconsistentes').selectedRows();
+      var message = "";
+      if (rows.length == 0) {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Cheque");
+         return false;
+      }
+
+      var cheques = [];
+
+      rows.forEach(function (item) {
+          cheques.push({CodigoBanco:item[0].Value,
+              NumCheque : item[2].Value});
+      });
+
+
+      AppAjaxString("POST","json","@Url.Action("ImportarChequeInconsistente", "ImportarCheque", new { area = "FI"})", cheques, "", false, false, function (response){
+      
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdChequesInconsistentes').flexReload();
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+         }
+      });
+
+   }
+
+
+
+   function setErrorProcess(data,id) {
+
+      data.rows.forEach(function (item) {
+         if (id == item.id)
+            item.cell[4] = "<div class='ValPrR' style='width:100%'>ERROR AL IMPORTAR DATOS</div>";
+      });
+
+      data.total = data.rows.length;
+
+      $("#grdImportBancos").flexAddData(data);
+   }
+
+   function fn_EliminarFila() {
+      var rows = $('#grdImportBancos').selectedRows();
+      if (rows.length == 0) {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+         return false;
+      }
+
+      var deleteIndex;
+
+      _data.rows.forEach(function (item) {
+         if (item.cell[0] == rows[0][0].Value && item.cell[1] == rows[0][1].Value && item.cell[2] == rows[0][2].Value) {
+            deleteIndex = item.id;
+         }
+      });
+
+      _data.rows = _data.rows.filter(function (val) {
+         return val.id != deleteIndex;
+      });
+
+      _data.total = _data.rows.length;
+
+      $("#grdImportBancos").flexAddData(_data);
+   }
+
+   function fn_PreCreation_grdChequesInconsistentes(JsonData) {
+      _dataChequesConError = JsonData;
+      return JsonData;
+   };
+
+   /* Funcion para buscar el kardex de un Año y Mes determinado */
+   function fn_addBanco() {
+       var validate = true; 
+       
+        validate = validate && SamControlEsValido("IdBanco", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtejercicio", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtidChequeInicial", "Se Requiere este dato.(solo números)");
+        validate = validate && SamControlEsValido("txtidChequeFinal", "Se Requiere este dato.(solo números)");
+
+      if (!validate)
+         return false;
+
+      validate = stringToInt(document.getElementById("txtejercicio").value) == 0;
+      SetErroControl("txtejercicio", "El ejercicio no puede ser igual a 0",validate)
+      if (validate)
+          return false;
+
+      validate = stringToInt(document.getElementById("txtidChequeInicial").value) == 0;
+      SetErroControl("txtidChequeInicial", "Este dato no puede ser igual a 0.", validate)
+      if (validate)
+         return false;
+      validate = stringToInt(document.getElementById("txtidChequeFinal").value) == 0;
+      SetErroControl("txtidChequeFinal", "Este dato no puede ser igual a 0.", validate)
+      if (validate)
+         return false;
+      validate = stringToInt(document.getElementById("txtidChequeInicial").value) >= stringToInt(document.getElementById("txtidChequeFinal").value);
+      SetErroControl("txtidChequeFinal", "El número de Cheque Final tiene que se Mayor a número de cheque Inicial.", validate)
+      if (validate)
+         return false;
+
+
+      var _Choise = $('#IdBanco').immybox('getChoice');
+      validate = true;
+      _data.rows.forEach(function (item) {
+         if (item.cell[0] == _Choise[0].value) {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"El Banco ya fue agregado en la fila " + item.id);
+            validate = false;
+         }
+      });
+
+      if (!validate)
+         return false;
+
+
+      _data.rows.push(
+                          {
+                             id: _data.rows.length + 1,
+                             cell: [
+                                     _Choise[0].value,
+                                     _Choise[0].text,
+                                     document.getElementById("txtidChequeInicial").value,
+                                     document.getElementById("txtidChequeFinal").value,
+                                     "PENDIENTE",
+                                     document.getElementById("txtejercicio").value
+                             ]
+                          }
+                      )
+      _data.total = _data.rows.length;
+
+      $("#grdImportBancos").flexAddData(_data);
+
+   }
+
+   function fn_onClickComboBancos(elemt) {
+      if (elemt.chequeInicial == 0)
+         $('#txtidChequeInicial').removeAttr('disabled');
+      else
+         $('#txtidChequeInicial').attr('disabled', 'disabled');
+
+      $('#txtidChequeInicial').val(elemt.chequeInicial);
+      $('#txtidChequeFinal').val('');
+
+   }
+   /* Iniciando obetos js */
+   $(document).ready(function () {
+      /*TITULO*/
+      showTitleSystem('@ViewBag.Title');
+      /*COMBO BANCOS*/
+      $('#IdBanco').immybox({
+         choices: _dataListBancos,
+         fnOnClick: fn_onClickComboBancos
+      });
+
+      /*END COMBO BANCOS*/
+
+      $('#divtbKardex').height(getHeightForGrid(75));
+      CreateTab("tbKardex", "divtbKardex");
+      var _heightGrid = getHeightForGrid(160);
+      var widthGrid = $('#divtbKardex').width() - 3;
+      $('#PanelKardex1').width(widthGrid);
+      $('#PanelKardex2').width(widthGrid);
+
+
+      /* iniciando grid grdKdxActual*/
+      $('#grdImportBancos').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         dataType: 'json',
+         colModel: [
+                     { display: 'Cod.Bco.', name: 'IdBanco'},
+                     { display: 'Descripción Bco.', name: 'GlosaBanco', width: 280, sortable: true },
+                     { display: 'Nº Cheque Inicial', name: 'idChequeInicial', width: 120},
+                     { display: 'Nº Cheque Final', name: 'idChequeFinal', width: 120 },
+                     { display: 'Estado', name: 'Estado', width: 250, sortable: true, align: 'center' },
+                     { display: 'Ejercicio', name: 'Ejercicio', width: 45, align: 'center' }
+         ],
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: _heightGrid,
+         resizable: false,
+         buttons: [
+                    { name: 'Eliminar de la Lista', bclass: 'delete', onpress: fn_EliminarFila },
+                    { name: 'Importar Bancos', bclass: 'Import', onpress: fn_ImportarBancos }
+         ]
+      });
+
+      /* iniciando grid grdKdxActual*/
+      $('#grdChequesInconsistentes').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetChequesIconsistentes", "ImportarCheque", new { area = "FI"})',
+         dataType: 'json',
+         colModel: [
+                     { display: 'Cod.Bco.', name: 'IdBanco', width: 50 },
+                     { display: 'Descripción Bco.', name: 'GlosaBanco', width: 220},
+                     { display: 'Nº Cheque', name: 'NumCheque', width: 85},
+                     { display: 'Nº Transacción', name: 'nroTransaccion', width: 60},
+                     { display: 'Nº Asiento', name: 'nroAsiento', width: 60},
+                     { display: 'Nº Lote', name: 'LotePago', width: 60},
+                     { display: 'Mon.', name: 'Mo', width: 30},
+                     { display: 'Importe', name: 'ImporteCheque', width: 60, align: 'right' },
+                     { display: 'Estado', name: 'DsEstadoImportacion', width: 250 }
+         ],
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: _heightGrid,
+         resizable: false,
+         buttons: [
+                    { name: 'Importar Cheques', bclass: 'Import', onpress: fn_ImportarChequeInco },
+                    { name: 'Sel.Mul.', bclass: 'CheckBox', onpress: fn_SelMultiCheque }
+         ],
+         preProcess: fn_PreCreation_grdChequesInconsistentes
+      });
+
+
+      /*Ocultar boton refrescar*/
+      $(".pReload").hide();
+   });
+
+
+   function fn_SelMultiCheque(valtr){
+      if(_checkStateArticulo){
+         $('#flexigrid-grdChequesInconsistentes').find(".UnCheckBox").addClass("CheckBox").removeClass("UnCheckBox");
+         $("#grdChequesInconsistentes").flexOptions({singleSelect: true});
+         _checkStateArticulo = false;
+      }else{
+         $('#flexigrid-grdChequesInconsistentes').find(".CheckBox").addClass("UnCheckBox").removeClass("CheckBox");
+         $("#grdChequesInconsistentes").flexOptions({singleSelect: false});
+         _checkStateArticulo = true;
+      }
+   }
+
+</script>

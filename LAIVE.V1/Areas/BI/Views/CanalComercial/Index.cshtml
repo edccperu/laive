@@ -1,0 +1,314 @@
+﻿@using Laive.Core.Common
+@{
+   ViewBag.Title = "Canal Comercial";
+}
+<div id="idSearch" class="ContentPageSearch">
+   <table cellspacing="0" style="width:100%">
+      <tr>
+         <td style="width:200px;">
+            <select id="searchColumnLaive" class="selectLaive"></select>
+         </td>
+         <td style="width:150px;">
+            <select id="searchOperadorLaive" class="selectLaive">
+               <option value="like">Contiene</option>
+               <option value="=">Igual que</option>
+               <option value="<">Menor que</option>
+               <option value="<=">Menor Igual que</option>
+               <option value=">">Mayor que</option>
+               <option value=">=">Mayor Igual que</option>
+            </select>
+         </td>
+         <td>
+            <input id="searchValueLaive" type="text" style="width:100%;box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;" />
+         </td>
+         <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="addFilterLaive();">
+               <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+               <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+         </td>
+         <td style="width:114px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="clearFilter();">
+               <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Borrar Filtros" />
+               <div class="ContentPageMenuPanelText">Borrar Filtros</div>
+            </a>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="5">
+            <input id="idTextFilterControl" type="text" />
+         </td>
+      </tr>
+   </table>
+
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+   <table id="GridBandeja"></table>
+</div>
+<div id="idPopupEdit">
+   <table cellpadding="0" cellspacing="2" style="width:100%;">
+      <tr>
+         <td>Canal Nivel 1</td>
+         <td colspan="2"><input id="txtCanalNivel1" class="text-box" type="text" style="width:370px" /></td>
+      </tr>
+      <tr>
+         <td>Canal Nivel 2</td>
+         <td colspan ="2"><input id="txtCanalNivel2" class="text-box" type="text" style="width:370px" /></td>
+      </tr>
+      <tr>
+         <td>Cliente</td>
+         <td colspan="2"><input id="txtCliente" class="text-box" type="text" style="width:370px" maxlength="9" /></td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            &nbsp;
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <input id="btnGuardar" type="button" value="Guardar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td ></td>
+         <td style="text-align:right;">
+            <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEdit').dialog('close');" />
+         </td>
+      </tr>
+   </table>
+</div>
+<script type="text/javascript">
+   /*VARIABLES GLOBALES*/
+   var _popupEntityState = SamGetStateUnchanged();
+   var _dataListCanalComercial = [@Html.Raw(ViewBag.ListaCanalComercial)];
+    var _id = 0;
+    var _codigoPartner = '';
+    var _idCanalModerno = 0;
+
+   /*CONTENEDOR DE FILTROS*/
+   $(document).ready(function () {
+      $("#idTextFilterControl").tokenInput("", { theme: "facebook" ,onDelete: function (item) {
+         var vartoken = $("#idTextFilterControl").tokenInput("get");
+         $('#GridBandeja').flexOptions({ query: JSON.stringify(vartoken) }).flexReload();
+      }});
+
+      $('#txtCanalNivel1').immybox({
+         choices: _dataListCanalComercial,
+         fnOnClick: fn_onClickComboCanalNivel1
+      });
+
+      $('#txtCanalNivel2').immybox();       
+     // $('#txtCliente').immybox();
+   });
+
+   jQuery(document).ready(function ($) {
+      showTitleSystem('@ViewBag.Title');
+
+      var heightGrid = getHeightForGrid(100);
+      var varColumn = [
+                       { isfilter:true, display: 'IdCanalModerno', name: 'IdCanalModerno',hide: true},
+                       { isfilter:true, display: 'IdCanalModerno', name: 'IdCanalModerno', hide: true},
+                       { isfilter:true, display: 'Nivel 1', name: 'CodigoNivel1', width: 40},
+                       { isfilter:true, display: 'Glosa Nivel 1', name: 'GlosaNivel1',width: 180},
+                       { isfilter:true, display: 'Nivel 2', name: 'CodigoNivel2', width: 40},
+                       { isfilter:true, display: 'Glosa Nivel 2', name: 'GlosaNivel2',width: 180},
+                       { isfilter:true, display: 'Partner', name: 'CodigoPartner', width: 80},
+                       { isfilter:true, display: 'ID', name: 'Id',hide: true},
+      ];
+
+      varColumn.forEach(function (item) {
+         if (item.isfilter)
+            $("#searchColumnLaive").append($("<option>", { value: item.name, text: item.display }));
+      });
+
+      $('#GridBandeja').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetBandeja", "CanalComercial", new { area = "BI"})',
+         dataType: 'json',
+         colModel: varColumn,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         resizable: false,
+         height: heightGrid,
+         buttons: [
+                     { name: 'Nuevo', bclass: 'add', onpress: AddRegister },
+                     { name: 'Editar', bclass: 'edit', onpress: EditRegister }
+         ]
+      });
+
+      $("#idPopupEdit").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 520,
+         height: 150,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+
+      $("#btnGuardar").click(function () {
+
+         var validate = true;
+         validate = validate && SamControlEsValido("txtCanalNivel1", "Seleccione Canal Nivel 1");
+         validate = validate && SamControlEsValido("txtCanalNivel2", "Seleccione Canal Nivel 2");
+         validate = validate && SamControlEsValido("txtCliente", "Ingrese el Cliente");
+
+
+         if (validate == false)
+            return false;
+
+       
+          debugger;
+          _idCanalModerno = $('#txtCanalNivel2').immybox('getValue')[0] || "0";
+         var _data = {
+             EntityState: _popupEntityState,
+             Id:_id,
+             IdCanalModerno:_idCanalModerno,
+            CodigoPartner:document.getElementById("txtCliente").value,
+         };
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateModel", "CanalComercial", new { area = "BI"})',
+            data:JSON.stringify(_data),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+               if (IsLoginRedirect(result.toString()))
+                  window.location.href = "/Login";
+               else {
+
+                  switch(result.Status){
+                     case 'success':
+                        $('#idPopupEdit').dialog('close');
+                        $('#GridBandeja').flexReload();
+                        MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                        break;
+                     case 'information':    
+                        MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                        break;
+                     case 'invalid':
+                        MsgAlert(@MsgAlertTypeConstant.ERROR,result.Message);
+                        break;
+                  }
+
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+
+      });
+
+
+   });
+
+   /*END READY*/
+
+    function AddRegister() {
+        //_idCanalModerno = 0;
+        _popupEntityState = SamGetStateAdded();
+        _isCaducate = '0';
+
+        SamClearControl("txtCanalNivel1", false);
+        SamClearControl("txtCanalNivel2", false);
+
+        $('#txtCanalNivel1').immybox('setValue','');
+        $('#txtCanalNivel2').immybox('setValue','');
+        $('#txtCliente').val('');
+
+        $("#idPopupEdit").dialog({ title: "Agregar Canal Comercial" });
+        $('#idPopupEdit').dialog('open');
+    };
+
+   function EditRegister(com, grid) {
+
+      var rows = $('#GridBandeja').selectedRows();
+      var message = "";
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un registro");
+         return false;
+      }
+       fn_EditarOCaducar(grid,true)
+   }
+
+
+    function fn_EditarOCaducar(grid,isCaducate){
+        debugger;
+
+        var items = $('.trSelected', grid);
+        if (items != null && items.length > 0) {
+            var item = items[0];
+            _id = item.cells[7].innerText || item.cells[7].textContent;
+            _codigoPartner = item.cells[6].innerText || item.cells[6].textContent;
+            _popupEntityState = SamGetStateModified();
+
+            var _itemCanalNovel1 = item.cells[1].innerText || item.cells[1].textContent;
+
+            SamSetInputValue("txtCanalNivel1", item,3, false);
+            SamSetInputValue("txtCanalNivel2", item,5, false);
+            SamSetInputValue("txtCliente", item , 6, false);
+
+            fn_onClickComboCanalNivel2(_itemCanalNovel1)
+
+            $("#idPopupEdit").dialog({ title: "Caducar Articulo" });
+            $('#idPopupEdit').dialog('open');
+        }
+        else {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+        }
+    }
+
+   function fn_onClickComboCanalNivel1(){
+       debugger;
+
+      var data = { idCanalNivel1 : $('#txtCanalNivel1').immybox('getValue')[0] || "0"};
+
+
+      AppAjax("POST","json",'@Url.Action("GetCanalNivel2", "CanalComercial", new { area = "BI" })', data, "", false, false, function(response){
+         if (typeof response != "undefined") {
+            $('#txtCanalNivel2').immybox("setChoices",response);
+         }
+         else {
+            MsgAlert(@MsgAlertTypeConstant.ERROR, response.message);
+         }
+      });
+
+
+
+   }
+
+
+    function fn_onClickComboCanalNivel2(padre){
+        debugger;
+
+        var data = { idCanalNivel1 : padre };
+
+
+        AppAjax("POST","json",'@Url.Action("GetCanalNivel2", "CanalComercial", new { area = "BI" })', data, "", false, false, function(response){
+            if (typeof response != "undefined") {
+                $('#txtCanalNivel2').immybox("setChoices",response);
+            }
+            else {
+                MsgAlert(@MsgAlertTypeConstant.ERROR, response.message);
+            }
+        });
+
+
+
+    }
+
+
+</script>

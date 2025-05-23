@@ -1,0 +1,83 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Cargar Constancia SUNAT";
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;
+    }
+</style>
+
+<table cellspacing="0" class="contentMauc">
+    <tr>
+        <td colspan="7">
+            <ul id="tbKardex" class="tabs">
+                <li class="active" rel="PanelKardex1">Bancos a Importar</li>
+
+            </ul>
+            <div id="divtbKardex" class="tab_container">
+                <div id="PanelKardex1" class="tab_content">
+                    <table id="grdImportBancos"></table>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<script>
+
+    $(document).ready(function () {
+        /*TITULO*/
+        showTitleSystem('@ViewBag.Title');
+
+        $('#divtbKardex').height(getHeightForGrid(75));
+        CreateTab("tbKardex", "divtbKardex");
+        var _heightGrid = getHeightForGrid(160);
+        var widthGrid = $('#divtbKardex').width() - 3;
+        $('#PanelKardex1').width(widthGrid);
+
+        $('#grdImportBancos').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            dataType: 'json',
+            colModel: [
+                        { display: 'Constancia Nombre', name: 'Constancia', width: 280, sortable: true },
+                        { display: 'Tamaño', name: 'Tamano', width: 280},
+                        { display: '', name: 'Ruta', hide: true }
+            ],
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: _heightGrid,
+            resizable: false,
+            buttons: [
+                       { name: 'Procesar Constancias', bclass: 'Import', onpress: fn_ProcesarConstancia },
+                       { name: 'Subir Constancias', bclass: 'Import', onpress: fn_ProcesarConstancia }
+            ]
+        });
+
+    })
+
+    function fn_ProcesarConstancia()
+    {
+
+
+    };
+
+
+</script>

@@ -1,0 +1,148 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Kardex Corrección MAUC";
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;
+    }
+</style>
+
+<table cellspacing="0" class="searchMauc">
+    <tr>
+        <td style="width:28px;">
+            Año
+        </td>
+        <td style="width:90px;">
+            <input type="text" class="text-box" id="txtPeriodo" style=" width:80px" />
+        </td>
+        <td style="width:28px;">
+            Mes
+        </td>
+        <td style="width:70px;">
+            <input type="text" class="text-box" id="txtMes" style=" width:60px" />
+        </td>
+
+        <td style="width:28px;">
+            Version
+        </td>
+        <td style="width:70px;">
+            <input type="text" class="text-box" id="txtVersion" style=" width:60px" />
+        </td>
+
+
+        <td></td>
+        <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="fn_searchCostosUnitarios();">
+                <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+                <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table cellspacing="0" class="contentMauc">
+    <tr>
+        <td colspan="7">
+            <table id="grdCostos"></table>
+            @*<div id="divtbKardex" class="tab_container">
+                    <div id="PanelKardex1" class="tab_content">
+                        <table id="grdCostos"></table>
+                    </div>
+                </div>*@
+        </td>
+    </tr>
+</table>
+
+<div id="PopupUpload">
+    <div id="lblheaderPopup" class="headerGroup">
+        Datos Ingreso
+    </div>
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Año
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input type="text" class="text-box" id="txtPeriodop" style=" width:80px" />
+        </div>
+    </div>
+
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Mes
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input type="text" class="text-box" id="txtMesp" style=" width:80px" />
+        </div>
+    </div>
+
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Version
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input type="text" class="text-box" id="txtMesp" style=" width:80px" />
+        </div>
+    </div>
+
+   
+    <table style=" width:100%;">
+        <tr>
+            <td style=" width:100px;">
+                <input id="btnAceptaUpload" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style=" width:100px;">
+                <input id="btnCancelarUpload" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    /* Iniciar Popup Upload*/
+    $("#PopupUpload").dialog({
+        appendTo: "#idContentPageAjax",
+        autoOpen: true,
+        modal: true,
+        draggable: true,
+        resizable: false,
+        width: 330,
+        title: "Cargar Informacion",
+        show: {
+            effect: "drop",
+            duration: 250
+        },
+        hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+        }
+    });
+
+
+    $(document).ready(function () {
+
+        //$('#PopupUpload').dialog('close');
+    });
+
+    $("#btnCancelarUpload").click(function () {
+        $('#PopupUpload').dialog('close');
+    });
+ </script>

@@ -1,0 +1,554 @@
+﻿@using Laive.Core.Common
+@{
+   ViewBag.Title = "Mantenimiento de Gestores / Firmantes";
+   Layout = null;
+}
+<div id="idSearch" class="ContentPageSearch">
+   <table cellspacing="0" style="width:100%">
+      <tr>
+         <td style="width:200px;">
+            <select id="searchColumnLaive" class="selectLaive"></select>
+         </td>
+         <td style="width:150px;">
+            <select id="searchOperadorLaive" class="selectLaive">
+               <option value="like">Contiene</option>
+               <option value="=">Igual que</option>
+               <option value="<">Menor que</option>
+               <option value="<=">Menor Igual que</option>
+               <option value=">">Mayor que</option>
+               <option value=">=">Mayor Igual que</option>
+            </select>
+         </td>
+         <td>
+            <input id="searchValueLaive" type="text" style="width:100%;box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;" />
+         </td>
+         <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="addFilterLaive();">
+               <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+               <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+         </td>
+         <td style="width:114px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="clearFilter();">
+               <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Borrar Filtros" />
+               <div class="ContentPageMenuPanelText">Borrar Filtros</div>
+            </a>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="5">
+            <input id="idTextFilterControl" type="text" />
+         </td>
+      </tr>
+   </table>
+
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+   <table id="GridBandeja"></table>
+</div>
+<div id="idPopupEdit">
+   <table style="width:100%;">
+      <tr>
+         <td class="tdRight" style="width:100px;">
+            Tipo Firmante
+         </td>
+         <td colspan="3">
+
+            @Html.DropDownList("ddlTipoFirmante", new SelectList(ViewBag.tipoFirmanteLista, "value", "text"), new { @class = "selectLaive", @style = "width:100px;" })
+         </td>
+      </tr>
+      <tr>
+         <td class="tdRight">
+            Codigo
+         </td>
+         <td colspan="3">
+            <input class="text-box" id="txtCodigoFirmante" type="text" style="width:94px" />
+         </td>
+      </tr>
+      <tr>
+         <td class="tdRight">
+            Nombre Firmante
+         </td>
+         <td colspan="3">
+            <input class="text-box" id="txtNombreFirmante" type="text" style="width:340px" />
+         </td>
+      </tr>
+      <tr>
+         <td class="tdRight">
+            Ruta Firma
+         </td>
+         <td colspan="3">
+            <input type="file" id="FileUpload" />
+         </td>
+      </tr>
+      <tr>
+         <td class="tdRight">
+            Login
+         </td>
+         <td colspan="3">
+            <input class="text-box" id="txtLogin" type="text" style="width:94px" />
+         </td>
+      <tr>
+      <tr>
+         <td></td>
+         <td>
+            <input type="checkbox" id="chkActivo" value="Activo" />Activo
+         </td>
+         <td class="tdRight" colspan="2">
+            <input type="checkbox" id="chkFirmaManual" value="Firma Manual" />Firma Manual
+         </td>
+      </tr>
+      <tr>
+         <td style="height:10px;"></td>
+      </tr>
+   </table>
+   <div id="divGridFirmantePc">
+      <table id="GridFirmantePc"></table>
+   </div>
+   <table style="width:100%">
+      <tr><td colspan="2" style="height:10px;"></td></tr>
+      <tr>
+         <td align="left">
+            <input id="btnGuardar" type="button" value="Guardar" class="btnClassButton" style="width:100px;" onclick="AddRegisterButtonClick();" />
+         </td>
+         <td align="right">
+            <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEdit').dialog('close');" />
+         </td>
+      </tr>
+   </table>
+</div>
+
+<div id="idPopupEditFirmantePc">
+   <div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Ip
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtIp" type="text" style="width:90px" readonly="readonly" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Nombre PC
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtHostName" type="text" style="width:90px" readonly="readonly" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+         </div>
+         <div class="samnetEditor">
+            <input type="checkbox" id="chkActivoFirmantePc" value="Activo" />Activo
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%; height:20px;">
+      </div>
+      <table style="width:100%">
+         <tr>
+            <td align="left">
+               <input id="btnGuardarFirmantePc" type="button" value="Guardar" class="btnClassButton" style="width:100px;" />
+            </td>
+            <td align="right">
+               <input id="btnCancelarFirmantePc" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEditFirmantePc').dialog('close');" />
+            </td>
+         </tr>
+      </table>
+   </div>
+</div>
+<input type="hidden" id="NuSecuen" />
+
+<script type="text/javascript">
+   /*VARIABLES GLOBALES*/
+   var _dataFirmantePc;
+   var _popupEntityState = SamGetStateUnchanged();
+   var _popupEntityStateFirmantePc = SamGetStateUnchanged();
+   var _entityState;
+
+
+   var _idCodigoFirmante = "";
+   var _varColumn = [
+                 { display: 'Codigo', name: 'CodigoFirmante', width: 60 },
+                 { display: 'Nombre', name: 'NombreFirmante', width: 200 },
+                 { display: 'Login', name: 'Login', width: 90 },
+                 { display: 'Firma Manual', name: 'FirmaManual', width: 60 },
+                 { display: '', name: 'IdTipoFirmante', hide: true },
+                 { display: 'Tipo Firmante', name: 'DsTipoFirmante', width: 90 },
+                 { display: '', name: 'Activo', hide: true }
+   ];
+
+   var _varColumnFirmantePc = [
+                 { display: 'EntityState', name: 'EntityState', hide: true },
+                 { display: 'Nº', name: 'NuSecuen', width: 75 },
+                 { display: 'IP', name: 'IpFirmante', width: 140 },
+                 { display: 'Nombre PC', name: 'HostNameFirmante', width: 180 },
+                 { display: '', name: 'Activo', hide: true }
+   ];
+
+
+   /*CONTENEDOR DE FILTROS*/
+   $(document).ready(function () { 
+
+      /*Titulo*/
+      showTitleSystem('@ViewBag.Title');
+
+      $("#idTextFilterControl").tokenInput("", {
+         theme: "facebook", onDelete: function (item) {
+            var vartoken = $("#idTextFilterControl").tokenInput("get");
+            $('#GridBandeja').flexOptions({ query: JSON.stringify(vartoken) }).flexReload();
+         }
+      });
+   });
+
+   jQuery(document).ready(function ($) {
+      showTitleSystem('@ViewBag.Title');
+
+      var heightGrid = getHeightForGrid(100);
+
+      _varColumn.forEach(function (item) {
+         if (item.display != '')
+            $("#searchColumnLaive").append($("<option>", { value: item.name, text: item.display }));
+      });
+
+      $('#GridBandeja').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetBandeja", "GestionFirmante", new { area = "FI"})',
+         dataType: 'json',
+         colModel: _varColumn,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         resizable: false,
+         height: heightGrid,
+         buttons: [
+                     { name: 'Nuevo', bclass: 'add', onpress: AddRegister },
+                     { separator: true },
+                     { name: 'Modificar', bclass: 'edit', onpress: EditRegister }
+         ]
+      });
+
+      $('#GridFirmantePc').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         dataType: 'json',
+         autoload:false,
+         colModel: _varColumnFirmantePc,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         resizable: false,
+         height: 70,
+         buttons: [
+                     { name: 'Nuevo', bclass: 'add', onpress: AddRegisterFirmantePc },
+                     { separator: true },
+                     { name: 'Modificar', bclass: 'edit', onpress: EditRegisterFirmantePc }
+         ]
+      });
+
+      $('#flexigrid-GridFirmantePc').find('.pReload').hide();
+
+      $("#idPopupEdit").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: false,
+         resizable: false,
+         width: 480,
+         height: 385,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+
+
+      $("#idPopupEditFirmantePc").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: false,
+         resizable: false,
+         width: 300,
+         height: 170,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+
+      /*BEGIN GUARDAR*/
+      $("#btnGuardar").click(function () {
+
+         var validate = true;
+         validate = validate && SamControlEsValido("txtNombreFirmante", "Ingrese el Nombre del Firmante");
+         validate = validate && SamControlEsValido("txtLogin", "Ingrese Login de Inicio de Session.");
+
+         if (validate == false)
+            return false;
+
+
+
+         var listFirmante = [];
+
+         var rowsPc = $('#GridFirmantePc').GetDataRows();
+         rowsPc.forEach(function (item) {
+            listFirmante.push({
+               EntityState : item[0].Value,
+               NuSecuen : item[1].Value,
+               IpFirmante : item[2].Value,
+               HostNameFirmante : item[3].Value,
+               Activo : item[4].Value
+            });
+
+         });
+
+         debugger;
+
+         var _data = {
+            EntityState: _popupEntityState,
+            CodigoFirmante: document.getElementById("txtCodigoFirmante").value,
+            NombreFirmante: document.getElementById("txtNombreFirmante").value,
+            Login: document.getElementById("txtLogin").value,
+            Activo: document.getElementById("chkActivo").checked,
+            FirmaManual: document.getElementById("chkFirmaManual").checked,
+            IdTipoFirmante: document.getElementById("ddlTipoFirmante").value,
+            EFirmantePcList : listFirmante
+         };
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateModel", "GestionFirmante", new { area = "FI"})',
+            data: JSON.stringify(_data),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+               if (IsLoginRedirect(result.toString()))
+                  window.location.href = "/Login";
+               else {
+                  if (result.Status == "success") {
+                     MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                     debugger;
+
+                     var formData = new FormData();
+                     var totalFiles = document.getElementById("FileUpload").files.length;
+
+                     if(totalFiles == 0)
+                     {
+                        $('#idPopupEdit').dialog('close');
+                        $('#GridBandeja').flexReload();
+                     }
+                     else{
+                                                               
+                        for (var i = 0; i < totalFiles; i++) {
+                           var file = document.getElementById("FileUpload").files[i];
+                           formData.append("FileUpload", file);
+                        }
+                        
+                        $.ajax({
+                           type: "POST",
+                           url:'@Url.Action("UploadFile", "GestionFirmante", new { area = "FI" })',
+                           data: formData,
+                           dataType: 'json',
+                           contentType: false,
+                           processData: false,
+                           success: function (response) {
+
+                              MsgAlert(@MsgAlertTypeConstant.SUCCESS,'La Firma se cargo correctamente.');
+                              $('#idPopupEdit').dialog('close');
+                              $('#GridBandeja').flexReload();
+                           },
+                           error: function (xhr, status, error) {
+                              MsgAlert(@MsgAlertTypeConstant.ERROR,"Error al Firma el Archivo");
+                           }
+                        });
+
+                     }
+                  }
+                  else {
+                     MsgAlert(@MsgAlertTypeConstant.ERROR,result.Message);
+                  }
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+
+
+      }); /*END GUARDAR*/
+
+
+      /*BEGIN GUARDAR IP HOSTNAME*/
+      $("#btnGuardarFirmantePc").click(function () {
+
+         debugger;
+
+         var rows = $('#GridFirmantePc').GetDataRows();
+         var existRow = false;
+         var nuSecuen = 0;
+         rows.forEach(function (item) {
+            debugger;
+
+            if(nuSecuen < stringToInt(item[1].Value))
+               nuSecuen = stringToInt(item[1].Value);
+
+            if(stringToInt($('#NuSecuen').val()) != stringToInt(item[1].Value) && _popupEntityStateFirmantePc == SamGetStateAdded() && item[3].Value == $('#txtHostName').val()){
+               existRow = true;
+            }
+
+         });
+
+         if(existRow){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,'La Pc ya se encuentra registrada.');
+            return false;
+         }
+
+         if(_popupEntityStateFirmantePc == SamGetStateAdded())
+         {   
+            nuSecuen = nuSecuen + 1;
+            _dataFirmantePc.rows.push({
+               id : nuSecuen,
+               cell: [
+                  _popupEntityStateFirmantePc,
+                  nuSecuen,
+                  $('#txtIp').val(),
+                  $('#txtHostName').val(),
+                  $('#chkActivoFirmantePc').is(':checked') ? 1 : 0]
+            });
+
+         }
+         else
+         {
+            nuSecuen = stringToInt($('#NuSecuen').val());
+
+            _dataFirmantePc.rows.forEach(function (item) {
+               if(item.cell[1] == nuSecuen)
+                  item.cell[4] = $('#chkActivoFirmantePc').is(':checked') ? 1 : 0;
+               if(item.cell[0] != SamGetStateAdded())
+                  item.cell[0] = SamGetStateModified();
+            });
+
+         }
+
+
+         _dataFirmantePc.total = _dataFirmantePc.rows.length;
+
+         $('#GridFirmantePc').flexAddData(_dataFirmantePc);
+         $('#idPopupEditFirmantePc').dialog('close');
+      }); /*END GUARDAR IP HOSTNAME*/
+
+   });
+
+   
+   function AddRegister() {
+      _idTurno = 0;
+      _popupEntityState = SamGetStateAdded();
+      _idCodigoFirmante = "";
+      _dataFirmantePc = {page: 0, total: 0, rows: []};
+      SamClearControl("ddlTipoFirmante", false);
+      SamClearControl("txtCodigoFirmante", true);
+      SamClearControl("txtNombreFirmante", false);
+      SamClearControl("txtLogin", false);
+      SamClearControl("chkFirmaManual", false);
+
+      document.getElementById("chkActivo").checked = true;
+      $('#GridFirmantePc').flexAddData([]);
+      $("#idPopupEdit").dialog({ title: "Agregar Item" });
+      $('#idPopupEdit').dialog('open');
+   }
+
+   function EditRegister(com, grid) {
+
+      var items = $('.trSelected', grid);
+      if (items != null && items.length > 0) {
+         var item = items[0];
+         //_idTransportista = item
+         _popupEntityState = SamGetStateModified();
+         _idCodigoFirmante = item.cells[0].innerText || item.cells[0].textContent;
+
+         SamSetInputValue("txtCodigoFirmante", item, 0, true);
+         SamSetInputValue("txtNombreFirmante", item, 1, false);
+         SamSetInputValue("txtLogin", item, 2, false);
+         SamSetInputValue("chkFirmaManual", item, 3, false);
+         SamSetInputValue("ddlTipoFirmante", item, 4, false);
+         SamSetInputValue("chkActivo", item, 6, false);
+
+         var datalink = {
+            codigoFirmante : _idCodigoFirmante
+         };
+
+         AppAjax('POST','json','@Url.Action("GetBandejaFirmantePc", "GestionFirmante", new { area = "FI" })', datalink, '', false, false, function (response){
+            _dataFirmantePc = response;
+            $('#GridFirmantePc').flexAddData(response);
+            $("#idPopupEdit").dialog({ title: "Editar Item" });
+            $('#idPopupEdit').dialog('open');
+         });
+
+      }
+      else {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+      }
+   }
+
+   function AddRegisterFirmantePc(com, grid) {
+      debugger;
+      _popupEntityStateFirmantePc = SamGetStateAdded();
+      _entityState = SamGetStateAdded();
+
+      AppAjax('POST','json','@Url.Action("GetDataNetwork", "GestionFirmante", new { area = "FI"})', null, "", false, false, function (response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            $('#NuSecuen').val('0');
+            $('#txtIp').val(response.Data.ip);
+            $('#txtHostName').val(response.Data.hostName);
+            $('#idPopupEditFirmantePc').dialog('open');
+            document.getElementById("chkActivoFirmantePc").checked = true;
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+
+
+
+   }
+
+   function EditRegisterFirmantePc(com, grid) {
+      _popupEntityStateFirmantePc = SamGetStateModified();
+
+      var rows = $('#GridFirmantePc').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un registro");
+         return false;
+      }
+
+      _entityState = rows[0][0].Value;
+      $('#NuSecuen').val(rows[0][1].Value);
+      $('#txtIp').val(rows[0][2].Value);
+      $('#txtHostName').val(rows[0][3].Value);
+
+      if(rows[0][4].Value == '1')
+         document.getElementById("chkActivoFirmantePc").checked = true;
+      else
+         document.getElementById("chkActivoFirmantePc").checked = false;
+
+      $('#idPopupEditFirmantePc').dialog('open');
+   }
+
+</script>

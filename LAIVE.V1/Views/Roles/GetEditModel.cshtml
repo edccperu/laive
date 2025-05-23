@@ -1,0 +1,312 @@
+﻿@using Laive.Entity.Sy;
+@using Laive.Core.Common
+@model ERol
+@{
+   if (@Model.EntityState == Laive.Core.Data.EntityState.Added)
+   { ViewBag.Title = "Roles - Nuevo"; }
+   else
+   { ViewBag.Title = "Roles - Modificar"; }
+}
+<div id="idMenu" class="ContentPageMenuPanel">
+   <a href="javascript:void(0)" onclick="javascript:SaveUpdateModel();">
+      <div class="ContentPageMenuPanelImg">
+         <img src="../../Content/images/MenuSave.png" alt="Guardar" title="Guardar" />
+         <div class="ContentPageMenuPanelText">Guardar</div>
+      </div>
+   </a>
+   <a href="javascript:void(0)" onclick="samlinkajaxData('@Url.Action(@ViewBag.BackPage, "Roles")', {EntityState:SamGetStateAdded()}, 'idContentPageAjax',true,true);">
+      <div class="ContentPageMenuPanelImg">
+         <img src="../../Content/images/MenuBack.png" alt="Regresar" title="Regresar" />
+         <div class="ContentPageMenuPanelText">Regresar</div>
+      </div>
+   </a>
+</div>
+<div id="EditPanelMaster" class="EditPanelMaster">
+   <div class="HBox" style="width: 100%;">
+      <div class="samnetLabel" style="width: 140px;">
+         Código
+      </div>
+      <div class="samnetEditor">
+         <input type="text" class="text-box" id="IdRol" value="@Model.IdRol" style=" width:80px" disabled="disabled"/>
+      </div>
+   </div>
+   <div class="HBox" style="width: 100%;">
+      <div class="samnetLabel">
+         Nombre
+      </div>
+      <div class="samnetEditor">
+         <input type="text" class="text-box" id="DsNombreRol" value="@Model.DsNombreRol" style=" width:310px" />
+      </div>
+   </div>
+   <div class="HBox" style="width: 100%;">
+      <div class="samnetLabel">
+         Descripción
+      </div>
+      <div class="samnetEditor">
+         <textarea type="text" class="text-box" id="DsDescripcionRol" style=" width:310px" >@Model.DsDescripcionRol</textarea>
+      </div>
+   </div>
+</div>
+<br/>
+<div id="EditPanelDetails" class="EditPanelDetails" style=" border:none; padding:0px; width: 100%;position: relative;">
+   <ul id="tbRol" class="tabs">
+      <li class="active" rel="PanelRol1">Asiganción de Menu</li>
+      <li rel="PanelRol2">Usuarios</li>
+   </ul>
+   <div id="divtbRol" class="tab_container">
+      <div id="PanelRol1" class="tab_content">
+         <div class="sam-header-HBox">
+            <span>Seleccione los Items del Menu al que el Rol podra tener ACCESO.</span>
+         </div>
+         <div id="idContentDiv" style=" background:#fff; width:100%;">
+            <div id="treeMenuConfig" style="overflow-y:auto">
+            </div>
+         </div>
+      </div>
+      <div id="PanelRol2" class="tab_content">
+         <table id="gridUsuario"></table>
+      </div>
+   </div>
+</div>
+<input type="hidden" id="EntityState" value="@ViewBag.EntityState" />
+<div id="idPopupAddUsuario">
+   <table id="gridUsuarioList"></table>
+</div>
+
+<script type="text/javascript">
+   //<![CDATA[
+   jQuery(document).ready(function ($) {
+      $('#FeExpira').Zebra_DatePicker();
+
+      var twData = { showcheck: true};
+
+      twData.data = @(Html.Raw("[" + ViewBag.JsonMenuList + "]"));
+
+      $("#treeMenuConfig").treeview(twData);
+
+      var heightScroll = getHeightForGrid(50);
+
+      document.getElementById('treeMenuConfig').style.height = (heightScroll + 10) + 'px';
+
+      $('#divtbRol').height(heightScroll + 40);
+      CreateTab("tbRol", "divtbRol");
+
+      /*GRILLA*/
+
+      var varColumn = [
+                 { display: '', name: 'IdUser', hide: true },
+                 { display: 'Usuario', name: 'IdLogon', width: 60 },
+                 { display: 'Apellidos y Nombres', name: 'DsNombres', width: 250 },
+                 { display: '', name: 'EntityState', hide: true }
+      ];
+
+      var varColumnAddUsuario = [
+               { display: '', name: 'IdUser', hide: true },
+               { display: 'Usuario', name: 'IdLogon', width: 60 },
+               { display: 'Apellidos y Nombres', name: 'DsNombres', width: 250 },
+               { display: '', name: 'EntityState', hide: true }
+      ];
+
+      $('#gridUsuario').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetUsuarioXRol", "Roles")',
+         dataType: 'json',
+         colModel: varColumn,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         resizable: false,
+         height: heightScroll - 38,
+         query : $('#IdRol').val(),
+         buttons: [
+                     { name: 'Agregar', bclass: 'add', onpress: AddRegister },
+                     { separator: true },
+                     { name: 'Eliminar', bclass: 'delete', onpress: DeleteRegister }
+         ]
+      });
+
+
+      $('#gridUsuarioList').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetUsuarios", "Roles")',
+         dataType: 'json',
+         colModel: varColumnAddUsuario,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         resizable: false,
+         height: 235,
+         width: 480,
+         buttons: [
+                     { name: 'Agregar Usuario', bclass: 'add', onpress: AddUsuario }
+         ]
+      });
+
+
+
+      $("#idPopupAddUsuario").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 500,
+         height: 350,
+         title:"Agregar Usuario",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      showTitleSystem('@ViewBag.Title');
+   });
+
+
+   function AddRegister(com, grid) {
+      $('#idPopupAddUsuario').dialog('open');
+   }
+
+   function DeleteRegister(com, grid) {
+
+      var rowsList = $('#gridUsuario').selectedRows();
+      if (rowsList.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Usuario.");
+         return false;
+      }
+
+      var trValue = $('#gridUsuario .trSelected');
+      trValue[0].cells[3].children[0].innerText = SamGetStateDeleted();
+      trValue[0].style.color = "red";
+   }
+
+   function AddUsuario(com, grid) {
+      debugger;
+      var rowsList = $('#gridUsuarioList').selectedRows();
+      if (rowsList.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Usuario.");
+         return false;
+      }
+
+      var rows = $('#gridUsuario').GetDataRows();
+      var existRow = false;
+      var nuSecuen = 0;
+      rows.forEach(function (item) {
+         debugger;
+
+         if(item[0].Value == rowsList[0][0].Value){
+            existRow = true;
+         }
+         nuSecuen++;
+      });
+
+      if(existRow){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,'La usuario ya se encuentra registrado.');
+         return false;
+      }
+
+      var _newRow = nuSecuen % 2 == 0 ? '<tr>':'<tr class="erow" onclick="onSelected(this);">';
+      _newRow += '<td style="display: none;"><div style="width: 100px;">'+ rowsList[0][0].Value + '</div></td>';
+      _newRow += '<td><div style="width: 60px;">' + rowsList[0][1].Value + '</div></td>';
+      _newRow += '<td><div style="width: 250px;">' + rowsList[0][2].Value + '</div></td>';
+      _newRow += '<td style="display: none;"><div style="width: 100px;">' + SamGetStateAdded() + '</div></td>';
+      _newRow += '</tr>';
+      $('#gridUsuario').last().append(_newRow);
+   
+   }
+
+   function onSelected(control){
+      $('#gridUsuario tr').removeClass('trSelected');
+      control.classList.add("trSelected");
+   }
+
+
+   function onChangegrupo(object){
+      if(object!= null && object.value != "00000")
+      {
+         var editPanel = $("#EditPanelDetails");
+         $("#samBloquedDiv").width(editPanel.width()).height(editPanel.height());
+         $("#samBloquedDiv").show("fade",400);
+      }
+      else
+      {
+         $("#samBloquedDiv").hide("fade",400);
+      }
+   }
+
+
+   function SaveUpdateModel()
+   {
+
+      var validate = true;
+      validate = validate && SamControlEsValido("DsNombreRol", "Se Requiere este dato.");
+      if(validate == false)
+         return false;
+
+      var arrayMenuPage = [];
+      var arrayUsuario = [];
+      var listMenu=$("#treeMenuConfig").getTSNs(true);
+
+      listMenu.forEach(function(value) {
+         arrayMenuPage.push({
+            IdMenuPage:value.value,
+            StateCheck:value.checkstate
+         });
+      });
+
+
+
+
+      var rowsUsuario = $('#gridUsuario').GetDataRows();
+
+
+      rowsUsuario.forEach(function(item) {
+         if(item[3].Value != SamGetStateUnchanged()){
+            arrayUsuario.push({
+               IdRol : document.getElementById("IdRol").value,
+               IdUser : item[0].Value,
+               EntityState : item[3].Value
+            });
+         }
+      });
+
+      var DataModel = { 'eRol':{ IdRol: document.getElementById("IdRol").value,
+         DsNombreRol: document.getElementById("DsNombreRol").value || "",
+         DsDescripcionRol: $("#DsDescripcionRol").val() || "",
+         EntityState : document.getElementById("EntityState").value,
+         ListNodeTV:arrayMenuPage,
+         ListRolUsuario : arrayUsuario
+      }
+      };
+
+      AppAjaxString('POST', 'html', '@Url.Action("UpdateModel", "Roles")', DataModel, "", true, true, function(result){
+
+         var arrComp = result.split(';');
+         if ((typeof arrComp[1] != 'undefined') && (arrComp[1] != '')) {
+            switch (arrComp[0]) {
+               case "1":
+                  MsgAlert(1,arrComp[1]);
+                  samlinkajaxData('@Url.Action(@ViewBag.BackPage, "Roles")', {EntityState:SamGetStateAdded()}, 'idContentPageAjax',true,true);
+                  break;
+               case "2":
+                  MsgAlert(2,arrComp[1]);
+                  break;
+               case "3":
+                  MsgAlert(3,arrComp[1]);
+                  break;
+            }
+         }
+
+      });
+   }
+   //]]>
+</script>

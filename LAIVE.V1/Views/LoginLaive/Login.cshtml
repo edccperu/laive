@@ -1,0 +1,84 @@
+﻿@{
+   ViewBag.Title = "Laive";
+   Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <meta name="description" content="SGCV Admin Panel" />
+   <meta name="author" content="" />
+
+   <title>Laive |  Login</title>
+
+   @Styles.Render("~/Content/StyleLogin")
+   @Scripts.Render("~/bundles/ScriptLogin")
+
+   <script type="text/javascript">
+      var baseurl = '@Url.Action("LogInAuthenticated", "LoginLaive")';
+   </script>
+
+</head>
+<body class="page-body  login-page login-form-fall">
+   <div class="login-progressbar">
+      <div></div>
+   </div>
+   <div class="login-container" style="padding:8% 0px;">
+      <div class="container">
+         <div class="row">
+            <div class="col-sm-12">
+               <div class="login-form">
+
+                  <div class="login-content">
+                     <div class="form-login-error">
+                        <h3>Inicio de Sesión Invalido.</h3>
+                        <p class="login-content-error">
+                        </p>
+                     </div>
+
+                     @using (Html.BeginForm("", "", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form", id = "form_login", style = "padding:35px 0;" }))
+                     {
+                        <div class="form-group" style="margin-bottom: 25px;">
+                           <img src="@Url.Content("~/Content/themes/base/images/Laive_Vive_Mas.png")" width="120" alt="" />
+                        </div>
+
+                        <div class="form-group">
+                           <div class="input-group">
+                              <div class="input-group-addon">
+                                 <i class="entypo-user"></i>
+                              </div>
+                              @Html.TextBox("UserName","", new { @class = "form-control", placeholder = "Usuario", autocomplete = "off", maxlength = "30" })
+                           </div>
+                        </div>
+
+                        <div class="form-group">
+
+                           <div class="input-group">
+                              <div class="input-group-addon">
+                                 <i class="entypo-key"></i>
+                              </div>
+                              @Html.Password("Password","", new { @class = "form-control", placeholder = "Contraseña", autocomplete = "off", maxlength = "50" })
+
+                           </div>
+
+                        </div>
+
+                        <div class="form-group">
+                           <button type="submit" class="btn btn-primary btn-block btn-login">
+                              <i class="entypo-login"></i>
+                              Iniciar Sesión
+                           </button>
+                        </div>
+                     }
+
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</body>
+</html>

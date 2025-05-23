@@ -1,0 +1,847 @@
+﻿@using Laive.Entity.Di;
+@using Laive.Core.Common
+@{
+   ViewBag.Title = "Consulta de Programación";
+}
+<table id="divTblConsultaProgramacion" style="width:100%; font-family:Tahoma; font-size:10px;">
+   <tr>
+      <td style="background:#f5e915;text-align:center; width:50%;">
+         CAMION
+      </td>
+   </tr>
+   <tr>
+      <td style="width:50%;" class="lblHead">
+         <div id="lblHeadCamion" style="min-height: 14px;"></div>
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <ul id="tbcamion" class="tabs">
+            <li class="active" rel="PanelCamion2"> Cerrado</li>
+            <li rel="PanelCamion3"> Consolidado Cliente</li>
+            <li rel="PanelCamion4"> Pedido Frios</li>
+            <li rel="PanelCamion5"> Pedido Secos</li>
+            <li rel="PanelCamion6"> Facturas</li>
+            <li rel="PanelCamion7"> Ordenes S/Factura</li>
+            <li rel="PanelCamion8"> Ordenes WMS</li>
+         </ul>
+         <div id="divtbcamion" class="tab_container">
+            <div id="PanelCamion2" class="tab_content">
+               <table id="grdCaCerrado"></table>
+            </div>
+            <div id="PanelCamion3" class="tab_content">
+               <table id="grdCaConso"></table>
+               <table style="width:100%">
+                  <tr>
+                     <td></td>
+                     <td style="width: 65px;"></td>
+                     <td style="width: 65px;">
+                        Peso Frios
+                     </td>
+                     <td style="width: 65px;">
+                        Importe S/. Frios
+                     </td>
+                     <td style="width: 65px;">
+                        Peso Secos
+                     </td>
+                     <td style="width: 65px;">
+                        Importe S/. Secos
+                     </td>
+                  </tr>
+                  <tr>
+                     <td></td>
+                     <td>
+                        TOTALES
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrio" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaImpFrio" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSeco" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaImpSeco" style="width: 65px;" readonly="readonly" />
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <div id="PanelCamion4" class="tab_content">
+               <table id="grdCaFrios"></table>
+               <table style="width:100%">
+                  <tr>
+                     <td></td>
+                     <td style="width: 65px;"></td>
+                     <td style="width: 65px;">
+                        Paleta
+                     </td>
+                     <td style="width: 65px;">
+                        Empaque
+                     </td>
+                     <td style="width: 65px;">
+                        Unidad
+                     </td>
+                     <td style="width: 65px;">
+                        Peso Bruto
+                     </td>
+                     <td style="width: 65px;">
+                        Importe S/.
+                     </td>
+                  </tr>
+                  <tr>
+                     <td></td>
+                     <td>
+                        TOTALES
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioPaleta" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioEmpa" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioUnidad" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioPeso" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioImp" style="width: 65px;" readonly="readonly" />
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <div id="PanelCamion5" class="tab_content">
+               <table id="grdCaSecos"></table>
+               <table style="width:100%">
+                  <tr>
+                     <td></td>
+                     <td style="width: 65px;"></td>
+                     <td style="width: 65px;">
+                        Paleta
+                     </td>
+                     <td style="width: 65px;">
+                        Empaque
+                     </td>
+                     <td style="width: 65px;">
+                        Unidad
+                     </td>
+                     <td style="width: 65px;">
+                        Peso Bruto
+                     </td>
+                     <td style="width: 65px;">
+                        Importe S/.
+                     </td>
+                  </tr>
+                  <tr>
+                     <td></td>
+                     <td>
+                        TOTALES
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoPaleta" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoEmpa" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoUnidad" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoPeso" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoImp" style="width: 65px;" readonly="readonly" />
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <div id="PanelCamion6" class="tab_content">
+               <table id="grdFacturas"></table>
+            </div>
+            <div id="PanelCamion7" class="tab_content">
+               <table id="grdSFacturas"></table>
+            </div>
+            <div id="PanelCamion8" class="tab_content">
+               <table id="grdOrdenesWMS"></table>
+            </div>
+         </div>
+      </td>
+   </tr>
+</table>
+
+<div id="PopupFilesXml">
+   <div style="width:100%;">
+      <button onclick="fn_GenerarZipXML();" style="width:100%;height:30px;">
+         Generar Archivos para Ordenes Agregadas Recientemente.
+      </button>
+   </div>
+   <div style="width:100%;">
+      <div id="ContentFilesXml" style="height: 260px;overflow-y: auto;border: 1px solid #9D9898;top: 4px;position: relative;">
+      </div>
+   </div>
+</div>
+
+<div id="PopupBuscarCliente">
+   <div class="HBox">
+      <div class="samnetEditorEmty">
+         <input type="text" id="txtBuscarCliente" placeholder="Ingrese codigo ó clave de partner" style="width:310px;" />
+      </div>
+      <div class="samnetEditorEmty" style=" width:15px;">
+      </div>
+      <div class="samnetEditorEmty">
+         <input id="btnBuscarCliente" type="button" value="Buscar" class="btnClassButton" style="width:100px;" />
+      </div>
+   </div>
+</div>
+
+<script type="text/javascript">
+   /* Variables Generales */
+   var _varHeadCamion = "";
+   var _varRowsAlmacen = @Html.Raw(ViewBag.ListAlmacenString);
+   var _varDivCodigoPartner = "";
+   var _varDivRuta;
+   var _varOrden;
+   var _varLinea;
+   var _varSubLinea;
+   var _gridSearchClient="";
+   var _varTipoCambioCamion = 0;
+
+   var _colgrdCaPrograCerrado = [
+                 { display: 'Ruta', name: 'IdRuta', width: 20, sortable: true, align: 'left' },
+                 { display: '', name: 'IdCargaUnidad', hide: true },
+                 { display: '', name: 'IdTransportista', hide: true },
+                 { display: '', name: 'IdUnidad', hide: true },
+                 { display: 'Placa', name: 'Placa', width: 45, sortable: true, align: 'left' },
+                 { display: 'F/S', name: 'TipoCarga', width: 15, sortable: true, align: 'center' },
+                 { display: 'Transportista', name: 'GlosaPartner', width: 150, sortable: true, align: 'left' },
+                 { display: 'Chofer', name: 'NombreChofer', width: 150, sortable: true, align: 'left' },
+                 { display: 'Carga Util', name: 'CargaUtil', width: 48, sortable: true, align: 'right' },
+                 { display: 'Kg. Asig.', name: 'KilosAsignados', width: 48, sortable: true, align: 'right' },
+                 { display: '% Util.', name: 'PorUnidad', width: 45, sortable: true, align: 'center' },
+                 { display: '', name: 'IdTurno_frio', hide: true },
+                 { display: '', name: 'IdTurno_Seco', hide: true },
+                 { display: '', name: 'IdBox_frio', hide: true },
+                 { display: '', name: 'IdBox_Seco', hide: true },
+                 { display: 'Flete/Vta', name: 'FleteVenta', width: 40, sortable: true, align: 'right' },
+                 { display: 'Flete Prom.', name: 'FletePromedio', width: 55, sortable: true, align: 'right' },
+                 { display: '', name: 'KilosFrio', hide: true },
+                 { display: '', name: 'KilosSeco', hide: true },
+                 { display: 'E', name: 'DsEstado', width: 15 },
+                 { display: '', name: 'DsTurno_frio', hide: true},
+                 { display: 'Turno/Box Frio', name: 'DsBox_frio', width: 105, sortable: true, align: 'center' },
+                 { display: '', name: 'DsTurno_Seco', hide: true},
+                 { display: 'Turno/Box Seco', name: 'DsBox_Seco', width: 105, sortable: true, align: 'center' },
+                 { display: '', name: 'Estado', hide: true },
+                 { display: 'Fecha Inicio', name: 'FechaInicio',width: 99 },
+                 { display: 'Fecha Cierre', name: 'FechaCierre',width: 99 },
+                 { display: 'Fecha Xml', name: 'FechaXml',width: 99 },
+                 { display: 'Fecha Expede', name: 'FechaExpede',width: 99 },
+                 { display: 'Fecha Factura', name: 'FechaFactura',width: 99 },
+                 { display: '', name: 'SiempreDisponible_Frio', hide: true },
+                 { display: '', name: 'SiempreDisponible_Seco', hide: true }
+   ];
+
+   var _colgrdCaConso = [
+                    { display: 'Ruta', name: 'IdRuta', width: 20, sortable: true, align: 'left' },
+                    { display: 'Cod Partner', name: 'CodigoPartner', width: 60, sortable: true, align: 'left' },
+                    { display: 'Clave Partner', name: 'GlosaPartner', width: 95, sortable: true, align: 'left' },
+                    { display: 'F.Paleta', name: 'PaletaFrios', hide: true},
+                    { display: 'Kg.Frio', name: 'PesoFrios', width: 65, sortable: true, align: 'right' },
+                    { display: 'S/.Frio', name: 'ImporteFrios', width: 65, sortable: true, align: 'right' },
+                    { display: 'S.Paleta', name: 'PaletaSecos', hide: true},
+                    { display: 'Kg.Seco', name: 'PesoSecos', width: 65, sortable: true, align: 'right' },
+                    { display: 'S/.Seco', name: 'ImporteSecos', width: 65, sortable: true, align: 'right' },
+                    { display: '', name: 'IdCargoUnidad', hide: true },
+   ];
+
+   var _colgrdCaFriosSecos = [
+                    { display: 'Ruta', name: 'IdRuta', width: 20, sortable: true, align: 'left', hide: true },
+                    { display: '', name: 'CodigoPartner', hide: true },
+                    { display: 'Cod. Articulo', name: 'CodigoArticulo', width: 60, sortable: true, align: 'left' },
+                    { display: 'Description Articulo', name: 'GlosaArticulo', width: 110, sortable: true, align: 'left' },
+                    { display: 'Orden', name: 'Orden', width: 65, sortable: true, align: 'left' },
+                    { display: '', name: 'Linea', hide: true },
+                    { display: '', name: 'Sublinea', hide: true },
+                    { display: 'Paleta', name: 'Paleta', width: 65, sortable: true, align: 'right' },
+                    { display: 'Empaque', name: 'Empaque', width: 65, sortable: true, align: 'right' },
+                    { display: 'Unidad', name: 'CantidadPedido', width: 65, sortable: true, align: 'right' },
+                    { display: 'Peso Bruto', name: 'KilosPedido', width: 65, sortable: true, align: 'right' },
+                    { display: 'Importe S/.', name: 'ImportePedido', width: 65, sortable: true, align: 'right' },
+                    { display: '', name: 'IdCargoUnidad', hide: true },
+   ];
+
+
+   var _colgrdFacturas = [
+                        { display: '', name: 'idCargaUnidad', hide: true },
+                        { display: 'Código Partner', name: 'CodigoPartner', width: 90},
+                        { display: 'Tipo Transacción', name: 'TipoTransaccion',  hide: true },
+                        { display: 'Nº de Transacción', name: 'NumTransaccion',  hide: true },
+                        { display: 'Transacción Ban.', name: 'TransaccionBam', width: 90 },
+                        { display: 'Comprobante', name: 'PreImpreso', width: 90 },
+                        { display: 'Comp. Fecha', name: 'FechaComprobante', width: 90 },
+                        { display: '<center>PEDIDO</br>Kilos Neto</center>', name: 'KilosNeto', width: 85, align: 'right' },
+                        { display: '<center>PEDIDO</br>Kilos Bruto</center>', name: 'KilosBruto', width: 85, align: 'right' },
+                        { display: '<center>PEDIDO</br>Valor S/.<center>', name: 'ImporteFactura', width: 85, align: 'right' },
+                        { display: '<center>ENTREGADO</br>Kg. Neto</center>', name: 'KilosNetoEntregado', width: 85, align: 'right' },
+                        { display: '<center>ENTREGADO</br>Kg. Bruto</center>', name: 'KilosBrutoEntregado', width: 85, align: 'right' },
+                        { display: '<center>ENTREGADO</br>Valor S/.</center>', name: 'ImporteEntregado', width: 85, align: 'right' }
+                        
+   ];
+
+
+   var _colgrdSFacturas = [
+                        { display: '', name: 'idCargaUnidad', hide: true },
+                        { display: 'Código Partner', name: 'CodigoPartner', width: 90},
+                        { display: 'Orden', name: 'Orden', width: 90},
+                        { display: 'Linea', name: 'Linea', width: 80},
+                        { display: 'Cod. Articulo', name: 'CodigoArticulo', width: 90},
+                        { display: 'Cod. Articulo', name: 'CodigoArticulo', width: 180},
+                        { display: 'Kilos Neto', name: 'KilosNeto', width: 85, align: 'right' },
+                        { display: 'Kilos Bruto', name: 'KilosBruto', width: 85, align: 'right' },
+                        { display: 'Importe', name: 'ImporteFactura', width: 85, align: 'right' }
+   ];
+
+   var _colgrdOrdenesWMS = [
+                        { display: '', name: 'idCargaUnidad', hide: true },
+                        { display: 'Partner', name: 'Partner', width: 110},
+                        { display: 'Orden', name: 'Orden', width: 110},
+                        { display: 'Archivo', name: 'Archivo', width: 180},
+                        { display: 'Kilos Neto', name: 'KilosNeto', width: 85, align: 'right' },
+                        { display: 'Kilos Bruto', name: 'KilosBruto', width: 85, align: 'right' },
+                        { display: 'Importe', name: 'Importe', width: 85, align: 'right' }
+   ];
+
+   function functionOnResize() {
+      $('#PanelCamion2').width(0);
+      $('#PanelCamion3').width(0);
+      $('#PanelCamion4').width(0);
+      $('#PanelCamion5').width(0);
+      $('#PanelCamion6').width(0);
+      $('#PanelCamion7').width(0);
+      $('#PanelCamion8').width(0);
+      var widthGrid = $('#divtbcamion').width();
+      $('#PanelCamion2').width(widthGrid);
+      $('#PanelCamion3').width(widthGrid);
+      $('#PanelCamion4').width(widthGrid);
+      $('#PanelCamion5').width(widthGrid);
+      $('#PanelCamion6').width(widthGrid);
+      $('#PanelCamion7').width(widthGrid);
+      $('#PanelCamion8').width(widthGrid);
+   }
+
+   /* Redimencionar Tabs */
+   $(document).ready(function () {
+      /* mostrar titulo*/
+      showTitleSystem('@ViewBag.Title - @ViewBag.fechaDespacho');
+      /* crear Tabs y redimencionar*/
+      CreateTab("tbcamion", "divtbcamion");
+
+      $('#divtbcamion').height(getHeightForGrid(90));
+
+      /* ------------------- REDIMENCIONAR  TABS----------------------------------*/
+      var heightGrid = getHeightForGrid(245);
+
+      /* -------------------INICIALIZAR CONTROLES NUMERICOS----------------------------------*/
+
+      $("#txtNewCostoFrioSeco").inputmask('decimal', { rightAlign: false,digits:6});
+      $(".txtDecimal").inputmask('decimal', { rightAlign: false,digits:6 });
+
+      /* ------------------- grdCaCerrado ----------------------------------*/
+      $('#grdCaCerrado').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaCerrado", "ConsultaProgramacion", new { area = "DI"})',
+         dataType: 'json',
+         colModel: _colgrdCaPrograCerrado,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         singleSelect: true,
+         height: heightGrid + 70,
+         resizable: false,
+         buttons: [
+                    //{ name: 'Rpt. Cons.', bclass: 'FilePdf', onpress: fn_RptConsolidado },
+                    //{ name: 'Rpt. Detalle.', bclass: 'FilePdf', onpress: fn_RptDetalle },
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaCerrado },
+                    { name: 'Buscar Cliente', bclass: 'Search', onpress: fn_BuscarClienteCaCerrado }
+         ],
+         preProcess: fn_PreCreation_GrdCaProgra,
+         onClickRow: fn_onClickRow_GrdCaCerrado
+      });
+
+      /* ------------------- grdCaConso (CAMION CONSOLIDADO)----------------------------------*/
+      $('#grdCaConso').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaConso", "ConsultaProgramacion", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel:_colgrdCaConso,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid,
+         resizable: false,
+         buttons: [
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaConso }
+         ],
+         onClickRow: fn_onClickRow_GrdCaConso
+      });
+
+      /* ------------------- grdCaFrios ----------------------------------*/
+      $('#grdCaFrios').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaFrios", "ConsultaProgramacion", new { area = "DI"})',
+         dataType: 'json',
+         autoload:false,
+         colModel:_colgrdCaFriosSecos,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid,
+         resizable: false,
+         buttons: [
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaFrios }
+         ]
+      });
+
+      /* ------------------- grdCaConso ----------------------------------*/
+      $('#grdCaSecos').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaSecos", "ConsultaProgramacion", new { area = "DI"})',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colgrdCaFriosSecos,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid,
+         resizable: false,
+         buttons: [
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaSecos }
+         ]
+      });
+
+      /* ------------------- grdFacturas ----------------------------------*/
+      $('#grdFacturas').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdFacturas", "ConsultaProgramacion", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colgrdFacturas,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid + 90,
+         resizable: false,
+         buttons: [
+           { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdFacturas }
+         ]
+      });
+
+      /* ------------------- grdSFactura ----------------------------------*/
+      $('#grdSFacturas').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdSFacturas", "ConsultaProgramacion", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colgrdSFacturas,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid + 90,
+         resizable: false,
+         buttons: [
+           { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdSFacturas}
+         ],
+      });
+
+      /* ------------------- grdOrdenes ----------------------------------*/
+      $('#grdOrdenesWMS').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdOrdenesWMS", "ConsultaProgramacion", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colgrdOrdenesWMS,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid + 90,
+         resizable: false,
+         buttons: [
+           { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdOrdenesWMS}
+         ]
+      });
+
+
+      $("#PopupFilesXml").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 480,
+         title: "Archivos Generados",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      $("#PopupBuscarCliente").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 480,
+         height: 75,
+         title: "Buscar Cliente",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+
+      $("#btnBuscarCliente").click(function () {
+         var vardata = {
+            DsBusqueda: document.getElementById("txtBuscarCliente").value
+         };
+
+         $.ajax({
+            type: "GET",
+            url:"@Url.Action("GetBuscarCliente", "ConsultaProgramacion", new { area = "DI" })",
+            data : vardata,
+            dataType: "json",
+            success: function (result) {
+               if (IsLoginRedirect(result))
+                  window.location.href = "/Login";
+               else {
+                  if(result.length > 0){
+                     MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Se encontraron " + result.length + " resultados.");
+                     var exist = false;
+                     $('#' + _gridSearchClient).find('tbody').find('tr').each(function () {
+                        $(this).removeClass('foundBusqueda');
+                        exist = false;
+                        var _value = this.cells[1].innerText || this.cells[1].textContent;
+                        result.forEach(function(item){
+                           if(_value == item.IdCargaUnidad)
+                           {
+                              exist = true;
+                              return;
+                           }
+                        })
+                        if(exist)
+                           $(this).addClass('foundBusqueda');
+                     });
+                  }
+                  else
+                  {
+                     MsgAlert(@MsgAlertTypeConstant.INFORMATION,"No se encontraron Resultados");
+                  }
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+      });
+
+   });
+
+   /*  FUNCIONES */
+
+   function DividirLineaSecos(com, grid) {
+
+   }
+
+   /* ANTES DE RENDEREAR LA GRILLA PROGRAMACION */
+   function fn_PreCreation_GrdCaProgra(JsonData) {
+      if (JsonData.rows == null)
+         return JsonData;
+      JsonData.rows.forEach(function (item) {
+         if(stringToDecimal(item.cell[10]) > 85)
+         {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrV" style="width:100%;">' + item.cell[10] + '%</div></div>';
+         } else if (stringToDecimal(item.cell[10]) >= 80 &&  stringToDecimal(item.cell[10]) < 85)
+         {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrA" style="width:100%;">' + item.cell[10] + '%</div></div>';
+         } else if (stringToDecimal(item.cell[10]) < 80) {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrR" style="width:100%;">' + item.cell[10] + '%</div></div>';
+         } else {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrV" style="width:100%;">' + item.cell[10] + '%</div></div>';
+         }
+         item.cell[15] = item.cell[15] + ' %';
+         item.cell[16] = 'S/. ' + item.cell[16];
+
+         switch(item.cell[24])
+         {
+             case '002':
+                 item.cell[19] = '<div class="bgPr" title="CERRADO"><div class="ValPrA" style="width:100%;">2</div></div>';
+                 break;
+             case '003':
+                 item.cell[19] = '<div class="bgPr" title="XML"><div class="Val15a082" style="width:100%;">3</div></div>';
+                 break;
+             case '004':
+                 item.cell[19] = '<div class="bgPr" title="EXPEDIDO"><div class="ValCELESTE" style="width:100%;">4</div></div>';
+                 break;
+             case '005':
+                 item.cell[19] = '<div class="bgPr" title="LINEAS PENDIENTES X FACTURAR"><div class="ValPrA" style="width:100%;">5</div></div>';
+                 break;
+             case '006':
+                 item.cell[19] = '<div class="bgPr" title="FACTURADO"><div class="ValPrAZUL" style="width:100%;">6</div></div>';
+                 break;
+         }
+      });
+      return JsonData;
+   };
+
+
+   /* Click al seleccionar una fila en la grilla GrdCaProgra*/
+   function fn_onClickRow_GrdCaCerrado(valtr) {
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 1) {
+         _varHeadCamion = '<b>CERRADO > CAMION:</b> ' + valtr.cells[4].firstChild.innerHTML + ' - ' + valtr.cells[6].firstChild.innerHTML;
+         $("#lblHeadCamion").html(_varHeadCamion);
+         SetGridXIdCargaUnidad(valtr.cells[1].firstChild.innerHTML);
+         $('#grdCaFrios').flexOptions({ query: ''}).flexReload();
+         $('#grdCaSecos').flexOptions({ query: ''}).flexReload();
+      }
+      else{
+         _varHeadCamion = '';
+         $("#lblHeadCamion").html(_varHeadCamion);
+         $('#grdCaConso').flexOptions({ query: ''}).flexReload();
+         $('#grdCaFrios').flexOptions({ query: ''}).flexReload();
+         $('#grdCaSecos').flexOptions({ query: ''}).flexReload();
+      }
+   }
+
+   /* Click al seleccionar una fila en la grilla GrdCaConso*/
+   function fn_onClickRow_GrdCaConso(valtr) {
+      $("#lblHeadCamion").html(_varHeadCamion + '   <b>PARTNER:</b> ' + valtr.cells[1].firstChild.innerHTML + ' - ' + valtr.cells[2].firstChild.innerHTML);
+      $('#grdCaFrios').flexOptions({ query: valtr.cells[9].firstChild.innerHTML + ',' + valtr.cells[1].firstChild.innerHTML}).flexReload();
+      $('#grdCaSecos').flexOptions({ query: valtr.cells[9].firstChild.innerHTML + ',' + valtr.cells[1].firstChild.innerHTML }).flexReload();
+   }
+
+   function SetGridXIdCargaUnidad(idCargaUnidad) {
+      $('#grdCaConso').flexOptions({ query: idCargaUnidad }).flexReload();
+      $('#grdFacturas').flexOptions({ query: idCargaUnidad }).flexReload();
+      $('#grdSFacturas').flexOptions({ query: idCargaUnidad }).flexReload();
+      $('#grdOrdenesWMS').flexOptions({ query: idCargaUnidad }).flexReload();
+   }
+
+   /* REPORTE CONSOLIDADO*/
+
+   function fn_RptConsolidado(){
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+
+      var idCargaUnidad = '';
+      rows.forEach(function (item) {
+         idCargaUnidad += (idCargaUnidad == ''?'':'_') + item[1].Value;
+      });
+
+      $.fileDownload('/ConsultaProgramacion/DownloadPDF?IdCargaUnidad=' + idCargaUnidad)
+             .done(function () {
+                AlertCorrecto("El Archivo se Descargo Correctamente.");
+             }).fail(function () {
+                AlertAtencion("Error al Descargar el Archivo.");
+             });
+
+   }
+
+   function fn_RptDetalle(){
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+
+      var idCargaUnidad = '';
+      rows.forEach(function (item) {
+         idCargaUnidad += (idCargaUnidad == ''?'':'_') + item[1].Value;
+      });
+
+      $.fileDownload('/ConsultaProgramacion/DownloadPDFDetalle?IdCargaUnidad=' + idCargaUnidad)
+       .done(function () {
+          AlertCorrecto("El Archivo se Descargo Correctamente.");
+       }).fail(function () {
+          AlertAtencion("Error al Descargar el Archivo.");
+       });
+
+   }
+
+   function fn_ShowPopupXml() {
+
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("GetListZipFile", "ConsultaProgramacion", new { area = "DI"})',
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               message = JSON.parse(result);
+               if(message.Status == "success" ){
+                  var _text = '';
+                  var _divDoc = document.getElementById("ContentFilesXml");
+                  message.Data.forEach(function(item){
+                     _text += '<a class="file" onclick="fn_ReGenerarZipXML(' + item.llave + ');"><div class="contentFile"><div class="iconFile"></div><div class="iconText">';
+                     _text += item.fileName;
+                     _text += '</div></div></a>';
+                  });
+                  _divDoc.innerHTML = _text;
+                  $('#PopupFilesXml').dialog('open');
+               }
+               else if(message.Status == "warning"){
+                  MsgAlert(@MsgAlertTypeConstant.INFORMATION,message.Message);
+                  $('#PopupFilesXml').dialog('open');
+               }
+               else{
+                  MsgAlert(@MsgAlertTypeConstant.ERROR,message.Message);
+               }
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+
+   }
+
+   function fn_GenerarZipXML(){
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("GenerateDataXml", "ConsultaProgramacion", new { area = "DI"})',
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               message = JSON.parse(result);
+               if(message.Status == "success" ){
+                  MsgAlert(@MsgAlertTypeConstant.SUCCESS,message.Message);
+                  $('#PopupFilesXml').dialog('close');
+
+                  $.fileDownload('/ConsultaProgramacion/GenerarZipXML')
+                        .done(function () {
+                           AlertCorrecto("El Archivo se Descargo Correctamente.");
+                        }).fail(function () {
+                           AlertAtencion("Error al Descargar el Archivo.");
+                        });
+               }
+               else if(message.Status == "warning"){
+                  MsgAlert(@MsgAlertTypeConstant.INFORMATION,message.Message);
+               }
+               else{
+                  MsgAlert(@MsgAlertTypeConstant.ERROR,message.Message);
+               }
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+
+   }
+
+   function fn_ReGenerarZipXML(llave){
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("ReGenerateDataXml", "ConsultaProgramacion", new { area = "DI"})',
+         dataType: "html",
+         data:{correlativo:llave},
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               message = JSON.parse(result);
+               if(message.Status == "success" ){
+                  MsgAlert(@MsgAlertTypeConstant.SUCCESS,message.Message);
+                  $('#PopupFilesXml').dialog('close');
+
+                  $.fileDownload('/ConsultaProgramacion/GenerarZipXML')
+                      .done(function () {
+                         AlertCorrecto("El Archivo se Descargo Correctamente.");
+                      }).fail(function () {
+                         AlertAtencion("Error al Descargar el Archivo.");
+                      });
+               }
+               else if(message.Status == "warning"){
+                  MsgAlert(@MsgAlertTypeConstant.INFORMATION,message.Message);
+               }
+               else{
+                  MsgAlert(@MsgAlertTypeConstant.ERROR,message.Message);
+               }
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+   }
+
+
+   function fn_BuscarClienteCaCerrado(valtr) {
+      document.getElementById("txtBuscarCliente").value = "";
+      _gridSearchClient = "grdCaCerrado";
+      $('#PopupBuscarCliente').dialog('open');
+   }
+
+   function fn_ExpExcelGrdCaCerrado(valtr) {
+      ExportToExcel(_colgrdCaPrograCerrado, "grdCaCerrado");
+   }
+
+   function fn_ExpExcelGrdCaConso(valtr) {
+      ExportToExcel(_colgrdCaConso, "grdCaConso");
+   }
+
+   function fn_ExpExcelGrdCaFrios(valtr) {
+      ExportToExcel(_colgrdCaFriosSecos, "grdCaFrios");
+   }
+
+   function fn_ExpExcelGrdCaSecos(valtr) {
+      ExportToExcel(_colgrdCaFriosSecos, "grdCaSecos");
+   }
+
+   function fn_ExpExcelGrdFacturas(valtr) {
+      ExportToExcel(_colgrdFacturas, "grdFacturas");
+   }
+
+   function fn_ExpExcelGrdSFacturas(valtr) {
+      ExportToExcel(_colgrdSFacturas, "grdSFacturas");
+   }
+
+   function fn_ExpExcelGrdOrdenesWMS(valtr) {
+      ExportToExcel(_colgrdOrdenesWMS, "grdOrdenesWMS");
+   }
+
+</script> 

@@ -1,0 +1,409 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Unidad";
+}
+<div id="idSearch" class="ContentPageSearch">
+    <table cellspacing="0" style="width:100%">
+        <tr>
+            <td style="width:200px;">
+                <select id="searchColumnLaive" class="selectLaive"></select>
+            </td>
+            <td style="width:150px;">
+                <select id="searchOperadorLaive" class="selectLaive">
+                    <option value="like">Contiene</option>
+                    <option value="=">Igual que</option>
+                    <option value="<">Menor que</option>
+                    <option value="<=">Menor Igual que</option>
+                    <option value=">">Mayor que</option>
+                    <option value=">=">Mayor Igual que</option>
+                </select>
+            </td>
+            <td>
+                <input id="searchValueLaive" type="text" style="width:100%;box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;" />
+            </td>
+            <td style="width:85px;">
+                <a class="urlButtom" href="javascript:void(0)" onclick="addFilterLaive();">
+                    <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+                    <div class="ContentPageMenuPanelText">Buscar</div>
+                </a>
+            </td>
+            <td style="width:114px;">
+                <a class="urlButtom" href="javascript:void(0)" onclick="clearFilter();">
+                    <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Borrar Filtros" />
+                    <div class="ContentPageMenuPanelText">Borrar Filtros</div>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <input id="idTextFilterControl" type="text" />
+            </td>
+        </tr>
+    </table>
+
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+    <table id="GridBandeja"></table>
+</div>
+<div id="idPopupEdit">
+    <div>
+       <div style="width:100%;">
+          <div class="HBox" style=" width:100%;">
+             <div class="samnetLabel">
+                Transportista
+             </div>
+             <div class="samnetEditor">
+                <input id="txtTransportista" class="text-box" type="text" style="width:350px" />
+             </div>
+          </div>x
+          <div class="HBox" style=" width:100%;">
+             <div class="samnetLabel">
+                Chofer
+             </div>
+             <div class="samnetEditor">
+                <input id="txtChofer" class="text-box" type="text" style="width:350px" />
+             </div>
+          </div>
+       </div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                Placa
+            </div>
+            <div class="samnetEditor">
+               <input id="txtPlaca" class="text-box" type="text" style="width:100px" />
+            </div>
+       </div>
+       <div class="HBox" style=" width:100%;">
+          <div class="samnetLabel">
+             Capacidad (Kg)
+          </div>
+          <div class="samnetEditor">
+             <input id="txtCapacidad" class="text-box" type="text" style="width:100px; text-align:right;" />
+          </div>
+          <div class="samnetLabel">
+             Carga Util (Kg)
+          </div>
+          <div class="samnetEditor">
+             <input id="txtCargaUtil" class="text-box" type="text" style="width:100px; text-align:right;" />
+          </div>
+       </div>
+       <div class="HBox" style=" width:100%;">
+          <div class="samnetLabel">
+             Costo Frios (S/.)
+          </div>
+          <div class="samnetEditor">
+             <input id="txtCostoFrios" class="text-box" type="text" style="width:100px;text-align:right;" />
+          </div>
+          <div class="samnetLabel">
+             Costo Secos (S/.)
+          </div>
+          <div class="samnetEditor">
+             <input id="txtCostoSecos" class="text-box" type="text" style="width:100px;text-align:right;" />
+          </div>
+       </div>
+       <div class="HBox" style=" width:100%;">
+          <div class="samnetLabel">
+             Comunicación
+          </div>
+          <div class="samnetEditor">
+             <input id="txtComunicacion" class="text-box" type="text" style="width:100px" />
+          </div>
+          <div class="samnetLabel">
+             Hora Carga
+          </div>
+          <div class="samnetEditor">
+             <input id="txtHoraCarga" class="text-box" type="text" style="width:100px" />
+          </div>
+       </div>
+       <div class="HBox" style=" width:100%;">
+          <div class="samnetLabel">
+             Paleta
+          </div>
+          <div class="samnetEditor">
+             <input id="txtPaleta" class="text-box" type="text" style="width:100px;text-align:right;" />
+          </div>
+          <div class="samnetLabel">
+             Marca Unidad
+          </div>
+          <div class="samnetEditor">
+             <input id="txtMarcaUnidad" class="text-box" type="text" style="width:100px" />
+          </div>
+       </div>
+       <div class="HBox" style=" width:100%;">
+          <div class="samnetLabel">
+             Modelo Unidad
+          </div>
+          <div class="samnetEditor">
+             <input id="txtModeloUnidad" class="text-box" type="text" style="width:100px" />
+          </div>
+          <div class="samnetLabel">
+             Tipo Carga
+          </div>
+          <div class="samnetEditor">
+             <select id="TipoCarga" style="width:100px" class="text-box">
+                <option value="F">Frios</option>
+                <option value="S">Secos</option>
+             </select>
+          </div>
+       </div>
+       <div class="HBox" style=" width:100%;">
+          <div class="samnetLabel">
+             
+          </div>
+          <div class="samnetEditor">
+             <input id="Activo" class="text-box" type="checkbox" style="width: 20px;"/>Estado
+          </div>
+       </div>
+        <div class="HBox" style=" width:100%; height:20px;">
+        </div>
+       <table style="width:100%;">
+          <tr>
+             <td style="width:50%;">
+                <input id="btnGuardar" type="button" value="Guardar" class="btnClassButton" style="width:100px;" onclick="AddRegisterButtonClick();" />
+             </td>
+             <td style="width:50%; text-align:right;">
+                <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEdit').dialog('close');" />
+             </td>
+          </tr>
+       </table>
+
+    </div>
+</div>
+<script type="text/javascript">
+    /*VARIABLES GLOBALES*/
+    var _popupEntityState = SamGetStateUnchanged();
+    var _idUnidad = 0;
+    var _dataListTransportista = @Html.Raw(ViewBag.ListaTransportista);
+    var _dataListChofer = @Html.Raw(ViewBag.ListaChofer);
+
+    /*CONTENEDOR DE FILTROS*/
+    $(document).ready(function () {
+        $("#idTextFilterControl").tokenInput("", { theme: "facebook" ,onDelete: function (item) {
+            var vartoken = $("#idTextFilterControl").tokenInput("get");
+            $('#GridBandeja').flexOptions({ query: JSON.stringify(vartoken) }).flexReload();
+        }});    
+
+        $('#txtTransportista').immybox({
+           choices: _dataListTransportista
+        });
+
+        $('#txtChofer').immybox({
+           choices: _dataListChofer
+        });
+
+        $("#txtCargaUtil").inputmask('decimal', { rightAlign: false,digits:0});
+        $("#txtCapacidad").inputmask('decimal', { rightAlign: false,digits:0 });
+        $("#txtCostoFrios").inputmask('decimal', { rightAlign: false,digits:2});
+        $("#txtCostoSecos").inputmask('decimal', { rightAlign: false,digits:2 });
+        $("#txtPaleta").inputmask('decimal', { rightAlign: false,digits:0});
+    });
+
+    jQuery(document).ready(function ($) {
+        showTitleSystem('@ViewBag.Title');
+
+       var heightGrid = getHeightForGrid(100);
+       var varColumn = [
+                        { isfilter:false, display: '', name: 'IdTransportista', hide: true },
+                        { isfilter:false, display: 'Codigo', name: 'IdUnidad',hide: true},
+                        { isfilter:true, display: 'Placa', name: 'Placa', width: 55},
+                        { isfilter:true, display: 'Transportista', name: 'DsTransportista', width: 175},
+                        { isfilter:false, display: '', name: 'IdChofer', hide: true },
+                        { isfilter:true, display: 'Chofer', name: 'NombreChofer', width: 175},
+                        { isfilter:false, display: 'CargaUtil', name: 'CargaUtil', width: 65, align: 'right'},
+                        { isfilter:false, display: 'Capacidad', name: 'Capacidad', width: 65, align: 'right'},
+                        { isfilter:false, display: 'Costo Frios', name: 'CostoFrios', width: 65, align: 'right'},
+                        { isfilter:false, display: 'Costo Secos', name: 'CostoSecos', width: 65, align: 'right'},
+                        { isfilter:true, display: 'Comunicación', name: 'Comunicacion', width: 65},
+                        { isfilter:false, display: 'Hora Carga', name: 'HoraCarga', width: 50},
+                        { isfilter:false, display: 'Paleta', name: 'Paleta', width: 50},
+                        { isfilter:true, display: 'Marca', name: 'MarcaUnidad', width: 65, hide: true},
+                        { isfilter:true, display: 'Modelo', name: 'ModeloUnidad', width: 65, hide: true},
+                        { isfilter:false, display: '', name: 'TipoCarga', hide: true },
+                        { isfilter:true, display: 'Tipo Carga', name: 'GlosaCarga', width: 65},
+                        { isfilter:false, display: '', name: 'Activo', hide: true }
+       ];
+
+       varColumn.forEach(function (item) {
+          if (item.isfilter)
+             $("#searchColumnLaive").append($("<option>", { value: item.name, text: item.display }));
+       });
+
+       $('#GridBandeja').flexigrid({
+          onError: function (jqXHR, textStatus, errorThrown) {
+             MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+          },
+          url:'@Url.Action("GetBandeja", "Unidad", new { area = "DI"})',
+          dataType: 'json',
+          colModel: varColumn,
+          singleSelect: true,
+          showTableToggleBtn: true,
+          showToggleBtn: false,
+          resizable: false,
+          height: heightGrid,
+          onSuccess: fn_OnSuccess_GridBandeja,
+          buttons: [
+                      { name: 'Nuevo', bclass: 'add', onpress: AddRegister },
+                      { separator: true },
+                      { name: 'Modificar', bclass: 'edit', onpress: EditRegister }
+          ]
+       });
+
+       $("#idPopupEdit").dialog({
+          appendTo: "#idContentPageAjax",
+          autoOpen: false,
+          modal: true,
+          draggable: true,
+          resizable: false,
+          width: 520,
+          height: 325,
+          show: {
+             effect: "drop",
+             duration: 250
+          },
+          hide: {
+             effect: "drop",
+             duration: 250,
+             direction: "right"
+          }
+       });
+
+
+       $("#btnGuardar").click(function () {
+
+          var validate = true;
+          validate = validate && SamControlEsValido("txtTransportista", "Seleccione el transportista");
+          validate = validate && SamControlEsValido("txtChofer", "Seleccione el Chofer");
+          validate = validate && SamControlEsValido("txtPlaca", "Ingrese la Placa.");
+          validate = validate && SamControlEsValido("txtCargaUtil", "Ingrese la Carga Util.");
+          validate = validate && SamControlEsValido("txtCapacidad", "Ingrese la Capacidad.");
+          validate = validate && SamControlEsValido("txtCostoFrios", "Ingrese el costo de Frio.");
+          validate = validate && SamControlEsValido("txtCostoSecos", "Ingrese el costo de Seco.");
+          validate = validate && SamControlEsValido("txtComunicacion", "Ingrese un numero de Celular/Telefono.");
+          validate = validate && SamControlEsValido("txtHoraCarga", "Ingrese una hora de carga.");
+          validate = validate && SamControlEsValido("txtPaleta", "Ingrese la Paleta.");
+          validate = validate && SamControlEsValido("txtMarcaUnidad", "Ingrese la marca.");
+          validate = validate && SamControlEsValido("txtModeloUnidad", "Ingrese el modelo.");
+          validate = validate && SamControlEsValido("TipoCarga", "Ingrese el tipo de cambio.");
+
+          if (validate == false)
+             return false;
+
+          var _data = {
+                         EntityState: _popupEntityState,
+                         IdTransportista:$('#txtTransportista').immybox('getValue')[0],
+                         IdUnidad: _idUnidad,
+                         IdOperador: 0,
+                         IdChofer:$('#txtChofer').immybox('getValue')[0],
+                         Placa:document.getElementById("txtPlaca").value,
+                         CargaUtil:stringToInt(document.getElementById("txtCargaUtil").value),
+                         Capacidad:stringToInt(document.getElementById("txtCapacidad").value),
+                         CostoFrios:stringToDecimal(document.getElementById("txtCostoFrios").value),
+                         CostoSecos:stringToDecimal(document.getElementById("txtCostoSecos").value),
+                         Comunicacion:document.getElementById("txtComunicacion").value,
+                         HoraCarga :document.getElementById("txtHoraCarga").value,
+                         Paleta :stringToInt(document.getElementById("txtPaleta").value),
+                         MarcaUnidad:document.getElementById("txtMarcaUnidad").value,
+                         ModeloUnidad:document.getElementById("txtModeloUnidad").value,
+                         TipoCarga :document.getElementById("TipoCarga").value,
+                         Activo : $("#Activo").is(':checked') ? 1 : 0
+          };
+
+          $.ajax({
+             type: "POST",
+             url:'@Url.Action("UpdateModel", "Unidad", new { area = "DI"})',
+             data:JSON.stringify(_data),
+             dataType: "json",
+             contentType: "application/json; charset=utf-8",
+             success: function (result) {
+                if (IsLoginRedirect(result.toString()))
+                   window.location.href = "/Login";
+                else {
+                   if (result.Status == "success") {
+                      $('#idPopupEdit').dialog('close');
+                      $('#GridBandeja').flexReload();
+                      MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                   }
+                   else {
+                      MsgAlert(@MsgAlertTypeConstant.ERROR,result.Message);
+                   }
+                }
+             },
+             error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+             }
+          });
+          
+       });
+
+
+    });
+
+    /*END READY*/
+
+    function AddRegister() {
+       _idUnidad = 0;
+       _popupEntityState = SamGetStateAdded();
+       SamClearControl("txtTransportista", false);
+       SamClearControl("txtChofer", false);
+       SamClearControl("txtPlaca", false);
+       SamClearControl("txtCargaUtil", false);
+       SamClearControl("txtCapacidad", false);
+       SamClearControl("txtCostoFrios", false);
+       SamClearControl("txtCostoSecos", false);
+       SamClearControl("txtComunicacion", false);
+       SamClearControl("txtHoraCarga", false);
+       SamClearControl("txtPaleta", false);
+       SamClearControl("txtMarcaUnidad", false);
+       SamClearControl("txtModeloUnidad", false);
+       SamClearControl("TipoCarga", false);
+
+       $("#idPopupEdit").dialog({ title: "Mantenimiento de Unidades" });
+       $('#idPopupEdit').dialog('open');
+    }
+
+    function EditRegister(com, grid) {
+       var items = $('.trSelected', grid);
+       if (items != null && items.length > 0) {
+          var item = items[0];
+          _idUnidad = item.cells[1].innerText || item.cells[1].textContent;
+          _popupEntityState = SamGetStateModified();
+
+          $('#txtTransportista').immybox('setValue',item.cells[0].innerText || item.cells[0].textContent);
+          $('#txtChofer').immybox('setValue',item.cells[4].innerText || item.cells[4].textContent);
+       
+          SamSetInputValue("txtPlaca", item, 2, false);
+          SamSetInputValue("txtCargaUtil", item, 6, false);
+          SamSetInputValue("txtCapacidad", item , 7, false);
+          SamSetInputValue("txtCostoFrios", item, 8, false);
+          SamSetInputValue("txtCostoSecos", item , 9, false);
+          SamSetInputValue("txtComunicacion", item, 10, false);
+          SamSetInputValue("txtHoraCarga", item , 11, false);
+          SamSetInputValue("txtPaleta", item , 12, false);
+          SamSetInputValue("txtMarcaUnidad", item , 13, false);
+          SamSetInputValue("txtModeloUnidad", item , 14, false);
+          SamSetInputValue("TipoCarga", item , 15, false);
+          SamSetInputValue("Activo", item , 17, false);
+          
+          $("#idPopupEdit").dialog({ title: "Mantenimiento de Unidades" });
+          $('#idPopupEdit').dialog('open');
+
+       }
+       else {
+          MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+       }
+    }
+
+   function fn_OnSuccess_GridBandeja(){
+      
+      $('#GridBandeja').find('tr').each(function() {
+         debugger;
+         if(this.cells[17].textContent == "false" || this.cells[17].textContent == "False")
+         {
+            this.style.color = "#FF0000";
+         }
+
+      });
+
+   }
+
+</script>

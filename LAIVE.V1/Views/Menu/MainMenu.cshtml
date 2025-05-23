@@ -1,0 +1,37 @@
+﻿@model List<Laive.Entity.Sy.EMenuPage>
+@{
+    Layout = null;
+}
+
+@helper ShowTree(List<Laive.Entity.Sy.EMenuPage> list, string idPadre)
+{
+    List<Laive.Entity.Sy.EMenuPage> query = Model.Where(fruit => (fruit.IdPadre == idPadre)).OrderBy(fruit => fruit.NuOrden) .ToList();
+        if(query.Count>0){
+            <ul @(idPadre == "_ROOT___"?"id=menuSamNet class=nav":"") >
+            @foreach (Laive.Entity.Sy.EMenuPage eMenuPage in query)
+            {
+                <li>    
+                @if (eMenuPage.DsController != "")
+                {
+                  <a href="#" onclick="samlinkajaxData('@( (eMenuPage.DsArea.Trim() == "" || eMenuPage.DsArea == null) ? Url.Action(eMenuPage.DsAction, eMenuPage.DsController) : Url.Action(eMenuPage.DsAction, eMenuPage.DsController, new { area = eMenuPage.DsArea }))',@(eMenuPage.DsParameter.Trim() == "" ? "null" : eMenuPage.DsParameter), 'idContentPageAjax',true,true);">
+                     @eMenuPage.DsMenuPage
+                     @if (eMenuPage.DsDOM.Trim() != "" && eMenuPage.ColorDOM.Trim() != "")
+                     {
+                        @Html.Raw("<span id=" + @eMenuPage.DsDOM.Trim() + " class=\"numerlabel\" style=\"background:" + @eMenuPage.ColorDOM.Trim() + ";\" >0</span>")
+                     }
+                  </a>
+                }
+                else
+                {
+                    <a href="#">
+                    @eMenuPage.DsMenuPage
+                    </a>
+                }
+                @ShowTree(query, eMenuPage.IdMenuPage)
+                </li>
+            }
+            </ul>
+        }
+}
+
+@ShowTree(Model, "_ROOT___")

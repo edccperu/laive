@@ -1,0 +1,89 @@
+﻿@using Laive.Entity.Mg;
+@model List<ETablaGen>
+@{
+    ViewBag.Title = "Tabla General";
+}
+<div id="idMenu" class="ContentPageMenuPanel">
+       <a href="javascript:void(0)" onclick="samlinkajaxData('@Url.Action("GetEditModel", "TablaGeneral")', { IdTabla: '',EntityState:SamGetStateAdded()}, 'idContentPageAjax',true,true);">
+                <div class="ContentPageMenuPanelImg">
+                    <img src="../../Content/images/MenuNew.png" alt="New" />
+                    <div class="ContentPageMenuPanelText">Nuevo</div>
+                </div>
+       </a>
+       <div class="PageMenuSeparator"></div>
+       <a href="javascript:void(0)" onclick="searchFilter();">
+                <div class="ContentPageMenuPanelImg">
+                    <img src="../../Content/images/MenuRefresh.png" alt="refrescar" title="Buscar"/>
+                    <div class="ContentPageMenuPanelText">Buscar</div>
+                </div>
+       </a>
+       <a href="javascript:void(0)" onclick="clearFilter();">
+                <div class="ContentPageMenuPanelImg">
+                    <img src="../../Content/images/MenuClearSearch.png" alt="limpiar" title="Borrar Filtros"/>
+                    <div class="ContentPageMenuPanelText">Borrar Filtros</div>
+                </div>
+       </a>
+</div>
+<div id="idSearch" class="ContentPageSearch">
+    <input id="idTextFilterControl" type="text" />
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+    <table id="samnetgrid">
+        <thead>
+            <tr>
+                <th onclick="openFilter('Codigo','idTabla');" width="100">
+                    Codigo
+                </th>
+                <th onclick="openFilter('Descripcion de Tabla General','dsTabla');" width="200">
+                    Descripcion de Tabla General
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach(ETablaGen eTablaGen in Model)
+        {
+            <tr>
+                <td>@eTablaGen.IdTabla</td>
+                <td>@eTablaGen.DsTabla</td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+   //<![CDATA[
+   $(document).ready(function () {
+      $("#idTextFilterControl").tokenInput("", { theme: "facebook" });
+   });
+
+   jQuery(document).ready(function ($) {
+
+      var heightGrid = getHeightForGrid(100);
+
+      $('#samnetgrid').flexigrid({
+         resizable: false,
+         height: heightGrid,
+         dataType: 'json',
+         singleSelect: true,
+         buttons: [
+                      { name: 'Modificar', bclass: 'edit', onpress: EditRegister }
+         ]
+      });
+
+
+      function EditRegister(com, grid) {
+         var items = $('.trSelected', grid);
+         if (items != null && items.length > 0) {
+            var item = items[0];
+            samlinkajaxData('@Url.Action("GetEditModel", "TablaGeneral")', { IdTabla: item.cells[0].innerText || item.cells[0].textContent, EntityState: SamGetStateModified() }, 'idContentPageAjax', true, true);
+         }
+         else {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+         }
+      }
+
+      showTitleSystem('@ViewBag.Title');
+   });
+   //]]>
+</script>

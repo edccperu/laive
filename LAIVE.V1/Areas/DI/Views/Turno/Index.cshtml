@@ -1,0 +1,272 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Turno";
+}
+<div id="idSearch" class="ContentPageSearch">
+    <table cellspacing="0" style="width:100%">
+        <tr>
+            <td style="width:200px;">
+                <select id="searchColumnLaive" class="selectLaive"></select>
+            </td>
+            <td style="width:150px;">
+                <select id="searchOperadorLaive" class="selectLaive">
+                    <option value="like">Contiene</option>
+                    <option value="=">Igual que</option>
+                    <option value="<">Menor que</option>
+                    <option value="<=">Menor Igual que</option>
+                    <option value=">">Mayor que</option>
+                    <option value=">=">Mayor Igual que</option>
+                </select>
+            </td>
+            <td>
+                <input id="searchValueLaive" type="text" style="width:100%;box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;" />
+            </td>
+            <td style="width:85px;">
+                <a class="urlButtom" href="javascript:void(0)" onclick="addFilterLaive();">
+                    <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+                    <div class="ContentPageMenuPanelText">Buscar</div>
+                </a>
+            </td>
+            <td style="width:114px;">
+                <a class="urlButtom" href="javascript:void(0)" onclick="clearFilter();">
+                    <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Borrar Filtros" />
+                    <div class="ContentPageMenuPanelText">Borrar Filtros</div>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <input id="idTextFilterControl" type="text" />
+            </td>
+        </tr>
+    </table>
+
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+    <table id="GridBandeja"></table>
+</div>
+<div id="idPopupEdit">
+    <div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                Codigo
+            </div>
+            <div class="samnetEditor">
+                <input class="text-box" id="txtCodigoTurno" type="text" style="width:250px" maxlength="6" />
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                Glosa
+            </div>
+            <div class="samnetEditor">
+                <input class="text-box" id="txtGlosaTurno" type="text" style="width:250px" />
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+
+            </div>
+            <div class="samnetEditor">
+                <input type="checkbox" id="chkActivo" value="Activo" />Activo
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%; height:20px;">
+        </div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetSpacer">
+            </div>
+            <div class="samnetButton" style=" text-align:right;">
+                <input id="btnGuardar" type="button" value="Guardar" class="btnClassButton" style="width:100px;" onclick="AddRegisterButtonClick();" />
+                <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEdit').dialog('close');" />
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    /*VARIABLES GLOBALES*/
+    var _popupEntityState = SamGetStateUnchanged();
+    var _idTurno = 0;
+
+    /*CONTENEDOR DE FILTROS*/
+    /*busca solo en la grilla pero no en base de datos*/
+    $(document).ready(function () {
+        $("#idTextFilterControl").tokenInput("", { theme: "facebook" ,onDelete: function (item) {
+            var vartoken = $("#idTextFilterControl").tokenInput("get");
+            $('#GridBandeja').flexOptions({ query: JSON.stringify(vartoken) }).flexReload();
+        }});
+    });
+
+    jQuery(document).ready(function ($) {
+        showTitleSystem('@ViewBag.Title');
+
+        var heightGrid = getHeightForGrid(100);
+        var varColumn = [
+                         { display: '', name: 'IdTurno', hide: true },
+                         { display: 'Codigo', name: 'CodigoTurno', width: 60 },
+                         { display: 'Glosa', name: 'GlosaTurno', width: 120 },
+                         { display: '', name: 'Activo', hide: true }
+        ];
+
+        varColumn.forEach(function (item) {
+            if (item.display != '')
+                $("#searchColumnLaive").append($("<option>", { value: item.name, text: item.display }));
+        });
+
+        $('#GridBandeja').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetBandeja", "Turno", new { area = "DI"})',
+            dataType: 'json',
+            colModel: varColumn,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            resizable: false,
+            height: heightGrid,
+            onSuccess: fn_OnSuccess_GridBandeja,
+            buttons: [
+                        { name: 'Nuevo', bclass: 'add', onpress: AddRegister },
+                        { separator: true },
+                        { name: 'Modificar', bclass: 'edit', onpress: EditRegister }
+            ]
+        });
+
+        $("#idPopupEdit").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 380,
+            height: 235,
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+
+
+        $("#btnGuardar").click(function () {
+            var validate = true;
+            validate = validate && SamControlEsValido("txtCodigoTurno","Ingrese el codigo de turno.");
+            validate = validate && SamControlEsValido("txtGlosaTurno","Ingrese la glosa de turno.");
+
+            if (validate == false)
+                return false;
+        
+            var _data = {
+                EntityState: _popupEntityState,
+                IdTurno:_idTurno,
+                CodigoTurno:document.getElementById("txtCodigoTurno").value,
+                GlosaTurno:document.getElementById("txtGlosaTurno").value,
+                Activo : $("#chkActivo").is(':checked') ? 1 : 0
+            };
+
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("UpdateModel", "Turno", new { area = "DI"})',
+                data:JSON.stringify(_data),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (result) {
+                    if (IsLoginRedirect(result.toString()))
+                        window.location.href = "/Login";
+                    else {
+                        if (result.Status == "success") {
+                            $('#idPopupEdit').dialog('close');
+                            $('#GridBandeja').flexReload();
+                            MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                        }
+                        else {
+                            MsgAlert(@MsgAlertTypeConstant.ERROR,result.Message);
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+                }
+            });
+        });
+    
+
+    });
+
+    
+  
+
+    function AddRegister() {
+        _idTurno = 0;
+        _popupEntityState = SamGetStateAdded();
+        SamClearControl("txtCodigoTurno", false);
+        SamClearControl("txtGlosaTurno", false);
+        SamClearControl("chkActivo", false);
+
+        $("#idPopupEdit").dialog({ title: "Agregar Turno" });
+        $('#idPopupEdit').dialog('open');
+    }
+
+    function EditRegister(com, grid) {
+        var items = $('.trSelected', grid);
+        if (items != null && items.length > 0) {
+            var item = items[0];
+            //_idTransportista = item
+            debugger;
+            _idTurno = item.cells[0].innerText || item.cells[0].textContent;
+            _popupEntityState = SamGetStateModified();
+
+            SamSetInputValue("txtCodigoTurno", item, 1, true);
+            SamSetInputValue("txtGlosaTurno", item, 2, false);
+            SamSetInputValue("chkActivo", item , 3, false);
+
+            $("#idPopupEdit").dialog({ title: "Editar Turno" });
+            $('#idPopupEdit').dialog('open');
+
+        }
+        else {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+        }
+    }
+
+    function DelRegister(com, grid) {
+        var items = $('.trSelected', grid);
+        if (items != null && items.length > 0) {
+            var item = items[0];
+           
+            _idTurno = item.cells[0].innerText || item.cells[0].textContent;
+            _popupEntityState = SamGetStateDeleted();
+
+            SamSetInputValue("txtCodigoTurno", item, 1, true);
+            SamSetInputValue("txtGlosaTurno", item, 2, true);
+            SamSetInputValue("chkActivo", item, 3, true);
+
+            $("#idPopupEdit").dialog({ title: "Eliminar Turno" });
+            $('#idPopupEdit').dialog('open');
+
+        }
+        else {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+        }
+    }
+
+    function fn_OnSuccess_GridBandeja(){
+      
+        $('#GridBandeja').find('tr').each(function() {
+            debugger;
+            if(this.cells[3].textContent == "false" || this.cells[3].textContent == "False")
+            {
+                this.style.color = "#FF0000";
+            }
+
+        });
+
+    }
+
+</script>

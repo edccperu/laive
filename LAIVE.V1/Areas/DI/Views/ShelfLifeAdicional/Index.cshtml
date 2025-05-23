@@ -1,0 +1,416 @@
+﻿@using Laive.Core.Common
+@{
+   ViewBag.Title = "ShelfLife Adicional por Partner";
+}
+<div id="idSearch" class="ContentPageSearch">
+   <table cellspacing="0" style="width:100%">
+      <tr>
+         <td style="width:200px;">
+            <select id="searchColumnLaive" class="selectLaive"></select>
+         </td>
+         <td style="width:150px;">
+            <select id="searchOperadorLaive" class="selectLaive">
+               <option value="like">Contiene</option>
+               <option value="=">Igual que</option>
+               <option value="<">Menor que</option>
+               <option value="<=">Menor Igual que</option>
+               <option value=">">Mayor que</option>
+               <option value=">=">Mayor Igual que</option>
+            </select>
+         </td>
+         <td>
+            <input id="searchValueLaive" type="text" style="width:100%;box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;" />
+         </td>
+         <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="addFilterLaive();">
+               <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+               <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+         </td>
+         <td style="width:114px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="clearFilter();">
+               <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Borrar Filtros" />
+               <div class="ContentPageMenuPanelText">Borrar Filtros</div>
+            </a>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="5">
+            <input id="idTextFilterControl" type="text" />
+         </td>
+      </tr>
+   </table>
+
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+   <table id="GridBandeja"></table>
+</div>
+
+<div id="idPopupEdit">
+   <div>
+      <div id="divPartner" class="HBox" style="width:100%;display:none;">
+         <div class="samnetLabel">
+            Codigo Partner
+         </div>
+         <div class="samnetEditor">
+            <input id="CodigoPartner" class="text-box" type="text" style="width:280px" />
+         </div>
+      </div>
+      <div id="divGrupo" class="HBox" style=" width:100%;display:none;">
+         <div class="samnetLabel">
+            Codigo Grupo
+         </div>
+         <div class="samnetEditor">
+            <input id="CodigoGrupo" class="text-box" type="text" style="width:280px" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Codigo Articulo
+         </div>
+         <div class="samnetEditor">
+            <input id="CodigoArticulo" class="text-box" type="text" style="width:280px" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            ShelfLife
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtShelfLife" type="text" value="0" style="width:80px" readonly="readonly" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Dias Adicionales
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtDiaAdicional" value="0" type="text" style="width:80px" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Fecha Desde
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtFechaInicio" type="text" style="width:200px" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Fecha Hasta
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtFechaFin" type="text" style="width:200px" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            
+         </div>
+         <div class="samnetEditor">
+            <input type="checkbox" id="chkActivo" checked="checked"/> ESTADO
+         </div>
+      </div>
+
+      <div class="HBox" style=" width:100%; height:20px;">
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetSpacer">
+         </div>
+         <div class="samnetButton" style=" text-align:right;">
+            <input id="btnGuardar" type="button" value="Guardar" class="btnClassButton" style="width:100px;" />
+            <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEdit').dialog('close');" />
+         </div>
+      </div>
+   </div>
+</div>
+
+<script type="text/javascript">
+   /*VARIABLES GLOBALES*/
+   var _popupEntityState = SamGetStateUnchanged();
+   var _idShelfLifeAdicional = 0;
+   var _idPartner = "";
+   var _dataListPartner = @Html.Raw(ViewBag.ListaPartner);
+   var _dataListGrupo = @Html.Raw(ViewBag.ListaGrupo);
+   var _dataListArticulo = @Html.Raw(ViewBag.ListaArticulo);
+   var _context = "";
+   var _tipoReg;
+
+   /*CONTENEDOR DE FILTROS*/
+   $(document).ready(function () {
+
+      $("#txtDiaAdicional").inputmask('Regex', { regex: "[0-9]*" });
+      $('#txtFechaInicio').Zebra_DatePicker({format:'d/m/Y'});
+      $('#txtFechaFin').Zebra_DatePicker({format:'d/m/Y'});
+
+      $("#idTextFilterControl").tokenInput("", {
+         theme: "facebook", onDelete: function (item) {
+            var vartoken = $("#idTextFilterControl").tokenInput("get");
+            $('#GridBandeja').flexOptions({ query: JSON.stringify(vartoken) }).flexReload();
+         }
+      });
+
+      $('#CodigoPartner').immybox({
+         choices: _dataListPartner,
+         fnOnClick: fn_onClickComboShelfLife
+      });
+
+      $('#CodigoGrupo').immybox({
+         choices: _dataListGrupo,
+         fnOnClick: fn_onClickComboShelfLife
+      });
+
+      $('#CodigoArticulo').immybox({
+         choices: _dataListArticulo,
+         fnOnClick: fn_onClickComboShelfLife
+      });
+
+   });
+
+   jQuery(document).ready(function ($) {
+      showTitleSystem('@ViewBag.Title');
+
+      var heightGrid = getHeightForGrid(100);
+      var varColumn = [
+                       { isfilter:true, display: 'Nº', name: 'IdShelfAdicional', width: 30 },
+                       { isfilter:false, display: '', name: 'TipoRegistro', hide :true},
+                       { isfilter:true, display: 'Tipo', name: 'GlosaTipoRegistro', width: 65 },
+                       { isfilter:false, display: 'Alm.', name: 'CodigoAlmacen', width: 30},
+                       { isfilter:false, display: '', name: 'GlosaAlmacen', hide:true},
+                       { isfilter:true, display: 'Cod.Articulo', name: 'CodigoArticulo', width: 70 },
+                       { isfilter:true, display: 'Articulo', name: 'GlosaArticulo', width: 180 },
+                       { isfilter:true, display: 'Cod.Grupo', name: 'CodigoGrupo', width: 70 },
+                       { isfilter:true, display: 'Grupo', name: 'GlosaGrupo', width: 180 },
+                       { isfilter:true, display: 'Cod.Partner', name: 'CodigoPartner', width: 75 },
+                       { isfilter:true, display: 'Partner', name: 'ClavePartner', width: 150 },
+                       { isfilter:true, display: 'ShelfLife', name: 'ShelfLife', width: 48, align:'center'},
+                       { isfilter:true, display: 'Dias Adici.', name: 'DiasAdicional', width: 48, align:'center'},
+                       { isfilter:true, display: 'F. Desde', name: 'FechaInicio', width: 75 },
+                       { isfilter:true, display: 'F. Hasta', name: 'FechaFin', width: 75 },
+                       { isfilter:false, display: '', name: 'Activo',hide : true },
+                       { isfilter:false, display: 'Activo', name: 'DsActivo',width: 70,align:'center' }
+      ];
+
+      varColumn.forEach(function (item) {
+         if (item.isfilter)
+            $("#searchColumnLaive").append($("<option>", { value: item.name, text: item.display.replace('<br/>',' ') }));
+      });
+
+
+      $('#GridBandeja').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetBandeja", "ShelfLifeAdicional", new { area = "DI" })',
+         dataType: 'json',
+         colModel: varColumn,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         resizable: false,
+         height: heightGrid,
+         buttons: [
+                     { name: 'Nuevo por Partner', bclass: 'add', onpress: AddPorPartner },
+                     { name: 'Nuevo por Grupo', bclass: 'add', onpress: AddPorGrupo },
+                     { separator: true },
+                     { name: 'Modificar', bclass: 'edit', onpress: EditRegister }
+         ]
+      });
+
+
+
+      $("#idPopupEdit").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 440,
+         height: 285,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      $("#btnGuardar").click(function () {
+
+         var validate = true;
+         if(_tipoReg == "001")
+         {
+            validate = validate && SamControlEsValido("CodigoPartner", "Seleccione un Partner.");
+         }
+         else{
+            validate = validate && SamControlEsValido("CodigoGrupo", "Seleccione un Grupo.");
+         }
+         validate = validate && SamControlEsValido("CodigoArticulo", "Seleccione el Articulo");
+         validate = validate && SamControlEsValido("txtDiaAdicional", "Ingrese los dias adicionales.");
+         validate = validate && SamControlEsValido("txtFechaInicio", "Ingrese la fecha desde.");
+         validate = validate && SamControlEsValido("txtFechaFin", "Ingrese la fecha hasta.");
+
+         if (validate == false)
+            return false;
+
+         var _data = {
+            EntityState: _popupEntityState,
+            IdShelfLifeAdicional:_idShelfLifeAdicional,
+            CodigoArticulo: $('#CodigoArticulo').immybox('getValue')[0],
+            CodigoPartner: $('#CodigoPartner').immybox('getValue')[0] || "",
+            CodigoGrupo: $('#CodigoGrupo').immybox('getValue')[0] || "",
+            DiasAdicional: $('#txtDiaAdicional').val(),
+            CodigoAlmacen: "",
+            ShelfLife: $('#txtShelfLife').val(),
+            FechaInicio: $('#txtFechaInicio').val(),
+            FechaFin: $('#txtFechaFin').val(),
+            TipoRegistro : _tipoReg,
+            Activo : $("#chkActivo").is(':checked') ? 1 : 0
+         };
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateModel", "ShelfLifeAdicional", new { area = "DI" })',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(_data),
+            dataType: "json",
+            success: function (result) {
+               if (IsLoginRedirect(result.toString()))
+                  window.location.href = "/Login";
+               else {
+                  if (result.Status == "success") {
+
+                     $('#idPopupEdit').dialog('close');
+                     $('#GridBandeja').flexReload();
+                     MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+
+                  }
+                  else {
+                     MsgAlert(@MsgAlertTypeConstant.ERROR,result.Message);
+                  }
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+
+
+      });
+   });
+
+   function AddPorPartner(com,grid){
+      _tipoReg = "001";
+      _popupEntityState = SamGetStateAdded();
+      _idShelfLifeAdicional = 0;
+      _context = "divPartner";
+      $('#divPartner').show();
+      $('#divGrupo').hide();
+      $('#divGrupoAlmacen').hide();
+      $('#CodigoPartner').immybox('setValue','');
+      $('#CodigoGrupo').immybox('setValue','');
+      $('#CodigoArticulo').immybox('setValue','');
+      $('#txtShelfLife').val('0');
+      $('#txtDiaAdicional').val('0');
+      $('#txtFechaInicio').val('');
+      $('#txtFechaFin').val('');
+      document.getElementById("chkActivo").checked = true;
+
+      $("#idPopupEdit").dialog({ title: "Agregar por Partner" });
+      $('#idPopupEdit').dialog('open');
+   }
+
+   function AddPorGrupo(com,grid){
+      _tipoReg = "002";
+      _popupEntityState = SamGetStateAdded();
+      _idShelfLifeAdicional = 0;
+      _context = "divGrupo";
+      $('#divPartner').hide();
+      $('#divGrupo').show();
+      $('#divGrupoAlmacen').show();
+
+      $('#CodigoPartner').immybox('setValue','');
+      $('#CodigoGrupo').immybox('setValue','');
+      $('#CodigoArticulo').immybox('setValue','');
+      $('#txtShelfLife').val('0');
+      $('#txtDiaAdicional').val('0');
+      $('#txtFechaInicio').val('');
+      $('#txtFechaFin').val('');
+      document.getElementById("chkActivo").checked = true;
+      $("#idPopupEdit").dialog({ title: "Agregar por Grupo" });
+      $('#idPopupEdit').dialog('open');
+   }
+
+   function EditRegister(com, grid) {
+      var items = $('.trSelected', grid);
+      if (items != null && items.length > 0) {
+         var item = items[0];
+         _idShelfLifeAdicional = item.cells[0].textContent;
+         _popupEntityState = SamGetStateModified();
+         debugger;
+         $('#CodigoPartner').immybox('setValue',item.cells[9].textContent);
+         $('#CodigoGrupo').immybox('setValue',item.cells[7].textContent);
+
+         $('#CodigoArticulo').immybox('setValue',item.cells[5].textContent);
+         $('#txtShelfLife').val(item.cells[11].textContent);
+         $('#txtDiaAdicional').val(item.cells[12].textContent);
+         $('#txtFechaInicio').val(item.cells[13].textContent);
+         $('#txtFechaFin').val(item.cells[14].textContent);
+         SamSetInputValue("chkActivo", item , 15, false);
+
+         if(item.cells[1].textContent == '001')
+         {
+            _tipoReg = "001";
+            _context = "divPartner";
+            $('#divPartner').show();
+            $('#divGrupo').hide();
+            $('#divGrupoAlmacen').hide();
+         }
+         else{
+            _tipoReg = "002";
+            _context = "divGrupo";
+            $('#divPartner').hide();
+            $('#divGrupo').show();
+            $('#divGrupoAlmacen').show();
+         }
+
+         $("#idPopupEdit").dialog({ title: "Editar Item" });
+         $('#idPopupEdit').dialog('open');
+
+      }
+      else {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+      }
+   }
+   
+   function fn_onClickComboShelfLife(elem){
+      debugger;
+      _codigoArticulo = $('#CodigoArticulo').immybox('getValue')[0] || "";
+      _codigoPartner =  $('#CodigoPartner').immybox('getValue')[0] || "";
+      _codigoGrupo= $('#CodigoGrupo').immybox('getValue')[0] || "";
+
+      if(_codigoArticulo != "" && ( _codigoPartner != "" || _codigoGrupo != ""))
+      {
+         var _data = {
+            tipoRegistro : _tipoReg,
+            codigoArticulo : _codigoArticulo,
+            codigoPartner : _codigoPartner,
+            codigoGrupo: _codigoGrupo
+         };
+
+         AppAjaxString('POST','json','@Url.Action("GetShelfLife", "ShelfLifeAdicional", new { area = "DI" })', _data, "", false, false, function(response){
+            if(response.Status == '@JsonMessageStatus.SUCCESS')
+            {
+               $('#txtShelfLife').val(response.Data);
+            }
+         });
+      }
+      else
+         return;
+   }
+
+</script>

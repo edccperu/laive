@@ -1,0 +1,183 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Cargar Constancia SUNAT";
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;
+    }
+</style>
+
+<div id="PopupArchivos">
+    <table>
+
+    </table>
+</div>
+
+<table cellspacing="0" class="contentMauc">
+    <tr>
+        <td colspan="7">
+            <ul id="tbKardex" class="tabs">
+                <li class="active" rel="PanelKardex1">Bancos a Importar</li>
+               
+            </ul>
+            <div id="divtbKardex" class="tab_container">
+                <div id="PanelKardex1" class="tab_content">
+                    <table id="grdImportBancos"></table>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="PopupUpload">
+    <div class="HBox" style="height:30px;">
+
+    </div>
+    <div class="HBox" style="height:30px;">
+        <center><input type="file" id="FileUpload" /></center>
+    </div>
+    <table style=" width:100%;">
+        <tr>
+            <td style=" width:100px;">
+                <input id="btnAceptaUpload" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style=" width:100px;">
+                <input id="btnCancelarUpload" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        /*TITULO*/
+        showTitleSystem('@ViewBag.Title');
+
+        $('#divtbKardex').height(getHeightForGrid(75));
+        CreateTab("tbKardex", "divtbKardex");
+        var _heightGrid = getHeightForGrid(160);
+        var widthGrid = $('#divtbKardex').width() - 3;
+        $('#PanelKardex1').width(widthGrid);
+
+        $('#grdImportBancos').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            dataType: 'json',
+            colModel: [
+                        { display: 'Constancia Nombre', name: 'Constancia', width: 280, sortable: true },
+                        { display: 'Tamaño', name: 'Tamano', width: 280},
+                        { display: '', name: 'Ruta', hide: true }
+            ],
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: _heightGrid,
+            resizable: false,
+            buttons: [
+                       { name: 'Procesar Constancias', bclass: 'Import', onpress: fn_ProcesarConstancia },
+                       { name: 'Subir Constancias', bclass: 'Import', onpress: fn_UploadKdxActual }
+            ]
+        });
+
+        /* Iniciar Popup Upload*/
+        $("#PopupUpload").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 420,
+            title: "Importar desde Excel",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+        $("#btnAceptaUpload").click(function () {
+
+            debugger;
+            var strname = "";
+            var strsize = "";
+            var strruta = "";
+            var strfile = "";
+
+            var formData = new FormData();
+            var x = document.getElementById("FileUpload");
+            var txt = "";
+            var totalFiles = document.getElementById("FileUpload").files.length;
+
+           
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("FileUpload").files[i];
+
+                formData.append("FileUpload", file);
+            }
+
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("UploadFile", "ConstanciaSunat", new { area = "FI" })',
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    debugger;
+                    MsgAlert(@MsgAlertTypeConstant.SUCCESS,'El Archivo se Cargo Correctamente.');
+                    $('#PopupUpload').dialog('close');
+                    $('#grdKdxProcesado').flexOptions({query: '' }).flexReload();
+                },
+                error: function (xhr, status, error) {
+                    debugger;
+                    MsgAlert(@MsgAlertTypeConstant.ERROR,"Error al Subir el Archivo");
+                }
+            });
+        });
+
+        $("#btnCancelarUpload").click(function () {
+            $('#PopupUpload').dialog('close');
+        });
+
+    });
+
+    function fn_UploadKdxActual(valtr) {
+       
+        $('#PopupUpload').dialog('open');
+    };
+
+    function fn_ProcesarConstancia(){
+
+
+    };
+</script>
+
+
+

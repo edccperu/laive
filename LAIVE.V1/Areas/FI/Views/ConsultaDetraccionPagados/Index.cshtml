@@ -1,0 +1,256 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Consulta Detraccion";
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;    
+    }
+
+</style>
+<table cellspacing="0" class="searchMauc">
+    <tr>
+        <td style="width:70px;">
+            Proveedor
+        </td>
+        <td style="width:80px;">
+            @*<input type="text" class="text-box" id="idPartner" style="width:80px" maxlength="9" />*@
+            <input id="idPartner" class="text-box" type="text" style="width:280px" />
+
+        </td>
+        <td style="width:58px;">
+            Periodo
+        </td>
+        <td style="width:40px;">
+            @*<input type="text" class="text-box" id="txtPeriodo" style=" width:60px" />*@
+            <select id="txtPeriodo" class="text-box" style=" width:100px">
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+            </select>
+        </td>
+        <td style="width:70px;">
+            Mes Inicio
+        </td>
+        <td style="width:50px;">
+            @*<input type="text" class="text-box" id="txtMesIni" style=" width:60px" />*@
+
+            <select id="txtMesIni" class="text-box" style=" width:100px">
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+        </td>
+        <td style="width:50px;">
+            Mes Fin
+        </td>
+        <td style="width:50px;">
+            @*<input type="text" class="text-box" id="txtMesFin" style=" width:60px" />*@
+
+            <select id="txtMesFin" class="text-box" style=" width:100px">
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+        </td>
+        <td></td>
+        <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="searchKardexMauc();">
+                <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+                <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" class="contentMauc">
+    <tr>
+        <td colspan="7">
+            <table id="grdConsulta"></table>
+
+        </td>
+    </tr>
+</table>
+<script >
+    debugger;
+
+    var _dataListPartners = @Html.Raw(ViewBag.Partners);
+
+    var d = new Date();
+    var nperiodo = d.getFullYear();
+
+    var month = new Array();
+    month[0] = "01";
+    month[1] = "02";
+    month[2] = "03";
+    month[3] = "04";
+    month[4] = "05";
+    month[5] = "06";
+    month[6] = "07";
+    month[7] = "08";
+    month[8] = "09";
+    month[9] = "10";
+    month[10] = "11";
+    month[11] = "12";
+    var nmes = month[d.getMonth()];
+
+    //$("#txtPeriodo").inputmask({ mask: '9{4}', greedy: false });
+    //$("#txtMesIni").inputmask({ mask: '9{2}', greedy: false });
+    //$("#txtMesFin").inputmask({ mask: '9{2}', greedy: false });
+
+
+    document.getElementById("txtPeriodo").value = parseInt(nperiodo);
+    document.getElementById("txtMesIni").value = parseInt(nmes);
+    document.getElementById("txtMesFin").value = parseInt(nmes);
+
+    var heightGrid = getHeightForGrid(245);
+
+    var varColumn = [
+                         { display: 'Pre-Impreso', name: 'preImpreso', width: 70, align: 'center' },
+                         { display: 'Nro. Baan', name: 'numBaan', width: 70, align: 'center' },
+                         { display: 'Partner', name: 'codigoPartnerProveedor', width: 70, align: 'center', hide: true },
+                         { display: 'Razon Social', name: 'glosaPartner', width: 70, align: 'center', hide: true },
+                         { display: 'Mon', name: 'moneda', width: 70, align: 'center' },
+                         { display: 'Importe Original', name: 'importeOriginal', width: 80, align: 'right' },
+                         { display: 'Importe Soles', name: 'importeSoles', width: 80, align: 'right' },
+                         { display: '% Detrac.', name: 'codigoPorcDetraccion', width: 40, align: 'center' },
+                         { display: 'Detrac. Soles.', name: 'importeDetraccion', width: 80, align: 'right' },
+                         { display: 'Fecha Pago', name: 'fechaPago', width: 70, align: 'center' },
+                         { display: 'Lote Detrac.', name: 'loteDetraccion', width: 80, align: 'center' },
+                         { display: '5to Dia', name: 'pagoQuintoDia', width: 40, align: 'center' },
+                         { display: 'Constancia Pago', name: 'constanciaSunat', width: 90, align: 'center' },
+                         { display: 'Tipo', name: 'codigoOperacion', width: 40, align: 'center' },
+                         { display: 'Bien Servicio', name: 'codigoBienServicio', width: 60, align: 'center' }
+    ]
+
+    function fn_onClickComboPartners(elemt) {
+        //if (elemt.chequeInicial == 0)
+        //    $('#txtidChequeInicial').removeAttr('disabled');
+        //else
+        //    $('#txtidChequeInicial').attr('disabled', 'disabled');
+
+        //$('#txtidChequeInicial').val(elemt.chequeInicial);
+        //$('#txtidChequeFinal').val('');
+
+    }
+
+    $(document).ready(function () {
+
+        $('#idPartner').immybox({
+            choices: _dataListPartners
+
+        });
+
+
+        $('#grdConsulta').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetBandeja", "ConsultaDetraccionPagados", new { area = "FI" })',
+            dataType: 'json',
+            colModel: varColumn,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: heightGrid + 90,
+            resizable: false,
+            buttons: [
+                       { name: 'Exportar Excel', bclass: 'FileExcel', onpress: fn_ProcesarLotePago }
+            ]
+
+        });
+
+
+
+    });
+
+    function searchKardexMauc() {
+
+        debugger;
+            var validate = true;
+            validate = validate && SamControlEsValido("idPartner", "Se Requiere este dato.");
+
+            //validate = validate && SamControlEsValido("txtPeriodo", "Se Requiere este dato.");
+            //validate = validate && SamControlEsValido("txtMesIni", "Se Requiere este dato.");
+            //validate = validate && SamControlEsValido("txtMesFin", "Se Requiere este dato.");
+
+            if (!validate)
+                return false;
+
+            var _vardata = {
+                vPeriodo : parseInt(document.getElementById("txtPeriodo").value),
+                vMesIni : parseInt(document.getElementById("txtMesIni").value),
+                vMesFin : parseInt(document.getElementById("txtMesFin").value),
+                vcodigoPartner : document.getElementById("idPartner").value,
+            };
+
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("GetDetraccionPagados", "ConsultaDetraccionPagados", new { area = "FI" })',
+                data: _vardata,
+                dataType: "json",
+                success: function (result) {
+
+                    if (IsLoginRedirect(result))
+                        window.location.href = "/Login";
+                    else {
+                        debugger;
+                        $("#grdConsulta").flexAddData(result);
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+                }
+            });
+
+    };
+
+    function fn_ProcesarLotePago() {
+
+        ExportToExcel(varColumn, "grdConsulta");
+    }
+
+
+
+</script>
+

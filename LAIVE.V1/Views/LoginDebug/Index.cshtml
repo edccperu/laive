@@ -1,0 +1,94 @@
+﻿@using Laive.Entity.Sy;
+@model List<EUsuario>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Bienvenido a SAMNET</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/baseScript")
+    @Scripts.Render("~/bundles/plugins")
+    <style type="text/css">
+    .HBox:hover
+    {
+        background: #eaeaea;
+    }
+    </style>
+</head>
+<body>
+    <div id="idPopupLogin">
+        <div style=" width:100%; padding:10px 0px; border-bottom:1px solid #ADA8A8;text-align: center;">
+            <img src="~/Content/themes/base/images/Laive.jpg" alt="LAIVE" />
+         </div>
+
+         <div style=" width:100%;padding:15px 0px 0px 0px;">
+               <div class="HBox" style=" width:30%;">
+                    <div class="samnetEditorEmty" style=" width:380px">
+                        <input id="txtsearch" type="text" class="text-box" style=" width:350px"/>
+                    </div>
+                    <div class="samnetEditorEmty">
+                        <input id="btnSearch" type="button" value="Buscar" class="btnClassButton" style="width:100px;" onclick=""/>
+                    </div>
+               </div>
+         </div>
+
+         <div style=" width:100%;padding:15px 0px;">
+            @foreach (EUsuario eUsuario in Model)
+            { 
+               <div class="HBox" style=" width:30%;">
+                    <div class="samnetLabelEmty">
+                        <img src="../../Content/images/userImage.png" alt="user" />
+                    </div>
+                    <div class="samnetEditorEmty" style=" width:380px">
+                        @eUsuario.DsNombres
+                    </div>
+                    <div class="samnetEditorEmty">
+                       <input id="btnAceptar" type="button" value="Ingresar" class="btnClassButton" style="width:100px;" onclick="UrlAccess('@eUsuario.IdUser','@eUsuario.IdLogon')" />
+                    </div>
+               </div>
+            }
+         </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#idPopupLogin").dialog({
+                dialogClass: "no-close",
+                title: "LOGIN DEBUG",
+                modal: false,
+                draggable: false,
+                resizable: false,
+                width: 500,
+                show: {
+                    effect: "fade",
+                    duration: 1500
+                },
+                position: { at:"top"}
+            });
+
+            $(".ui-dialog").css("top", "15px")
+        });
+
+        function UrlAccess(idUser,idLogon) {
+           var datalink = { IdUser: idUser, IdLogon: idLogon };
+
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("Login", "LoginDebug")',
+                data: datalink,
+                dataType: "html",
+                success: function (result) {
+                    if (result)
+                        window.location.href = "/home";
+                },
+                error: function (xhr, status, error) {
+                    alert(error.toString());
+                }
+            });       
+        }
+    </script>
+</body>
+</html>

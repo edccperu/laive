@@ -1,0 +1,217 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Transportista";
+}
+<div id="idSearch" class="ContentPageSearch">
+    <table cellspacing="0" style="width:100%">
+        <tr>
+            <td style="width:200px;">
+                <select id="searchColumnLaive" class="selectLaive">
+                </select>
+            </td>
+            <td style="width:150px;">
+                <select id="searchOperadorLaive" class="selectLaive">
+                    <option value="like">Contiene</option>
+                    <option value="=">Igual que</option>
+                    <option value="<">Menor que</option>
+                    <option value="<=">Menor Igual que</option>
+                    <option value=">">Mayor que</option>
+                    <option value=">=">Mayor Igual que</option>
+                </select>
+            </td>
+            <td>
+                <input id="searchValueLaive" type="text" style="width:100%;box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;" />
+            </td>
+            <td style="width:85px;">
+                <a class="urlButtom" href="javascript:void(0)" onclick="addFilterLaive();">
+                    <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+                    <div class="ContentPageMenuPanelText">Buscar</div>
+                </a>
+            </td>
+            <td style="width:114px;">
+                <a class="urlButtom" href="javascript:void(0)" onclick="clearFilter();">
+                    <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Borrar Filtros" />
+                    <div class="ContentPageMenuPanelText">Borrar Filtros</div>
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <input id="idTextFilterControl" type="text" />
+            </td>
+        </tr>
+    </table>
+    
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+    <table id="GridBandeja"></table>
+</div>
+<div id="idPopupEdit">
+   <div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Código
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtCodigo" type="text" style="width:100px" disabled="disabled" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            RUC
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtRuc" type="text" style="width:100px" disabled="disabled" />
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Razon Social
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtRazonSocial" type="text" style="width:280px" disabled="disabled"/>
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetLabel">
+            Cod. Partner
+         </div>
+         <div class="samnetEditor">
+            <input class="text-box" id="txtCodigoPartner" type="text" style="width:100px" disabled="disabled"/>
+         </div>
+      </div>
+      <div class="HBox" style=" width:100%; height:20px;">
+      </div>
+      <div class="HBox" style=" width:100%;">
+         <div class="samnetSpacer">
+         </div>
+         <div class="samnetButton" style=" text-align:right;">
+            <input id="btnCancelar" type="button" value="Cerrar" class="btnClassButton" style="width:100px;" onclick="$('#idPopupEdit').dialog('close');" />
+         </div>
+      </div>
+   </div>
+</div>
+
+<script type="text/javascript">
+    /*VARIABLES GLOBALES*/
+    var _popupEntityState = SamGetStateUnchanged();
+
+    /*CONTENEDOR DE FILTROS*/
+    $(document).ready(function () {
+        $("#idTextFilterControl").tokenInput("", { theme: "facebook" ,onDelete: function (item) {
+            var vartoken = $("#idTextFilterControl").tokenInput("get");
+            $('#GridBandeja').flexOptions({ query: JSON.stringify(vartoken) }).flexReload();
+        }});
+    });
+
+    jQuery(document).ready(function ($) {
+        showTitleSystem('@ViewBag.Title');
+
+        var heightGrid = getHeightForGrid(100);
+        var varColumn = [
+                         { display: '', name: 'IdTransportista', hide: true },
+                         { display: 'Codigo', name: 'CodigoTransportista', width: 60 },
+                         { display: 'RUC', name: 'Ruc', width: 75},
+                         { display: 'Razon Social', name: 'RazonSocial', width: 220},
+                         { display: 'Cod. Partner', name: 'CodigoPartner', width: 75},
+                         { display: '', name: 'Activo', hide: true }
+        ];
+
+        varColumn.forEach(function (item) {
+            if (item.display != '')
+                $("#searchColumnLaive").append($("<option>", { value: item.name, text: item.display }));
+        });
+
+        $('#GridBandeja').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetBandeja", "Transportista", new { area = "DI"})',
+            dataType: 'json',
+            colModel: varColumn,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            resizable: false,
+            height: heightGrid,
+            buttons: [
+                        { name: 'Ver Detalle', bclass: 'ViewDetails', onpress: fn_VerDetalle },
+                        { name: 'Actualizar Datos', bclass: 'Import', onpress: fn_ActualizarDatos }
+            ]
+        });
+
+       $("#idPopupEdit").dialog({
+          appendTo: "#idContentPageAjax",
+          autoOpen: false,
+          modal: true,
+          draggable: true,
+          resizable: false,
+          width: 420,
+          height: 200,
+          show: {
+             effect: "drop",
+             duration: 250
+          },
+          hide: {
+             effect: "drop",
+             duration: 250,
+             direction: "right"
+          }
+       });
+
+    });
+
+       
+    function fn_VerDetalle(com, grid) {
+        var items = $('.trSelected', grid);
+        if (items != null && items.length > 0) {
+            var item = items[0];
+            //_idTransportista = item
+            _popupEntityState = SamGetStateModified();
+
+            SamSetInputValue("txtCodigo", item, 1, true);
+            SamSetInputValue("txtRuc", item, 2, true);
+            SamSetInputValue("txtRazonSocial", item, 3, true);
+            SamSetInputValue("txtCodigoPartner", item, 4, true);
+
+            $("#idPopupEdit").dialog({ title: "Detalle" });
+            $('#idPopupEdit').dialog('open');
+
+        }
+        else {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+        }
+    };
+
+    function fn_ActualizarDatos(){
+        _popupEntityState = SamGetStateModified();
+        var _data = {
+            EntityState: _popupEntityState
+        }
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateModel", "Transportista", new { area = "DI"})',
+            data:JSON.stringify(_data),
+            dataType: "json",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                if (IsLoginRedirect(result.toString()))
+                    window.location.href = "/Login";
+                else {
+                    if (result.Status == "success") {
+                        $('#GridBandeja').flexReload();
+                        MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                    }
+                    else {
+                        MsgAlert(@MsgAlertTypeConstant.ERROR,result.Message);
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+    };
+   
+</script>

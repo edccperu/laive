@@ -1,0 +1,837 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E130F25B-B9BD-4B30-A94D-F72D522B5E53}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LAIVE.V1</RootNamespace>
+    <AssemblyName>LAIVE.V1</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <SilverlightApplicationList>
+    </SilverlightApplicationList>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ExcelDataReader.2.1.2.3\lib\net20\Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\packages\DotNetZip.1.9.3\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\packages\iTextSharp.5.5.7\lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.SQLServer.ManagedDTS, Version=10.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>BinDll\Microsoft.SQLServer.ManagedDTS.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.License">
+      <HintPath>..\packages\Spire.PDF.3.6.11\lib\net40\Spire.License.dll</HintPath>
+    </Reference>
+    <Reference Include="Spire.Pdf">
+      <HintPath>..\packages\Spire.PDF.3.6.11\lib\net40\Spire.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Providers">
+      <HintPath>..\packages\Microsoft.AspNet.Providers.Core.1.1\lib\net40\System.Web.Providers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20710.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.1.0\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\BI\BIAreaRegistration.cs" />
+    <Compile Include="Areas\BI\Controllers\SolidoLecheController.cs" />
+    <Compile Include="Areas\CO\COAreaRegistration.cs" />
+    <Compile Include="Areas\DI\Controllers\AsignacionPedidoController.cs" />
+    <Compile Include="Areas\DI\Controllers\ConsultaProgramacionController.cs" />
+    <Compile Include="Areas\DI\Controllers\ShelfLifeAdicionalController.cs" />
+    <Compile Include="Areas\DI\Controllers\BoxController.cs" />
+    <Compile Include="Areas\DI\DIAreaRegistration.cs" />
+    <Compile Include="Areas\FI\Controllers\ChequeExcluidoController.cs" />
+    <Compile Include="Areas\FI\Controllers\FirmaManualController.cs" />
+    <Compile Include="Areas\FI\Controllers\GenerarArchivoController.cs" />
+    <Compile Include="Areas\FI\Controllers\ImportarDetraccionController.cs" />
+    <Compile Include="Areas\FI\Controllers\ImprimirChequeController.cs" />
+    <Compile Include="Areas\FI\FIAreaRegistration.cs" />
+    <Compile Include="Areas\DI\Controllers\AlmacenController.cs" />
+    <Compile Include="Areas\DI\Controllers\ChoferController.cs" />
+    <Compile Include="Areas\CO\Controllers\KardexMaucController.cs" />
+    <Compile Include="Areas\DI\Controllers\PlanDespachoController.cs" />
+    <Compile Include="Areas\DI\Controllers\RutaController.cs" />
+    <Compile Include="Areas\DI\Controllers\TipoCargaController.cs" />
+    <Compile Include="Areas\DI\Controllers\TransportistaController.cs" />
+    <Compile Include="Areas\DI\Controllers\TurnoController.cs" />
+    <Compile Include="Areas\DI\Controllers\UnidadController.cs" />
+    <Compile Include="Areas\DI\Controllers\PartnerController.cs" />
+    <Compile Include="Areas\FI\Controllers\AsignarChequeController.cs" />
+    <Compile Include="Areas\FI\Controllers\ChequeFirmadoController.cs" />
+    <Compile Include="Areas\FI\Controllers\ChequePendiFirmarController.cs" />
+    <Compile Include="Areas\FI\Controllers\ChequePendiVeriController.cs" />
+    <Compile Include="Areas\FI\Controllers\ChequeVerificadoController.cs" />
+    <Compile Include="Areas\FI\Controllers\GestionFirmanteController.cs" />
+    <Compile Include="Areas\FI\Controllers\ImportarChequeController.cs" />
+    <Compile Include="Areas\FI\Controllers\SecurityMACController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LoginDebugController.cs" />
+    <Compile Include="Controllers\LoginLaiveController.cs" />
+    <Compile Include="Controllers\MenuController.cs" />
+    <Compile Include="Controllers\MG\TablaGeneralController.cs" />
+    <Compile Include="Controllers\SamcontrollerBase.cs" />
+    <Compile Include="Controllers\SY\ParametrosSistemaController.cs" />
+    <Compile Include="Controllers\SY\RolesController.cs" />
+    <Compile Include="Controllers\SY\UsuariosController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\DI_CargaUnidad_Rpt01.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DI_CargaUnidad_Rpt01.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Applets\index.html" />
+    <Content Include="Applets\macaddressapplet.jar" />
+    <Content Include="BinDll\Microsoft.SQLServer.ManagedDTS.dll" />
+    <Content Include="Config\ConfigData.xml" />
+    <Content Include="Content\animation\Import.GIF" />
+    <Content Include="Content\animation\loadingGrid.gif" />
+    <Content Include="Content\animation\loadingPanel9.GIF" />
+    <Content Include="Content\animation\Preloader.gif" />
+    <Content Include="Content\avgrund.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\elusive\animation.css" />
+    <Content Include="Content\elusive\elusive-codes.css" />
+    <Content Include="Content\elusive\elusive-embedded.css" />
+    <Content Include="Content\elusive\elusive-ie7-codes.css" />
+    <Content Include="Content\elusive\elusive-ie7.css" />
+    <Content Include="Content\elusive\elusive.css" />
+    <Content Include="Content\entypo\css\animation.css" />
+    <Content Include="Content\entypo\css\entypo-codes.css" />
+    <Content Include="Content\entypo\css\entypo-embedded.css" />
+    <Content Include="Content\entypo\css\entypo-ie7-codes.css" />
+    <Content Include="Content\entypo\css\entypo-ie7.css" />
+    <Content Include="Content\entypo\css\entypo.css" />
+    <Content Include="Content\entypo\font\entypo.svg" />
+    <Content Include="Content\flexigrid.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\fonts\BebasNeue-webfont.css" />
+    <Content Include="Content\fonts\BebasNeue-webfont.svg" />
+    <Content Include="Content\fonts\elusive.svg" />
+    <Content Include="Content\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\icheck\icheck.js" />
+    <Content Include="Content\icheck\index.html" />
+    <Content Include="Content\icheck\skins\all.css" />
+    <Content Include="Content\icheck\skins\flat\aero%402x.png" />
+    <Content Include="Content\icheck\skins\flat\aero.css" />
+    <Content Include="Content\icheck\skins\flat\aero.png" />
+    <Content Include="Content\icheck\skins\flat\blue%402x.png" />
+    <Content Include="Content\icheck\skins\flat\blue.css" />
+    <Content Include="Content\icheck\skins\flat\blue.png" />
+    <Content Include="Content\icheck\skins\flat\flat%402x.png" />
+    <Content Include="Content\icheck\skins\flat\flat.css" />
+    <Content Include="Content\icheck\skins\flat\flat.png" />
+    <Content Include="Content\icheck\skins\flat\green%402x.png" />
+    <Content Include="Content\icheck\skins\flat\green.css" />
+    <Content Include="Content\icheck\skins\flat\green.png" />
+    <Content Include="Content\icheck\skins\flat\grey%402x.png" />
+    <Content Include="Content\icheck\skins\flat\grey.css" />
+    <Content Include="Content\icheck\skins\flat\grey.png" />
+    <Content Include="Content\icheck\skins\flat\orange%402x.png" />
+    <Content Include="Content\icheck\skins\flat\orange.css" />
+    <Content Include="Content\icheck\skins\flat\orange.png" />
+    <Content Include="Content\icheck\skins\flat\pink%402x.png" />
+    <Content Include="Content\icheck\skins\flat\pink.css" />
+    <Content Include="Content\icheck\skins\flat\pink.png" />
+    <Content Include="Content\icheck\skins\flat\purple%402x.png" />
+    <Content Include="Content\icheck\skins\flat\purple.css" />
+    <Content Include="Content\icheck\skins\flat\purple.png" />
+    <Content Include="Content\icheck\skins\flat\red%402x.png" />
+    <Content Include="Content\icheck\skins\flat\red.css" />
+    <Content Include="Content\icheck\skins\flat\red.png" />
+    <Content Include="Content\icheck\skins\flat\yellow%402x.png" />
+    <Content Include="Content\icheck\skins\flat\yellow.css" />
+    <Content Include="Content\icheck\skins\flat\yellow.png" />
+    <Content Include="Content\icheck\skins\flat\_all.css" />
+    <Content Include="Content\icheck\skins\futurico\futurico%402x.png" />
+    <Content Include="Content\icheck\skins\futurico\futurico.css" />
+    <Content Include="Content\icheck\skins\futurico\futurico.png" />
+    <Content Include="Content\icheck\skins\line\aero.css" />
+    <Content Include="Content\icheck\skins\line\blue.css" />
+    <Content Include="Content\icheck\skins\line\green.css" />
+    <Content Include="Content\icheck\skins\line\grey.css" />
+    <Content Include="Content\icheck\skins\line\line%402x.png" />
+    <Content Include="Content\icheck\skins\line\line.css" />
+    <Content Include="Content\icheck\skins\line\line.png" />
+    <Content Include="Content\icheck\skins\line\orange.css" />
+    <Content Include="Content\icheck\skins\line\pink.css" />
+    <Content Include="Content\icheck\skins\line\purple.css" />
+    <Content Include="Content\icheck\skins\line\red.css" />
+    <Content Include="Content\icheck\skins\line\yellow.css" />
+    <Content Include="Content\icheck\skins\line\_all.css" />
+    <Content Include="Content\icheck\skins\minimal\aero%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\aero.css" />
+    <Content Include="Content\icheck\skins\minimal\aero.png" />
+    <Content Include="Content\icheck\skins\minimal\blue%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\blue.css" />
+    <Content Include="Content\icheck\skins\minimal\blue.png" />
+    <Content Include="Content\icheck\skins\minimal\green%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\green.css" />
+    <Content Include="Content\icheck\skins\minimal\green.png" />
+    <Content Include="Content\icheck\skins\minimal\grey%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\grey.css" />
+    <Content Include="Content\icheck\skins\minimal\grey.png" />
+    <Content Include="Content\icheck\skins\minimal\minimal%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\minimal.css" />
+    <Content Include="Content\icheck\skins\minimal\minimal.png" />
+    <Content Include="Content\icheck\skins\minimal\orange%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\orange.css" />
+    <Content Include="Content\icheck\skins\minimal\orange.png" />
+    <Content Include="Content\icheck\skins\minimal\pink%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\pink.css" />
+    <Content Include="Content\icheck\skins\minimal\pink.png" />
+    <Content Include="Content\icheck\skins\minimal\purple%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\purple.css" />
+    <Content Include="Content\icheck\skins\minimal\purple.png" />
+    <Content Include="Content\icheck\skins\minimal\red%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\red.css" />
+    <Content Include="Content\icheck\skins\minimal\red.png" />
+    <Content Include="Content\icheck\skins\minimal\yellow%402x.png" />
+    <Content Include="Content\icheck\skins\minimal\yellow.css" />
+    <Content Include="Content\icheck\skins\minimal\yellow.png" />
+    <Content Include="Content\icheck\skins\minimal\_all.css" />
+    <Content Include="Content\icheck\skins\polaris\polaris%402x.png" />
+    <Content Include="Content\icheck\skins\polaris\polaris.css" />
+    <Content Include="Content\icheck\skins\polaris\polaris.png" />
+    <Content Include="Content\icheck\skins\square\aero%402x.png" />
+    <Content Include="Content\icheck\skins\square\aero.css" />
+    <Content Include="Content\icheck\skins\square\aero.png" />
+    <Content Include="Content\icheck\skins\square\blue%402x.png" />
+    <Content Include="Content\icheck\skins\square\blue.css" />
+    <Content Include="Content\icheck\skins\square\blue.png" />
+    <Content Include="Content\icheck\skins\square\green%402x.png" />
+    <Content Include="Content\icheck\skins\square\green.css" />
+    <Content Include="Content\icheck\skins\square\green.png" />
+    <Content Include="Content\icheck\skins\square\grey%402x.png" />
+    <Content Include="Content\icheck\skins\square\grey.css" />
+    <Content Include="Content\icheck\skins\square\grey.png" />
+    <Content Include="Content\icheck\skins\square\orange%402x.png" />
+    <Content Include="Content\icheck\skins\square\orange.css" />
+    <Content Include="Content\icheck\skins\square\orange.png" />
+    <Content Include="Content\icheck\skins\square\pink%402x.png" />
+    <Content Include="Content\icheck\skins\square\pink.css" />
+    <Content Include="Content\icheck\skins\square\pink.png" />
+    <Content Include="Content\icheck\skins\square\purple%402x.png" />
+    <Content Include="Content\icheck\skins\square\purple.css" />
+    <Content Include="Content\icheck\skins\square\purple.png" />
+    <Content Include="Content\icheck\skins\square\red%402x.png" />
+    <Content Include="Content\icheck\skins\square\red.css" />
+    <Content Include="Content\icheck\skins\square\red.png" />
+    <Content Include="Content\icheck\skins\square\square%402x.png" />
+    <Content Include="Content\icheck\skins\square\square.css" />
+    <Content Include="Content\icheck\skins\square\square.png" />
+    <Content Include="Content\icheck\skins\square\yellow%402x.png" />
+    <Content Include="Content\icheck\skins\square\yellow.css" />
+    <Content Include="Content\icheck\skins\square\yellow.png" />
+    <Content Include="Content\icheck\skins\square\_all.css" />
+    <Content Include="Content\images\add.png" />
+    <Content Include="Content\images\AddCamion.png" />
+    <Content Include="Content\images\addDinamic.png" />
+    <Content Include="Content\images\AddFilter.png" />
+    <Content Include="Content\images\AddFilterLaive.png" />
+    <Content Include="Content\images\AddUser.png" />
+    <Content Include="Content\images\arrows.png" />
+    <Content Include="Content\images\AsignarTurRam.png" />
+    <Content Include="Content\images\Assign.png" />
+    <Content Include="Content\images\bg.gif" />
+    <Content Include="Content\images\blue-lock-icon.png" />
+    <Content Include="Content\images\btn-sprite.gif" />
+    <Content Include="Content\images\calendar-disabled.png" />
+    <Content Include="Content\images\calendar.png" />
+    <Content Include="Content\images\CargarMercaderia.png" />
+    <Content Include="Content\images\cbs.png" />
+    <Content Include="Content\images\CerrarCamion.png" />
+    <Content Include="Content\images\ChangeCamion.png" />
+    <Content Include="Content\images\checkBoxDisable.gif" />
+    <Content Include="Content\images\checkbox_0.gif" />
+    <Content Include="Content\images\checkbox_1.gif" />
+    <Content Include="Content\images\checkbox_2.gif" />
+    <Content Include="Content\images\Correct.png" />
+    <Content Include="Content\images\DelCamion.png" />
+    <Content Include="Content\images\DeleteFilterLaive.png" />
+    <Content Include="Content\images\dividirLinea.png" />
+    <Content Include="Content\images\Download-icon.png" />
+    <Content Include="Content\images\EditFilterLaive.png" />
+    <Content Include="Content\images\ErrorImport.png" />
+    <Content Include="Content\images\correctImport.png" />
+    <Content Include="Content\images\ddn.png" />
+    <Content Include="Content\images\default-date.png" />
+    <Content Include="Content\images\delete.png" />
+    <Content Include="Content\images\disabled-date.png" />
+    <Content Include="Content\images\dn.png" />
+    <Content Include="Content\images\drop-yes.png" />
+    <Content Include="Content\images\edit.png" />
+    <Content Include="Content\images\elbow-end-minus-nl.png" />
+    <Content Include="Content\images\elbow-end-minus.png" />
+    <Content Include="Content\images\elbow-end-plus-nl.png" />
+    <Content Include="Content\images\elbow-end-plus.png" />
+    <Content Include="Content\images\elbow-end.png" />
+    <Content Include="Content\images\elbow-line.png" />
+    <Content Include="Content\images\elbow-minus-nl.png" />
+    <Content Include="Content\images\elbow-minus.png" />
+    <Content Include="Content\images\elbow-plus-nl.png" />
+    <Content Include="Content\images\elbow-plus.png" />
+    <Content Include="Content\images\elbow.png" />
+    <Content Include="Content\images\Error.png" />
+    <Content Include="Content\images\ExcelMetro.png" />
+    <Content Include="Content\images\Exit.png" />
+    <Content Include="Content\images\fhbg.gif" />
+    <Content Include="Content\images\filepdf.png" />
+    <Content Include="Content\images\Firma.png" />
+    <Content Include="Content\images\first.gif" />
+    <Content Include="Content\images\folder-open.png" />
+    <Content Include="Content\images\folder.png" />
+    <Content Include="Content\images\FolderFile.png" />
+    <Content Include="Content\images\GetXML.png" />
+    <Content Include="Content\images\green-ok.png" />
+    <Content Include="Content\images\GridAdd.png" />
+    <Content Include="Content\images\GridAddUser.png" />
+    <Content Include="Content\images\gridAlert.png" />
+    <Content Include="Content\images\GridDelete.png" />
+    <Content Include="Content\images\GridEdit.png" />
+    <Content Include="Content\images\header.png" />
+    <Content Include="Content\images\History.png" />
+    <Content Include="Content\images\hl.png" />
+    <Content Include="Content\images\hl2.png" />
+    <Content Include="Content\images\immybox-arrow.png" />
+    <Content Include="Content\images\import.png" />
+    <Content Include="Content\images\info.png" />
+    <Content Include="Content\images\last.gif" />
+    <Content Include="Content\images\leaf.png" />
+    <Content Include="Content\images\line.gif" />
+    <Content Include="Content\images\ListCheck.png" />
+    <Content Include="Content\images\load.gif" />
+    <Content Include="Content\images\loadComboBox.gif" />
+    <Content Include="Content\images\magnifier.png" />
+    <Content Include="Content\images\MenuBack.png" />
+    <Content Include="Content\images\MenuClearSearch.png" />
+    <Content Include="Content\images\MenuNew.png" />
+    <Content Include="Content\images\MenuRefresh.png" />
+    <Content Include="Content\images\MenuSave.png" />
+    <Content Include="Content\images\nav-down.png" />
+    <Content Include="Content\images\nav-up.png" />
+    <Content Include="Content\images\next.gif" />
+    <Content Include="Content\images\none.gif" />
+    <Content Include="Content\images\not-green-ok.png" />
+    <Content Include="Content\images\OpenCamion.png" />
+    <Content Include="Content\images\padlock.png" />
+    <Content Include="Content\images\prev.gif" />
+    <Content Include="Content\images\purrBottomNaranja.png" />
+    <Content Include="Content\images\purrBottomRojo.png" />
+    <Content Include="Content\images\purrBottomVerde.png" />
+    <Content Include="Content\images\purrClose.png" />
+    <Content Include="Content\images\purrTopNaranja.png" />
+    <Content Include="Content\images\purrTopRojo.png" />
+    <Content Include="Content\images\purrTopVerde.png" />
+    <Content Include="Content\images\question.png" />
+    <Content Include="Content\images\refresh.png" />
+    <Content Include="Content\images\RetirarMercaderia.png" />
+    <Content Include="Content\images\s.gif" />
+    <Content Include="Content\images\search.png" />
+    <Content Include="Content\images\selected-date.png" />
+    <Content Include="Content\images\SetHistory.png" />
+    <Content Include="Content\images\sprite.gif" />
+    <Content Include="Content\images\Template.png" />
+    <Content Include="Content\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\images\up.png" />
+    <Content Include="Content\images\UpdateFactura.png" />
+    <Content Include="Content\images\Upload-icon.png" />
+    <Content Include="Content\images\userImage.png" />
+    <Content Include="Content\images\uup.png" />
+    <Content Include="Content\images\wbg.gif" />
+    <Content Include="Content\immybox.css" />
+    <Content Include="Content\jquery.navgoco.css" />
+    <Content Include="Content\jquery.smallipop.css" />
+    <Content Include="Content\jquery.timeline.css" />
+    <Content Include="Content\laive-login.css" />
+    <Content Include="Content\metallic.css" />
+    <Content Include="Content\themes\base\images\header-separator.png" />
+    <Content Include="Content\themes\base\images\home-header-bkg.png" />
+    <Content Include="Content\themes\base\images\Laive.jpg" />
+    <Content Include="Content\themes\base\images\Laive180X150.png" />
+    <Content Include="Content\themes\base\images\navigate-down-icon.png" />
+    <Content Include="Content\themes\base\images\noise.png" />
+    <Content Include="Content\themes\base\images\session.png" />
+    <Content Include="Content\toggles-modern.css" />
+    <Content Include="Content\token-input-facebook.css" />
+    <Content Include="Content\tree.css" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\flexigrid.js" />
+    <Content Include="Content\fonts\BebasNeue-webfont.woff" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\fonts\BebasNeue-webfont.eot" />
+    <Content Include="Content\fonts\BebasNeue-webfont.ttf" />
+    <Content Include="packages.config" />
+    <Content Include="Content\icheck\.DS_Store" />
+    <Content Include="Areas\FI\Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\DI\Views\Web.config" />
+    <Content Include="Areas\CO\Views\Web.config" />
+    <Content Include="Scripts\jquery-ui\jquery-ui.min.css" />
+    <Content Include="Scripts\jquery-ui\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery-ui\jquery-ui.structure.min.css" />
+    <Content Include="Scripts\jquery-ui\jquery-ui.theme.min.css" />
+    <Content Include="Scripts\jquery.js" />
+    <Content Include="Scripts\jquery-migrate.js" />
+    <Content Include="Scripts\jquery-ui\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-icons_222222_256x240.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-icons_454545_256x240.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-icons_888888_256x240.png" />
+    <Content Include="Scripts\jquery-ui\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Scripts\jquery-ui\index.html" />
+    <Content Include="Scripts\jquery-ui\jquery-ui.css" />
+    <Content Include="Scripts\jquery-ui\jquery-ui.js" />
+    <Content Include="Scripts\jquery-ui\jquery-ui.structure.css" />
+    <Content Include="Scripts\jquery-ui\jquery-ui.theme.css" />
+    <Content Include="Scripts\jquery.layout.js" />
+    <Content Include="Scripts\jquery.smallipop.js" />
+    <Content Include="Scripts\jquery.timeline.js" />
+    <Content Include="Scripts\jquery.tokeninput.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\plugins\avgrund.js" />
+    <Content Include="Scripts\plugins\joinable.js" />
+    <Content Include="Scripts\plugins\jquery.base64.js" />
+    <Content Include="Scripts\plugins\jquery.fileDownload.js" />
+    <Content Include="Scripts\plugins\jquery.immybox.js" />
+    <Content Include="Scripts\plugins\jquery.inputmask.js" />
+    <Content Include="Scripts\plugins\jquery.inputmask.numeric.extensions.js" />
+    <Content Include="Scripts\plugins\jquery.inputmask.regex.extensions.js" />
+    <Content Include="Scripts\plugins\jquery.limitkeypress.js" />
+    <Content Include="Scripts\plugins\jquery.navgoco.js" />
+    <Content Include="Scripts\plugins\jquery.purr.js" />
+    <Content Include="Scripts\plugins\jquery.tools.min.js" />
+    <Content Include="Scripts\plugins\jquery.tree.js" />
+    <Content Include="Scripts\plugins\resizeable.js" />
+    <Content Include="Scripts\plugins\tableExport.js" />
+    <Content Include="Scripts\plugins\TweenMax.js" />
+    <Content Include="Scripts\plugins\zebra_datepicker.js" />
+    <Content Include="Scripts\plugins\zebra_datepicker.src.js" />
+    <Content Include="Scripts\samnet.general.script-1.0.1.js" />
+    <Content Include="Scripts\laive-login.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\DI\Views\Transportista\Index.cshtml" />
+    <Content Include="Areas\DI\Views\Unidad\Index.cshtml" />
+    <Content Include="Areas\DI\Views\Chofer\Index.cshtml" />
+    <Content Include="Areas\DI\Views\Almacen\Index.cshtml" />
+    <Content Include="Areas\DI\Views\Turno\Index.cshtml" />
+    <Content Include="Areas\DI\Views\TipoCarga\Index.cshtml" />
+    <Content Include="Areas\CO\Views\KardexMauc\Index.cshtml" />
+    <Content Include="Areas\CO\Views\KardexMauc\ImportarKardex.cshtml" />
+    <Content Include="Scripts\jquery-2.1.1.min.map" />
+    <Content Include="Areas\DI\Views\Ruta\Index.cshtml" />
+    <Content Include="Areas\DI\Views\Partner\Index.cshtml" />
+    <Content Include="Areas\FI\Views\ImportarCheque\Index.cshtml" />
+    <Content Include="Areas\FI\Views\ChequePendiVeri\Index.cshtml" />
+    <Content Include="Areas\FI\Views\AsignarCheque\Index.cshtml" />
+    <Content Include="Areas\FI\Views\ChequeVerificado\Index.cshtml" />
+    <Content Include="Areas\FI\Views\ChequePendiFirmar\Index.cshtml" />
+    <Content Include="Areas\FI\Views\GestionFirmante\Index.cshtml" />
+    <Content Include="Areas\FI\Views\ChequeFirmado\Index.cshtml" />
+    <Content Include="Areas\FI\Views\SecurityMAC\Index.cshtml" />
+    <Content Include="Areas\FI\Views\SecurityMAC\ValidateError.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Areas\BI\Models\" />
+    <Folder Include="Areas\BI\Views\Shared\" />
+    <Folder Include="Areas\CO\Models\" />
+    <Folder Include="Areas\CO\Views\Shared\" />
+    <Folder Include="Areas\DI\Views\Shared\" />
+    <Folder Include="Areas\FI\Models\" />
+    <Folder Include="Areas\FI\Views\Shared\" />
+    <Folder Include="FileTemp\" />
+    <Folder Include="Models\" />
+    <Folder Include="Ssis_Paquetes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Laive.BOMnt.Bi.v1\Laive.BOMnt.Bi.v1.csproj">
+      <Project>{d5de017a-0dde-47f6-9837-5e805ca63d75}</Project>
+      <Name>Laive.BOMnt.Bi.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOMnt.Co.v1\Laive.BOMnt.Co.v1.csproj">
+      <Project>{0e44f91b-3b73-4cd0-b9a9-8f4d5c8595ce}</Project>
+      <Name>Laive.BOMnt.Co.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOMnt.Di.v1\Laive.BOMnt.Di.v1.csproj">
+      <Project>{8cd74d2c-1ccb-4ff0-8cd3-b09b29fa5671}</Project>
+      <Name>Laive.BOMnt.Di.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOMnt.Fi.v1\Laive.BOMnt.Fi.v1.csproj">
+      <Project>{d0e3dc0e-be2b-49d9-b212-318100e2ed4d}</Project>
+      <Name>Laive.BOMnt.Fi.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOMnt.Mg.v1\Laive.BOMnt.Mg.v1.csproj">
+      <Project>{c58a6a4e-64e7-45e1-8b93-9c5ab06e7ff4}</Project>
+      <Name>Laive.BOMnt.Mg.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOMnt.Sy.v1\Laive.BOMnt.Sy.v1.csproj">
+      <Project>{f11bcd0c-94e6-403b-a6fa-7ce73e54c07c}</Project>
+      <Name>Laive.BOMnt.Sy.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOQry.Bi.v1\Laive.BOQry.Bi.v1.csproj">
+      <Project>{eb943d9e-2ebe-4a9d-b843-59586c93f570}</Project>
+      <Name>Laive.BOQry.Bi.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOQry.Co.v1\Laive.BOQry.Co.v1.csproj">
+      <Project>{f730b027-b4df-4e81-ab88-6a466908dcf8}</Project>
+      <Name>Laive.BOQry.Co.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOQry.Di.v1\Laive.BOQry.Di.v1.csproj">
+      <Project>{abf0fc1c-d66f-45ec-a206-806f843b4590}</Project>
+      <Name>Laive.BOQry.Di.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOQry.Fi.v1\Laive.BOQry.Fi.v1.csproj">
+      <Project>{8337da94-9b07-443e-98e8-1509615ddd57}</Project>
+      <Name>Laive.BOQry.Fi.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOQry.Mg.v1\Laive.BOQry.Mg.v1.csproj">
+      <Project>{4ea60b57-c288-4da0-ac86-77a739451964}</Project>
+      <Name>Laive.BOQry.Mg.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BOQry.Sy\Laive.BOQry.Sy.v1.csproj">
+      <Project>{c1d520a9-0cd5-414b-bdc7-76f6beb2f614}</Project>
+      <Name>Laive.BOQry.Sy.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.BORpt.Di.v1\Laive.BORpt.Di.v1.csproj">
+      <Project>{f9907cad-675b-4baa-921f-8dbb8b88984e}</Project>
+      <Name>Laive.BORpt.Di.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Core.Common.v1\Laive.Core.Common.v1.csproj">
+      <Project>{78f53fbf-b2b7-4287-980c-f54cb767619c}</Project>
+      <Name>Laive.Core.Common.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Core.Data.v1\Laive.Core.Data.v1.csproj">
+      <Project>{966dcfd4-b5ba-49a6-9b87-1ff466bd5d5e}</Project>
+      <Name>Laive.Core.Data.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Core.Entity.v1\Laive.Core.Entity.v1.csproj">
+      <Project>{3325a152-ee32-4f91-82fe-8db540067650}</Project>
+      <Name>Laive.Core.Entity.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Entity.Bi.v1\Laive.Entity.Bi.v1.csproj">
+      <Project>{7b7b0cb2-13eb-48d8-816b-c3f0b15db50e}</Project>
+      <Name>Laive.Entity.Bi.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Entity.Co.v1\Laive.Entity.Co.v1.csproj">
+      <Project>{e5986432-6879-4521-af3a-422628e9550a}</Project>
+      <Name>Laive.Entity.Co.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Entity.Di.v1\Laive.Entity.Di.v1.csproj">
+      <Project>{67ced631-7af2-4024-8d63-a96d8659c1f8}</Project>
+      <Name>Laive.Entity.Di.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Entity.Fi.v1\Laive.Entity.Fi.v1.csproj">
+      <Project>{30223382-0d8c-4650-ab59-b09b19a452a4}</Project>
+      <Name>Laive.Entity.Fi.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Entity.Mg.v1\Laive.Entity.Mg.v1.csproj">
+      <Project>{5fcf5a3e-6204-47e7-b849-a57113947457}</Project>
+      <Name>Laive.Entity.Mg.v1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Laive.Entity.Sy.v1\Laive.Entity.Sy.v1.csproj">
+      <Project>{1a214798-925a-4e91-b331-0d5b762434b4}</Project>
+      <Name>Laive.Entity.Sy.v1</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Menu\MainMenu.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\TablaGeneral\EditModel.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\TablaGeneral\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Usuarios\Index.cshtml" />
+    <Content Include="Views\Usuarios\NuevoUsuario.cshtml" />
+    <Content Include="Views\Usuarios\EditModel.cshtml" />
+    <Content Include="Views\LoginDebug\Index.cshtml" />
+    <Content Include="Areas\DI\Views\PlanDespacho\Index.cshtml" />
+    <Content Include="Areas\DI\Views\PlanDespacho\GetPlanDespacho.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\DI_CargaUnidad_Rpt01.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>DI_CargaUnidad_Rpt01.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\fonts\FontAwesome.otf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\fonts\elusive.eot" />
+    <Content Include="Content\fonts\elusive.ttf" />
+    <Content Include="Content\fonts\elusive.woff" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\DI\Views\ShelfLifeAdicional\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\DI\Views\AsignacionPedido\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\DI\Views\AsignacionPedido\GetAsignacionPedido.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\DI\Views\ConsultaProgramacion\GetConsultaProgramacion.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Areas\DI\Views\ConsultaProgramacion\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\entypo\font\entypo.eot" />
+    <Content Include="Content\entypo\font\entypo.ttf" />
+    <Content Include="Content\entypo\font\entypo.woff" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Areas\FI\Views\ImportarDetraccion\Index.cshtml" />
+    <Content Include="Areas\FI\Views\GenerarArchivo\Index.cshtml" />
+    <Content Include="Areas\BI\Views\Web.config" />
+    <Content Include="Areas\BI\Views\SolidoLeche\Index.cshtml" />
+    <Content Include="Areas\DI\Views\Box\Index.cshtml" />
+    <Content Include="Areas\FI\Views\ImprimirCheque\Index.cshtml" />
+    <Content Include="Areas\FI\Views\FirmaManual\Index.cshtml" />
+    <Content Include="Areas\FI\Views\ChequeExcluido\Index.cshtml" />
+    <Content Include="Areas\BI\Views\CanalComercial\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\Laive.pubxml" />
+    <Content Include="Views\LoginLaive\Login.cshtml" />
+    <Content Include="Views\ParametrosSistema\Index.cshtml" />
+    <Content Include="Views\Roles\Index.cshtml" />
+    <Content Include="Views\Roles\GetEditModel.cshtml" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>53292</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:2540/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

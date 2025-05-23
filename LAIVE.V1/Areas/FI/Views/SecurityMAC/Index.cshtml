@@ -1,0 +1,54 @@
+﻿@using Laive.Core.Common
+<div class="divPreloader">
+   <div class="divPreloaderContent">
+      <center>
+         <img alt="|" src="~/Content/animation/Preloader.gif" />
+         <br />
+         Comprobando Permisos...
+      </center>
+   </div>
+</div>
+
+<style type="text/css">
+   .divPreloader {
+      position: inherit;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+   }
+   .divPreloaderContent {
+      position: relative;
+      top: 40%;
+      font-size: 12px;
+   }
+</style>
+
+<script type="text/javascript">
+
+   $(document).ready(function () {
+
+      $.ajax({
+         type: "GET",
+         contentType: "application/json; charset=utf-8",
+         url:'@Url.Action("ValidateMAC", "SecurityMAC", new { area = "FI" })',
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               setTimeout(function () {
+                  $("#idContentPageAjax").html(result);
+               }, 1200);
+            }
+         },
+         error: function (xhr, status, error) {
+            if (error.toString() == "")
+               error = xhr.statusText;
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+   });
+
+</script>

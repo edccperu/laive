@@ -1,0 +1,55 @@
+﻿   <div id="fechaDespacho">
+        <div class="bodybuscador">
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetEditor" style=" height: 30px;">
+                  <input id="txtFecha" type="text" class="text-box" style="width: 208px;" value="@DateTime.Now.ToString("dd/MM/yyyy")" /> 
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%; height:10px;">
+            </div>
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetButton" style=" text-align:right;">
+                    <input id="btnAceptar" type="button" value="Aceptar" class="btnClassButton" style="width:100px;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+       $(document).ready(function () {  
+            $('#txtFecha').Zebra_DatePicker({format:'d/m/Y'});
+
+             $("#btnAceptar").click(function() {
+                var validate = true;
+                    validate = validate && SamControlEsValido("txtFecha", "Se Requiere este dato.");
+                    if (!validate)
+                        return false;
+
+                    samlinkajaxData('@Url.Action("GetConsultaProgramacion", "ConsultaProgramacion", new { area = "DI" })', { "FechaDespacho": document.getElementById("txtFecha").value }, 'idContentPageAjax', true, true);
+                    $("#fechaDespacho").dialog("close");
+                    $("#fechaDespacho").dialog('destroy').remove();
+            });
+
+             $("#fechaDespacho").dialog({
+                    appendTo: "#idContentPageAjax",
+                    autoOpen: true,
+                    modal: true,
+                    draggable: false,
+                    resizable: false,
+                    width: 240,
+                    height : 130,
+                    title: "Ingrese la Fecha a Trabajar",
+                    show: {
+                        effect: "drop",
+                        duration: 250
+                    },
+                    hide: {
+                        effect: "drop",
+                        duration: 250,
+                        direction: "right"
+                    }
+            });
+
+       });
+
+
+    </script>

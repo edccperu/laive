@@ -1,0 +1,300 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Pago Detracciones";
+    Layout = null;
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;
+    }
+</style>
+
+
+            <table cellspacing="0" class="searchMauc">
+                <tr>
+                    <td style="width:58px;">
+                        Ejercicio
+                    </td>
+                    <td style="width:38px;">
+                        <input type="text" class="text-box" id="txtejerciciolt" style=" width:80px" onkeypress="return justNumbers(event);" />
+                    </td>
+                    <td style="width:20px;"></td>
+                    <td>
+                        <a class="urlButtom" href="javascript:void(0)" onclick="fn_FilterLotePago();">
+                            <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Buscar Por Ejercicio" />
+                            <div class="ContentPageMenuPanelText">Buscar</div>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+ 
+<table cellspacing="0" class="contentMauc">
+    <tr>
+        <td colspan="7">
+            <table id="grdLote"></table>
+            @*<div id="divtbKardex" class="tab_container">
+                    <div id="PanelKardex1" class="tab_content">
+                        <table id="grdCostos"></table>
+                    </div>
+                </div>*@
+        </td>
+    </tr>
+</table>
+
+
+<div id="PopupProcesar">
+    <div id="lblheaderPopup" class="headerGroup">
+        Datos Ingreso
+    </div>
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Ejercicio
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input type="text" class="text-box" id="txtEjerciciop" style=" width:100px" />
+        </div>
+    </div>
+
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Periodo
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;" >
+            <select id="txtPeriodop" class="text-box" style=" width:100px">
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+
+            @*<input type="text" class="text-box" id="txtPeriodop" style=" width:80px" />*@
+        </div>
+    </div>
+
+
+    <table style=" width:100%;">
+        <tr>
+            <td style=" width:100px;">
+                <input id="btnAceptaProcesar" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style=" width:100px;">
+                <input id="btnCancelarProcesar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script type="text/javascript">
+    var _popupEntityState = SamGetStateUnchanged();
+    var fecha = new Date();
+    var _periodo = fecha.getFullYear();
+
+    var _ejercicioLote = '';
+
+
+    
+
+    var heightGrid = getHeightForGrid(245);
+    var varColumn = [
+                         { display: '', name: 'IdLoteDetraccion', hide: true },
+                         { display: '', name: 'EjercicioLote', hide: true },
+                         { display: 'Lote', name: 'NumeroLote', width: 30, sortable: true },
+                         { display: '<center>Importe</center>', name: 'ImporteLote', width: 70, align: 'right' },
+                         { display: '<center>Fecha</br>Lote</center>', name: 'FechaLote', width: 60, align: 'center' },
+                         { display: '<center>Pago</br>5to. Dia</center>', name: 'PagoQuintoDia', width: 35 },
+                         { display: '<center>Fecha</br>Constancia</center>', name: 'FechaConstancia', width: 57 },
+                         { display: '<center>Importe</br>Sunat</center>', name: 'ImporteDeposito', width: 80, align: 'right' },
+                         { display: '<center>Forma</br>Pago</center>', name: 'FormaPago', width: 40, align: 'center' },
+                         { display: '<center>Transaccion</br>Banco</center>', name: 'TraBaanBco', width: 67 },
+                         { display: '<center>Lote</br>Contable</center>', name: 'LoteContable', width: 50, align: 'center' },
+                         { display: '<center>Nro</br>Finaliz.</center>', name: 'NroFinalizacion', width: 40 },
+                         { display: 'Archivo Depositivo', name: 'ArchivoDeposito', width: 100 },
+                         { display: '<center>Constancia</br>Sunat</center>', name: 'ConstanciaSunat', width: 70 },
+                         { display: '<center>Operacion</br>Deposito</center>', name: 'OperacionDeposito', width: 80 },
+                         { display: '<center>Cantidad</br>Deposito</center>', name: 'CantidadDeposito', width: 45 },
+                         { display: '...', name: 'ArchivoDescarga', width: 30, align: 'center', hide: true },
+                         { display: 'E', name: 'EstadoLote', width: 20, align: 'center' }
+    ];
+
+    $("#txtejerciciolt").inputmask({ mask: '9{4}', greedy: false });
+
+    $(document).ready(function () {
+        debugger;
+        /* iniciando grid grdCostos*/
+        $('#grdLote').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetBandeja", "ProcesarDetraccion", new { area = "FI" })',
+            dataType: 'json',
+            colModel: varColumn,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: heightGrid + 90,
+            resizable: false,
+            buttons: [
+                       { name: 'Procesar Lote Pago', bclass: 'Concilacion', onpress: fn_ProcesarLotePago }
+            ],
+            preProcess: fn_PreCreation_grdLote
+        });
+    });
+
+    $("#PopupProcesar").dialog({
+        appendTo: "#idContentPageAjax",
+        autoOpen: true,
+        modal: true,
+        draggable: true,
+        resizable: false,
+        width: 350,
+        title: "Procesar Lote Pago",
+        show: {
+            effect: "drop",
+            duration: 250
+        },
+        hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+        }
+    });
+
+    $("#btnAceptaProcesar").click(function () {
+        
+        debugger;
+        var validate = true;
+        validate = validate && SamControlEsValido("txtEjerciciop", "Se Requiere este dato.");
+        //validate = validate && SamControlEsValido("txtPeriodop", "Se Requiere este dato.");
+
+    
+        if (!validate)
+            return false;
+
+        var _vardata = {
+            vEjercicio : document.getElementById("txtEjerciciop").value,
+            vPeriodo : parseInt(document.getElementById("txtPeriodop").value),
+        };
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateConcilacion", "ProcesarDetraccion", new { area = "FI" })',
+            data: _vardata,
+            dataType: 'json',
+            success: function (response) {
+                debugger;
+                MsgAlert(@MsgAlertTypeConstant.SUCCESS,'El Proceso se Ejecuto Correctamente.');
+                $('#PopupProcesar').dialog('close');
+                //$('#grdCostos').flexOptions({query: '' }).flexReload();
+                $('#grdLote').flexReload();
+            },
+            error: function (xhr, status, error) {
+                debugger;
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"Error al Procesar la Informacion");
+            }
+        });
+    });
+
+    $("#btnCancelarProcesar").click(function () {
+        $('#PopupProcesar').dialog('close');
+    });
+
+
+    function fn_ProcesarLotePago(valtr) {
+
+        $("#txtEjerciciop").inputmask({ mask: '9{4}', greedy: false });
+       // $("#txtPeriodop").inputmask({ mask: '9{2}', greedy: false });
+
+        $('#PopupProcesar').dialog('open');
+    }
+
+
+    function fn_PreCreation_grdLote(JsonData) {
+        if (JsonData.rows == null)
+            return JsonData;
+        JsonData.rows.forEach(function (item) {
+            switch(item.cell[17])
+            {
+                case '1':
+                    item.cell[17] = '<div class="bgPr" title="PAGO CARGADO"><div class="ValPrA" style="width:100%;">1</div></div>';
+                    break;
+                case '2':
+                    item.cell[17] = '<div class="bgPr" title="PAGO ACTUALIZADO"><div class="ValPrA" style="width:100%;">2</div></div>';
+                    break;
+                case '3':
+                    item.cell[17] = '<div class="bgPr" title="PAGO GENERADO SUNAT"><div class="ValPrA" style="width:100%;">3</div></div>';
+                    break;
+                case '4':
+                    item.cell[17] = '<div class="bgPr" title="CONCILIADO"><div class="ValPrAZUL" style="width:100%;">4</div></div>';
+                    break;
+                case '5':
+                    item.cell[17] = '<div class="bgPr" title="NO CONCILIADO"><div class="ValPrROJO" style="width:100%;">5</div></div>';
+                    break;
+
+            }
+        });
+        return JsonData;
+    };
+
+
+    function fn_FilterLotePago()
+    {
+
+
+        var vardata = {
+            Ejercicio : document.getElementById("txtejerciciolt").value
+        };
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("GetBandejaEjercicio", "ProcesarDetraccion", new { area = "FI" })',
+            data: vardata,
+            dataType: "json",
+            success: function (result) {
+
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    debugger;
+                    $("#grdLote").flexAddData(result);
+                    // $('#GridBandeja').flexReload();
+                    //$('#PopupFiltrar').dialog('close');
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+    }
+
+</script>
+
+
+
+
+

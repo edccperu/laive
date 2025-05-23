@@ -1,0 +1,365 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Importar Kardex";
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;
+    }
+</style>
+<table cellspacing="0" class="searchMauc">
+    <tr>
+        <td style="width:28px;">
+            Año
+        </td>
+        <td style="width:90px;">
+            <input type="text" class="text-box" id="txtPeriodo" style=" width:80px" />
+        </td>
+        <td style="width:28px;">
+            Mes
+        </td>
+        <td style="width:70px;">
+            <input type="text" class="text-box" id="txtMes" style=" width:60px" />
+        </td>
+        <td style="width:50px;">
+            Articulo
+        </td>
+        <td style="width:105px;">
+            <input type="text" class="text-box" id="txtArticulo" style=" width:100px;text-transform: uppercase;" maxlength="9" size="9" />
+        </td>
+        <td style="width:20px;"></td>
+        <td>
+            <a class="urlButtom" href="javascript:void(0)" onclick="searchKardexMauc();">
+                <img src="~/Content/images/add.png" alt="*" title="Agregar Articulo" />
+                <div class="ContentPageMenuPanelText">Agregar Articulo</div>
+            </a>
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" class="contentMauc">
+   <tr>
+      <td colspan="7">
+         <ul id="tbKardex" class="tabs">
+            <li class="active" rel="PanelKardex1">Lista a Importar</li>
+            <li rel="PanelKardex2">Articulos Importados</li>
+         </ul>
+         <div id="divtbKardex" class="tab_container">
+            <div id="PanelKardex1" class="tab_content">
+               <table id="grdImportKardex"></table>
+            </div>
+            <div id="PanelKardex2" class="tab_content">
+               <table id="grdArticulosImportados"></table>
+            </div>
+         </div>
+      </td>
+   </tr>
+</table>
+
+<script>
+    /* Variables Globales */
+
+   var _data = { page: 0, total: 0, rows: [] };
+   var _dataArtImp = { page: 0, total: 0, rows: [] };
+
+    /* Construir text de tipo decimal*/
+
+    $("#txtPeriodo").inputmask({ mask: '9{4}', greedy: false });
+    $("#txtMes").inputmask({ mask: '9{2}', greedy: false });
+
+    /* Redimencionar Tabs */
+    function functionOnResize() {
+       $('#PanelKardex1').width(0);
+       $('#PanelKardex2').width(0);
+       var widthGrid = $('#divtbKardex').width();
+       $('#PanelKardex1').width(widthGrid);
+       $('#PanelKardex2').width(widthGrid);
+    }
+
+    /* Funcion para buscar el kardex de un Año y Mes determinado */
+    function searchKardexMauc() {
+        var validate = true;
+        validate = validate && SamControlEsValido("txtPeriodo", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtMes", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtArticulo", "Se Requiere este dato.");
+
+        if (!validate)
+            return false;
+
+        if (document.getElementById("txtArticulo").value.length < 9)
+        { MsgAlert(@MsgAlertTypeConstant.INFORMATION,"El Codigo de Articulo debe tener 9 caracteres."); return false; }
+
+        _data.rows.forEach(function (item) {
+           if (item.cell[0] == document.getElementById("txtPeriodo").value && item.cell[1] == ('0' + document.getElementById("txtMes").value.replace("_","")).substr(-2) && item.cell[2] == document.getElementById("txtArticulo").value.toUpperCase())
+            {
+                MsgAlert(@MsgAlertTypeConstant.INFORMATION,"El articulo ya se encuentra en la Lista de Importación.");
+                validate = false;
+            }
+        });
+
+        if (!validate)
+            return false;
+
+
+        _data.rows.push(
+                            {
+                                id: _data.rows.length + 1,
+                                cell: [
+                                        document.getElementById("txtPeriodo").value,
+                                        ('0' + document.getElementById("txtMes").value.replace("_","")).substr(-2),
+                                        document.getElementById("txtArticulo").value.toUpperCase(),
+                                        "",
+                                        "PENDIENTE"
+                                      ]
+                            }
+                        )
+        _data.total = _data.rows.length;
+
+        $("#grdImportKardex").flexAddData(_data);
+
+    }
+
+    /*Funcion mostrar popup modificar datos.*/
+
+    function fn_ImportarArticulo() {
+       if (_data.total == 0){
+          MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Agregue al menos un Articulo para Importar");
+          return false;
+       }
+
+        _data.rows.forEach(function (item) {
+            
+            var DataImport = {
+                Anio : item.cell[0],
+                Mes: item.cell[1],
+                CodigoArticulo: item.cell[2]
+            }
+            
+            item.cell[4] = "<img alt='|' src='../../Content/animation/loadingPanel9.GIF'/>Procesando...";
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ImportarKardexBaan", "KardexMauc", new { area = "CO"})',
+                data: DataImport,
+                dataType: "html",
+                success: function (result) {
+                    if (IsLoginRedirect(result))
+                        window.location.href = "/Login";
+                    else {
+                       setSuccessProcess(_data,item.id, result);
+                       $('#grdArticulosImportados').flexReload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                   setErrorProcess(_data,item.id);
+                }
+            });
+
+        });
+
+        _data.total = _data.rows.length;
+
+        $("#grdImportKardex").flexAddData(_data);
+    }
+
+    function fn_ImportarKardexDCA() {
+       var rows = $('#grdArticulosImportados').selectedRows();
+       var message = "";
+       if (rows.length == 0) {
+          MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Articulo");
+          return false;
+       }
+
+       if (rows[0][9].Value == 2 || rows[0][7].Value == 2)
+       {
+          MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Ya se importo el Kardex DCA para este Articulo.");
+          return false;
+       }
+
+       var DataImport = {
+          Anio: rows[0][0].Value,
+          Mes: rows[0][1].Value,
+          CodigoArticulo: rows[0][2].Value
+       }
+
+       _dataArtImp.rows.forEach(function (item) {
+          if (rows[0][0].Value == item.cell[0] && rows[0][1].Value == item.cell[1] && rows[0][2].Value == item.cell[2])
+             item.cell[6] = "<img alt='|' src='../../Content/animation/loadingPanel9.GIF'/>Procesando...";
+       });
+
+       $("#grdArticulosImportados").flexAddData(_dataArtImp);
+
+       $.ajax({
+          type: "POST",
+          url:'@Url.Action("ImportarKardexDCA", "KardexMauc", new { area = "CO"})',
+          data: DataImport,
+          dataType: "html",
+          success: function (result) {
+             if (IsLoginRedirect(result))
+                window.location.href = "/Login";
+             else {
+                message = JSON.parse(result);
+
+                _dataArtImp.rows.forEach(function (item) {
+                   if (rows[0][0].Value == item.cell[0] && rows[0][1].Value == item.cell[1] && rows[0][2].Value == item.cell[2]) {
+                      item.cell[6] = message.Status == "success" ? "<div class='ValPrV' style='width:100%'>" + message.Message + "</div>" : "<div class='ValPrR' style='width:100%'>" + message.Message + "</div>";
+                      item.cell[7] = 2;
+                      item.cell[8] = 'CERRADO';
+                   }
+                });
+
+                $("#grdArticulosImportados").flexAddData(_dataArtImp);
+
+             }
+          },
+          error: function (xhr, status, error) {
+             _dataArtImp.rows.forEach(function (item) {
+                if (rows[0][0].Value == item.cell[0] && rows[0][1].Value == item.cell[1] && rows[0][2].Value == item.cell[2])
+                   item.cell[6] = "<div class='ValPrR' style='width:100%'>ERROR AL IMPORTAR DATOS</div>";
+             });
+
+             $("#grdArticulosImportados").flexAddData(_dataArtImp);
+
+          }
+       });
+
+    }
+   
+    function setSuccessProcess(data,id,message) {
+        message = JSON.parse(message);
+        data.rows.forEach(function (item) {
+            if(id == item.id)
+                item.cell[4] = message.Status == "success" ? "<div class='ValPrV' style='width:100%'>" + message.Message + "</div>" : "<div class='ValPrR' style='width:100%'>" + message.Message + "</div>";
+        });
+
+        data.total = data.rows.length;
+
+        $("#grdImportKardex").flexAddData(data);
+    }
+
+    function setErrorProcess(data,id) {
+
+       data.rows.forEach(function (item) {
+            if (id == item.id)
+                item.cell[4] = "<div class='ValPrR' style='width:100%'>ERROR AL IMPORTAR DATOS</div>";
+        });
+
+       data.total = data.rows.length;
+
+       $("#grdImportKardex").flexAddData(data);
+    }
+
+
+
+    function fn_EliminarFila() {
+        var rows = $('#grdImportKardex').selectedRows();
+        if (rows.length == 0) {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+            return false;
+        }
+
+        var deleteIndex;
+
+        _data.rows.forEach(function (item) {
+            if (item.cell[0] == rows[0][0].Value && item.cell[1] == rows[0][1].Value && item.cell[2] == rows[0][2].Value) {
+                deleteIndex = item.id;
+            }
+        });
+
+        _data.rows = _data.rows.filter(function (val) {
+            return val.id != deleteIndex;
+        });
+
+        _data.total = _data.rows.length;
+
+        $("#grdImportKardex").flexAddData(_data);
+    }
+
+    function fn_PreCreation_GrdArticulosImportados(JsonData) {
+       _dataArtImp = JsonData;
+       return JsonData;
+    };
+
+    /* Iniciando obetos js */
+    $(document).ready(function () {
+       $('#divtbKardex').height(getHeightForGrid(75));
+       CreateTab("tbKardex", "divtbKardex");
+       var _heightGrid = getHeightForGrid(160);
+       var widthGrid = $('#divtbKardex').width() - 3;
+       $('#PanelKardex1').width(widthGrid);
+       $('#PanelKardex2').width(widthGrid);
+ 
+       
+        /* iniciando grid grdKdxActual*/
+        $('#grdImportKardex').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetDataGrdKdxActual", "KardexMauc", new { area = "CO"})',
+            dataType: 'json',
+            colModel: [
+                        { display: 'Año', name: 'Anio', width: 40, sortable: true },
+                        { display: 'Mes', name: 'Mes', width: 30, sortable: true },
+                        { display: 'Codigo Articulo', name: 'codigoArticulo', width: 120},
+                        { display: 'Descripción Articulo', name: 'glosaArticulo', width: 350,hide:true},
+                        { display: 'Estado', name: 'Estado', width: 250, sortable: true, align: 'center' }
+            ],
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: _heightGrid,
+            resizable: false,
+            buttons: [
+                       { name: 'Eliminar de la Lista', bclass: 'delete', onpress: fn_EliminarFila },
+                       { name: 'Importar Datos', bclass: 'Import', onpress: fn_ImportarArticulo }
+            ]
+        });
+
+       /* iniciando grid grdKdxActual*/
+        $('#grdArticulosImportados').flexigrid({
+           onError: function (jqXHR, textStatus, errorThrown) {
+              MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+           },
+           url:'@Url.Action("GetDataGrdArticulosImportados", "KardexMauc", new { area = "CO"})',
+           dataType: 'json',
+           colModel: [
+                       { display: 'Año', name: 'Anio', width: 40, sortable: true },
+                       { display: 'Mes', name: 'Mes', width: 30, sortable: true },
+                       { display: 'Codigo Articulo', name: 'codigoArticulo', width: 120 },
+                       { display: '', name: 'IdEstadoKardexAuto', hide: true },
+                       { display: 'Kardex Auto', name: 'DsEstadoKardexAuto', width: 100, sortable: true, align: 'center' },
+                       { display: '', name: 'IdEstadoKardexAuto',hide: true },
+                       { display: 'Kardex DCA', name: 'DsEstadoKardexAuto', width: 100, sortable: true, align: 'center' },
+                       { display: '', name: 'Estado',hide: true },
+                       { display: 'Estado', name: 'Estado', width: 50, sortable: true, align: 'center' },
+                       { display: '', name: 'Tipo', hide: true }
+           ],
+           singleSelect: true,
+           showTableToggleBtn: true,
+           showToggleBtn: false,
+           height: _heightGrid,
+           resizable: false,
+           buttons: [
+                      { name: 'Importar Kardex DCA', bclass: 'Import', onpress: fn_ImportarKardexDCA }
+           ],
+           preProcess: fn_PreCreation_GrdArticulosImportados
+        });
+
+
+        /*Ocultar boton refrescar*/
+        $(".pReload").hide();
+    });
+</script>

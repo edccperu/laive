@@ -1,0 +1,134 @@
+﻿@using Laive.Core.Common
+@{
+   ViewBag.Title = "Pago Detracciones";
+}
+
+<div id="ContentPageDetails" class="ContentPageDetails">
+    <table id="GridBandeja"></table>
+</div>
+
+<div id="PopupGenerarArchivo">
+    <div class="bodybuscador">
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                TraBaanBco
+            </div>
+            <div class="samnetEditor">
+                <input class="text-box" id="txttrabaanbco" type="text" style="width:140px" maxlength="4" />
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                NroBaanBco
+            </div>
+            <div class="samnetEditor">
+                <input class="text-box" id="txtnrobaanbco" type="text" style="width:140px" maxlength="5" />
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                Lote Contable
+            </div>
+            <div class="samnetEditor">
+                <input class="text-box" id="txtlotecontable" type="text" style="width:140px" maxlength="5" />
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                Nro. Finalizacion
+            </div>
+            <div class="samnetEditor">
+                <input class="text-box" id="txtnrofinalizacion" type="text" style="width:140px" maxlength="5" />
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%; height:10px;">
+        </div>
+        <div style=" width:100%;">
+            <table style=" width:100%;">
+
+                <tr>
+                    <td style="width:50%; text-align:left;">
+                        <a class="urlButtom" href="javascript:void(0)" onclick="fn_GenerarArchivoSunat();">
+                            <img src="~/Content/images/import.png" alt="*" title="Generar Documento Sunat" />
+                            <div class="ContentPageMenuPanelText">Generar</div>
+                        </a>
+                    </td>
+                    <td style="width:50%;text-align:right;">
+                        <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#PopupGenerarArchivo').dialog('close');" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var _popupEntityState = SamGetStateUnchanged();
+   $(document).ready(function () {
+       showTitleSystem('@ViewBag.Title - @ViewBag.fechaDespacho');
+
+       var fecha = new Date();
+       var heightGrid = getHeightForGrid(100);
+       var varColumn = [
+                        { display: '', name: 'IdLoteDetraccion', hide: true },
+                        { display: '', name: 'EjercicioLote', hide: true },
+                        { display: 'Lote', name: 'NumeroLote', width: 30, sortable: true },
+                        { display: '<center>Importe</center>', name: 'ImporteLote', width: 70, align: 'right' },
+                        { display: '<center>Pago</br>5to. Dia</center>', name: 'PagoQuintoDia', width: 35 },
+                        { display: '<center>Fecha</br>Deposito</center>', name: 'FechaDeposito', width: 57 },
+                        { display: '<center>Forma</br>Pago</center>', name: 'FormaPago', width: 40, align: 'center' },
+                        { display: '<center>Importe</br>Sunat</center>', name: 'ImporteDeposito', width: 80, align: 'right' },
+                        { display: '<center>Transaccion</br>Banco</center>', name: 'TraBaanBco', width: 67 },
+                        { display: 'Fecha Lote', name: 'FechaLote', width: 65 },
+                        { display: 'Lote Contable', name: 'LoteContable', width: 70 },
+                        { display: 'Nro Finaliz.', name: 'NroFinalizacion', width: 50 },
+                        { display: 'Archivo Depositivo', name: 'ArchivoDeposito', width: 100 },
+                        { display: '<center>Constancia</br>Sunat</center>', name: 'ConstanciaSunat', width: 70 },
+                        { display: '<center>Operacion</br>Deposito</center>', name: 'OperacionDeposito', width: 80 },
+                        { display: '<center>Cantidad</br>Deposito</center>', name: 'CantidadDeposito', width: 45 },
+                        { display: 'Descarga', name: 'ArchivoDescarga', width: 50, align: 'center' }
+       ];
+
+       $('#GridBandeja').flexigrid({
+           onError: function (jqXHR, textStatus, errorThrown) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+           },
+           url:'@Url.Action("GetBandeja", "ImportarDetraccion", new { area = "FI" })',
+           dataType: 'json',
+           colModel: varColumn,
+           singleSelect: true,
+           showTableToggleBtn: true,
+           showToggleBtn: false,
+           resizable: false,
+           height: 300,
+           buttons: [
+                       { name: 'Generar Archivo Sunat', bclass: 'edit', onpress: fn_OpenGenerarArchivo }
+           ]
+       });
+
+
+
+      $("#PopupGenerarArchivo").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: true,
+         modal: true,
+         draggable: false,
+         resizable: false,
+         width: 320,
+         height: 280,
+         title: "Generar Archivo",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+   });
+
+
+</script>

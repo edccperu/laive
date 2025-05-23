@@ -1,0 +1,297 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Kardex Corrección MAUC";
+}
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;
+    }
+</style>
+
+<table cellspacing="0" class="searchMauc">
+    <tr>
+        <td style="width:28px;">
+            Año
+        </td>
+        <td style="width:90px;">
+            <input type="text" class="text-box" id="txtPeriodo" style=" width:80px" />
+        </td>
+        <td style="width:28px;">
+            Mes
+        </td>
+        <td style="width:70px;">
+            <input type="text" class="text-box" id="txtMes" style=" width:60px" />
+        </td>
+        
+       
+        <td></td>
+        <td style="width:85px;">
+            <a class="urlButtom" href="javascript:void(0)" onclick="fn_searchCostosUnitarios();">
+                <img src="../../Content/images/AddFilter.png" alt="*" title="Agregar Filtro" />
+                <div class="ContentPageMenuPanelText">Buscar</div>
+            </a>
+        </td>
+    </tr>
+</table>
+<table cellspacing="0" class="contentMauc">
+    <tr>
+        <td colspan="7">
+            <table id="grdCostos"></table>
+            @*<div id="divtbKardex" class="tab_container">
+                <div id="PanelKardex1" class="tab_content">
+                    <table id="grdCostos"></table>
+                </div>
+            </div>*@
+        </td>
+    </tr>
+</table>
+
+<div id="PopupUpload">
+    <div id="lblheaderPopup" class="headerGroup">
+        Datos Ingreso
+    </div>
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Periodo
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input type="text" class="text-box" id="txtPeriodop" style=" width:80px" />
+        </div>
+    </div>
+
+    <div class="HBox" style="height:30px;">
+        <div class="samnetLabelEmty" style="width:80px;">
+            Mes
+        </div>
+        <div class="samnetEditorEmty" style="width:100px;">
+            <input type="text" class="text-box" id="txtMesp" style=" width:80px" />
+        </div>
+    </div>
+   
+    <div class="HBox" style="height:30px;">
+        <center><input type="file" id="FileUpload" /></center>
+    </div>
+    <table style=" width:100%;">
+        <tr>
+            <td style=" width:100px;">
+                <input id="btnAceptaUpload" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style=" width:100px;">
+                <input id="btnCancelarUpload" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script>
+    /* Variables Globales*/
+    var _idRowKdxActual = 0;
+    var _TotalKdxActual = 0;
+    var _TypoArticulo = 0;
+
+    var _dataColumnActual = [
+                            { display: 'Año', name: 'Año', width: 30, align: 'center' },
+                            { display: 'Mes', name: 'Mes', width: 30, sortable: true, align: 'center' },
+                            { display: 'Fecha', name: 'Fecha', width: 70, sortable: true, align: 'center' },
+                            { display: 'Codigo Articulo', name: 'Codigo_Articulo', width: 90, sortable: true, align: 'center' },
+                            { display: 'Costo Unitario', name: 'Costo_Unitario', width: 90, align: 'right' }
+    ];
+
+    /* Construir text de tipo decimal*/
+    $("#txtPeriodo").inputmask({ mask: '9{4}', greedy: false });
+    $("#txtMes").inputmask({ mask: '9{2}', greedy: false });
+
+    var d = new Date();
+    var nperiodo = d.getFullYear();
+
+    var month = new Array();
+    month[0] = "01";
+    month[1] = "02";
+    month[2] = "03";
+    month[3] = "04";
+    month[4] = "05";
+    month[5] = "06";
+    month[6] = "07";
+    month[7] = "08";
+    month[8] = "09";
+    month[9] = "10";
+    month[10] = "11";
+    month[11] = "12";
+    var nmes = month[d.getMonth()];
+
+
+    document.getElementById("txtPeriodo").value = nperiodo;
+    document.getElementById("txtMes").value = nmes;
+
+    function functionOnResize() {
+        $('#PanelKardex1').width(0);
+        var widthGrid = $('#divtbKardex').width();
+        $('#PanelKardex1').width(widthGrid);
+    }
+
+    function searchKardexMauc() {
+        var validate = true;
+        validate = validate && SamControlEsValido("txtPeriodo", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtMes", "Se Requiere este dato.");
+
+        if (!validate)
+            return false;
+
+        $('#grdCostos').flexOptions({
+            query: document.getElementById("txtPeriodo").value + ',' +
+                   ('0' + document.getElementById("txtMes").value.replace("_", "")).substr(-2)
+        }).flexReload();
+    }
+
+    /* Iniciar Popup Upload*/
+    $("#PopupUpload").dialog({
+        appendTo: "#idContentPageAjax",
+        autoOpen: false,
+        modal: true,
+        draggable: true,
+        resizable: false,
+        width: 420,
+        title: "Importar desde Excel",
+        show: {
+            effect: "drop",
+            duration: 250
+        },
+        hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+        }
+    });
+
+    var _heightGrid = getHeightForGrid(160);
+
+    $(document).ready(function () {
+
+        /* iniciando grid grdCostos*/
+        $('#grdCostos').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetDataGrdCostosUnitarios", "CostosUnitarios", new { area = "BI" })',
+            dataType: 'json',
+            colModel: _dataColumnActual,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            height: _heightGrid,
+            resizable: false,
+            buttons: [
+                       { name: 'Importar Costos Unitarios', bclass: 'UploadFile', onpress: fn_UploadCostosUnitarios }
+            ]
+        });
+    });
+
+
+    $("#btnAceptaUpload").click(function () {
+
+        var validate = true;
+        validate = validate && SamControlEsValido("txtPeriodop", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtMesp", "Se Requiere este dato.");
+
+        if (!validate)
+            return false;
+
+        var _vAnio = document.getElementById("txtPeriodop").value;
+        debugger;
+        var _vMes = parseInt(document.getElementById("txtMesp").value);
+
+        var formData = new FormData();
+        var totalFiles = document.getElementById("FileUpload").files.length;
+        for (var i = 0; i < totalFiles; i++) {
+            var file = document.getElementById("FileUpload").files[i];
+
+            formData.append("FileUpload", file);
+        }
+        $.ajax({
+            type: "POST",
+            url:'/CostosUnitarios/UploadFile?Anio=' + _vAnio + '&Mes=' + _vMes,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                debugger;
+                MsgAlert(@MsgAlertTypeConstant.SUCCESS,'El Archivo se Cargo Correctamente.');
+                $('#PopupUpload').dialog('close');
+                //$('#grdCostos').flexOptions({query: '' }).flexReload();
+                $('#grdCostos').flexReload();
+            },
+            error: function (xhr, status, error) {
+                debugger;
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"Error al Subir el Archivo");
+            }
+        });
+    });
+
+    $("#btnCancelarUpload").click(function () {
+        $('#PopupUpload').dialog('close');
+    });
+
+    function fn_UploadCostosUnitarios(valtr) {
+
+        $("#txtPeriodop").inputmask({ mask: '9{4}', greedy: false });
+        $("#txtMesp").inputmask({ mask: '9{2}', greedy: false });
+
+
+       
+
+        document.getElementById("FileUpload").value = "";
+        $('#PopupUpload').dialog('open');
+    }
+
+    function fn_searchCostosUnitarios(){
+        var validate = true;
+        validate = validate && SamControlEsValido("txtPeriodo", "Se Requiere este dato.");
+        validate = validate && SamControlEsValido("txtMes", "Se Requiere este dato.");
+
+        if (!validate)
+            return false;
+
+        var vardata = {
+            panio : document.getElementById("txtPeriodo").value,
+            pmes: document.getElementById("txtMes").value
+        };
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("GetCostosUnitarios", "CostosUnitarios", new { area = "BI" })',
+            data: vardata,
+            dataType: "json",
+            success: function (result) {
+
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    debugger;
+                    $("#grdCostos").flexAddData(result);
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+    }
+
+</script>

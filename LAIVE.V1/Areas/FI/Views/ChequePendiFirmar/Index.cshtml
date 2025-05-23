@@ -1,0 +1,808 @@
+﻿@using Laive.Core.Common
+@{
+   ViewBag.Title = "Cheques Pendientes de Firmar";
+   Layout = null;
+}
+
+<div id="idMenu" class="ContentPageMenuPanel">
+   <a href="javascript:void(0)" onclick="onClickIdMenu('_EXPANDIR');">
+      <div class="ContentPageMenuPanelImg">
+         <img src="~/Content/images/nav-down.png" alt="Expandir" title="Expandir la lista de Cheques" />
+         <div class="ContentPageMenuPanelText">Expandir</div>
+      </div>
+   </a>
+   <a href="javascript:void(0)" onclick="onClickIdMenu('_CONTRAER');">
+      <div class="ContentPageMenuPanelImg">
+         <img src="~/Content/images/nav-up.png" alt="Contraer" title="Contraer la lista de Cheques" />
+         <div class="ContentPageMenuPanelText">Contraer</div>
+      </div>
+   </a>
+   <div class="PageMenuSeparator"></div>
+   <a href="javascript:void(0)" onclick="onClickIdMenu('_FIRMAR');">
+      <div class="ContentPageMenuPanelImg">
+         <img src="~/Content/images/Firma.png" alt="Firmar Cheques" title="Firmar Cheques" />
+         <div class="ContentPageMenuPanelText">Firmar Cheques</div>
+      </div>
+   </a>
+   <a href="javascript:void(0)">
+      <div class="ContentPageMenuPanelImg" onclick="onClickIdMenu('_RECHAZAR');">
+         <img src="~/Content/images/not-green-ok.png" alt="Rechazar" title="Rechazar Cheques" />
+         <div class="ContentPageMenuPanelText">Rechazar</div>
+      </div>
+   </a>
+   <a href="javascript:void(0)" onclick="onClickIdMenu('_FILTRAR');">
+      <div class="ContentPageMenuPanelImg">
+         <img src="../../Content/images/EditFilterLaive.png" alt="Filtrar" title="Filtrar" />
+         <div class="ContentPageMenuPanelText">Filtrar</div>
+      </div>
+   </a>
+</div>
+
+<div id="grdCheques" class="divTable">
+</div>
+
+<div id="PopupAccion">
+   <table>
+      <tr>
+         <td colspan="2"><label id="lblPreguntaAccion"></label></td>
+      </tr>
+      <tr>
+         <td colspan="2" style="height:8px;"></td>
+      </tr>
+      <tr>
+         <td>Observaciones</td>
+         <td>
+            <textarea id="IdObservacion" rows="4" class="text-box" style="width:339px"></textarea>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="2" style="height:10px;"></td>
+      </tr>
+   </table>
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptar" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+
+<div id="PopupFiltro">
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td>Poder</td>
+         <td>
+            <input id="IdPoder" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdPoder','b.codigoPoder',true,'Poder');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+       <tr>
+           <td>Banco</td>
+           <td>
+               <input id="IdBanco" class="text-box" type="text" style="width:280px" />
+           </td>
+           <td>
+               <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('IdBanco','a.codigoBanco',true,'Banco');">
+                   <img src="~/Content/images/AddFilterLaive.png" />
+               </button>
+           </td>
+       </tr>
+       <tr>
+           <td>Rango Fechas.</td>
+           <td> 
+               <div class="samnetEditor" style=" height: 30px;">
+                   <input id="txtFechaini" type="text" class="text-box" style="width: 130px;" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+               </div>
+                
+               <div class="samnetEditor" style=" height: 30px;">
+                   <input id="txtFechafin" type="text" class="text-box" style="width: 130px;" value="@DateTime.Now.ToString("dd/MM/yyyy")" />
+               </div>
+            </td>
+           <td>
+               <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterRangoResultado('txtFechaini','txtFechafin','a.fechaPago',true,'Fecha Rango.');">
+                   <img src="~/Content/images/AddFilterLaive.png" />
+               </button>
+           </td>
+           
+       </tr>
+     
+      <tr>
+         <td>Rango Cheques.</td>
+         <td>
+            <input id="NumCheque" class="text-box" type="text" style="width:130px" />
+             <input id="NumChequeFin" class="text-box" type="text" style="width:130px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterRangoNumResultado('NumCheque','NumChequeFin','a.numCheque',true,'Rango Cheque');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      
+      <tr>
+         <td>Cod. Partner</td>
+         <td>
+            <input id="CodPartner" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('CodPartner','a.codigoPartner',false,'Cod. Partner');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Beneficiario</td>
+         <td>
+            <input id="Beneficiario" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('Beneficiario','a.beneficiario',false,'Beneficiario');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Nº de transacción</td>
+         <td>
+            <input id="NroTransaccion" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('NroTransaccion','a.nroTransaccion',false,'Nº de transacción');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Nº de Asiento</td>
+         <td>
+            <input id="NroAsiento" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('NroAsiento','a.nroAsiento',false,'Nº de Asiento');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td>Lote</td>
+         <td>
+            <input id="Lote" class="text-box" type="text" style="width:280px" />
+         </td>
+         <td>
+            <button type="button" class="btnClassButton" style="padding: 1px;" onclick="fn_AddFilterResultado('Lote','a.lotePago',false,'Lote');">
+               <img src="~/Content/images/AddFilterLaive.png" />
+            </button>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="3"></td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <input id="txtFiltro" type="text" style="height:80px;" />
+         </td>
+      </tr>
+   </table>
+   <table cellpadding="2" cellspacing="1" style="width:100%;">
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptarFiltro" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelarFiltro" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+
+
+<div id="PopupHistorial">
+   <div id="PopupHistorialContent" style=" width:100%; height:100%;">
+
+   </div>
+</div>
+
+<script type="text/javascript">
+    var _heightGrid;
+    var _dataListAlcancePoder = [@Html.Raw(ViewBag.AlcancePoder)];
+    var _newState = "";
+    var _chequeIds = [];
+
+    $(document).ready(function () {
+        /*Titulo*/
+        showTitleSystem('@ViewBag.Title');
+
+        /*INICIAR VARIABLES*/
+        _heightGrid = getHeightForGrid(60);
+        $('#IdPoder').immybox({choices: _dataListAlcancePoder});
+
+        /*INICIAR VARIABLES FECHA INI FECHA FIN*/
+        $('#txtFechaini').Zebra_DatePicker({format:'d/m/Y'});
+        $('#txtFechafin').Zebra_DatePicker({format:'d/m/Y'});
+
+        $("#PopupAccion").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            title: "Atención",
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 480,
+            height: 190,
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+
+
+        /* POPUP FILTRO ARTICULO*/
+        $("#PopupFiltro").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 420,
+            title: "Filtros",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+
+        /* POPUP FILTRO ARTICULO*/
+        $("#PopupHistorial").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 450,
+            height:  $(window).height() - 200,
+            title: "Historial",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+        $("#btnAceptarFiltro").click(function () {
+            GetData();
+            $('#PopupFiltro').dialog('close');
+        });
+
+        $("#btnAceptar").click(function () {
+
+            if(_newState == '@ConstEstadoCheque.EXCLUIDO' && $('#IdObservacion').val() == ''){
+                MsgAlert(@MsgAlertTypeConstant.INFORMATION,'Para rechazar un cheque, es necesario ingresar la observación.');
+                return false;
+            }
+
+            var data = { chequeIds : _chequeIds, dsObservacion : $('#IdObservacion').val() || "", newEstado : _newState}
+
+            AppAjaxString('POST','json','@Url.Action("CambiarEstado", "ChequePendiFirmar", new { area = "FI" })', data, "", false, false, function(response){
+                if(response.Status == '@JsonMessageStatus.SUCCESS')
+                {
+                    GetData();
+                    if(_newState == '@ConstEstadoCheque.EXCLUIDO')
+                        MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Cheques rechazados correctamente.");
+                    else
+                        MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Cheques Verificados correctamente.");
+
+                    getNumRegMenu();
+                    $('#PopupAccion').dialog('close');
+                }
+                else{
+                    MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+                }
+
+            });
+        });
+
+        $("#btnCancelarFiltro").click(function () {
+            $('#PopupFiltro').dialog('close');
+        });
+
+        $("#btnCancelar").click(function () {
+            $('#PopupAccion').dialog('close');
+        });
+
+        /*FILTRO*/
+        $("#txtFiltro").tokenInput("", { theme: "facebook"});
+
+
+        /*INIT GRILLA*/
+        GetData();
+
+
+        $("#PopupHistorialContent").timeline({data:[]});
+
+        /*END JQUERY LOAD*/
+    });
+
+    function onClickIdMenu(key) {
+        switch(key){
+            case '_EXPANDIR':
+                $(".divRowBody").show();
+                break;
+            case '_CONTRAER':
+                $(".divRowBody").hide();
+                break;
+            case '_FIRMAR':
+                var checkedList = GetSelectedRows();
+                if (checkedList.length == 0)
+                {
+                    MsgAlert(@MsgAlertTypeConstant.INFORMATION,'Seleccione un Cheque');
+                    return false;
+                }
+
+                _chequeIds = [];
+                checkedList.forEach(function(item){
+                    if(typeof item != "undefined"){
+                        _chequeIds.push(item.IdCheque);
+                    }
+                });
+                _newState = '@ConstEstadoCheque.PRIMER_FIRMANTE';
+                $('#lblPreguntaAccion').text('Esta seguro de firmar los cheques seleccionados?');
+                $("input[type=text]").val('');
+                $("#IdObservacion").val('');
+                $("#PopupAccion").dialog('open');
+                break;
+            case '_RECHAZAR':
+                var checkedList = GetSelectedRows();
+                if (checkedList.length == 0)
+                {
+                    MsgAlert(@MsgAlertTypeConstant.INFORMATION,'Seleccione un Cheque');
+                    return false;
+                }
+
+                //*************************************************************************************
+                //verificar la columna estado
+                //*************************************************************************************
+                debugger
+
+                _chequeIdss = [];
+                var chequeNoValido = false;
+                checkedList.forEach(function(item){
+                    if(typeof item != "undefined"){
+                        if(item.CodigoEstado == '@ConstEstadoCheque.VERIFICAR')
+                            _chequeIdss.push(item.IdCheque);
+                        else
+                            chequeNoValido = true;
+                    }
+                });
+
+                if(chequeNoValido){
+                    MsgAlert(@MsgAlertTypeConstant.INFORMATION,'Cheque(s) ya se encuentran con estado rechazado.');
+                }
+                else
+                {
+
+                    _chequeIds = [];
+                    checkedList.forEach(function(item){
+                        _chequeIds.push(item.IdCheque);
+                    });
+
+                    _newState = '@ConstEstadoCheque.EXCLUIDO';
+                    $('#lblPreguntaAccion').text('Esta seguro de rechazar los cheques seleccionados?');
+                    $("input[type=text]").val('');
+                    $("#IdObservacion").val('');
+                 $("#PopupAccion").dialog('open');
+
+             }
+
+             //**************************************************************************************
+
+
+
+            break;
+          case '_FILTRAR':
+              debugger;
+              var data = {}
+              AppAjax('POST','json','@Url.Action("GetBanco", "ChequePendiFirmar", new { area = "FI" })',data,"",false,false,function(response){
+                  if(response.Status == '@JsonMessageStatus.SUCCESS')
+                  {
+                      $('#IdBanco').immybox({choices: response.Data});
+                      $('#IdPoder').immybox('setValue','');
+                      $('#txtFechaini').val('');
+                      $('#txtFechafin').val('');
+                      $('#NumCheque').val('');
+                      $('#NumChequeFin').val('');
+                      $('#CodPartner').val('');
+                      $('#Beneficiario').val('');
+                      $('#NroTransaccion').val('');
+                      $('#NroAsiento').val('');
+                      $('#Lote').val('');
+                      $('#txtFiltro').val('');
+                      $("#PopupFiltro").dialog('open');
+                  }
+                  else{
+                      MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+                  }
+              }
+                    );
+                break;
+        }
+    };
+
+
+
+    function GetData()
+    {
+        var vartoken = $("#txtFiltro").tokenInput("get");
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("GetDataGrdCheques", "ChequePendiFirmar", new { area = "FI" })',
+            dataType: "json",
+            data : {filtro : JSON.stringify(vartoken)},
+            success: function (result) {
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+
+                    WriterTable(result);
+
+                    $('#chkAllChecked').on('ifChecked', function (event) {
+                        $('.chkSelectedRow').iCheck('check');
+                    });
+
+                    $('#chkAllChecked').on('ifUnchecked', function (event) {
+                        $('.chkSelectedRow').iCheck('uncheck');
+                    });
+
+
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+    };
+
+
+    function WriterTable(dataResult) {
+
+        var _html = '';
+        _html += '<div class="divHeader">';
+        _html += '<div class="divCell" style="width:22px;">'
+        _html += '<input id="chkAllChecked" type="checkbox" />';
+        _html += '</div>';
+
+        _html += WriterNode("", 20);
+        _html += WriterNode("Poder", 130);
+        _html += WriterNode("Nº Cheque", 60);
+        _html += WriterNode("Cod.Partner", 80);
+        _html += WriterNode("Beneficiario", 180);
+        _html += WriterNode("Fecha Pago", 80);
+        _html += WriterNode("Nº Transacción", 80);
+        _html += WriterNode("Nº Asiento", 60);
+        _html += WriterNode("Nº Pago", 60);
+        _html += WriterNode("Mon", 30);
+        _html += WriterNode("Importe", 60);
+        _html += WriterNode("Estado", 80);
+        _html += '</div>';
+        _html += '<div class="divBody" style="height:' + _heightGrid + 'px;overflow-x: auto;">';
+
+        if (dataResult.length == 0) {
+            _html += '<div class="divBody" style="height:' + _heightGrid + 'px;overflow-x: auto;">';
+            _html += '<div style="border: 1px solid #D3D3D3;border-top: none;height: ' + _heightGrid +'px; width: 100%;font-size: 12px;text-align: center;position: absolute;">';
+            _html += '<div style="top:50%;position: relative;">';
+            _html += '<img src="../../Content/images/gridAlert.png"/><br/>No se encontraron registros.</div>';
+            _html += '</div>';
+        }
+
+        var index = 0;
+
+        dataResult.forEach(function (item) {
+
+            _html += '<div class="divRow">';
+            _html += '<div class="divRowHead" onclick="expandir(\'' + item.RowNumber + '\')">'
+            _html += '<div class="divCell" style="width:20px;">'
+            _html += '<input type="checkbox" class="chkSelectedRow" data-id="' + index + '"/>';
+            _html += '</div>';
+            _html += WriterNode("<a href=\"javascript:void(0)\" onclick=\"fn_showHistorial(event," + item.IdCheque + ")\" class=\"divgrdButton\"><img src=\"@Url.Content("~/Content/images/History.png")\" alt=\"Hist.\"/></a>",20);
+            _html += WriterNode(item.GlosaPoder,130);
+            _html += WriterNode(item.NumCheque, 60);
+            _html += WriterNode(item.CodigoPartner, 80);
+            _html += WriterNode(item.Beneficiario, 180);
+            _html += WriterNode(item.FechaPago, 80);
+            _html += WriterNode(item.TipoTransaccion + '-' + item.NroTransaccion, 80);
+            _html += WriterNode(item.NroAsiento, 60);
+            _html += WriterNode(item.LotePago, 60);
+            _html += WriterNode(item.Moneda,30);
+            _html += WriterNodeNumber(item.ImporteCheque, 60);
+            _html += WriterEstado(item, 80);
+            _html += '</div>';
+            _html += '<div class="divRowBody" id="divRowBody' + item.RowNumber + '">';
+
+            _html += '<div style="width: 49%;display: inline-block;margin: 5px;">'
+            _html += '<div class="divHeader">';
+            _html += WriterNodeStyle("1er Firmante",'min-width:100px;');
+            _html += WriterNodeStyle(item.Nombre1erFirmante,'max-width:100%;width:100%;background: #FFF;border-right:none;');
+            _html += '</div></div>';
+
+            _html += '<div style="width: 49%;display: inline-block;margin: 5px;">'
+            _html += '<div class="divHeader">';
+            _html += WriterNodeStyle("2er Firmante",'min-width:100px;');
+            _html += WriterNodeStyle(item.Nombre2doFirmante,'max-width:100%;width:100%;background: #FFF;border-right:none;');
+            _html += '</div></div>';
+
+            _html += WriterComPago(item.ListComprobantes);
+            _html += WriterVoucher(item.ListVoucher);
+
+            _html += '</div>';
+            _html += '</div>';
+            index++;
+        });
+
+        _html += '</div>';
+
+        $("#grdCheques").html(_html).data("datasource", dataResult);
+
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_minimal-blue'
+        });
+
+    };
+
+    function expandir(index) {
+        if ($("#divRowBody" + index).is(":visible"))
+            $("#divRowBody" + index).hide();
+        else
+            $("#divRowBody" + index).show();
+    };
+
+    function WriterNode(value, width) {
+        var _html = '<div class="divCell" style="max-width:' + width + 'px;width:' + width + 'px;">'
+        _html += value;
+        _html += '</div>';
+        return _html;
+    };
+
+    function WriterNodeNumber(value, width) {
+        var _html = '<div class="divCell" style="max-width:' + width + 'px;width:' + width + 'px; text-align: right;">'
+        _html += value;
+        _html += '</div>';
+        return _html;
+    };
+
+    function WriterNodeStyle(value, Style) {
+        var _html = '<div class="divCell" style="' + Style + '">'
+        _html += value;
+        _html += '</div>';
+        return _html;
+    };
+
+    function WriterEstado(item, width) {
+        var background, color;
+        debugger;
+        switch (item.CodigoEstado) {
+            case 'E01':
+                background = '#71BD71'; color = '#FFFFFF';
+                break;
+            case 'E02':
+                background = '#008BD7'; color = '#FFFFFF';
+                break;
+            case 'E03':
+                background = '#FFFC00'; color = '#745C1E';
+                break;
+            case 'E04':
+                background = '#1C92B5'; color = '#FFFFFF';
+                break;
+            case 'E05':
+                background = '#FF962F'; color = '#FFFFFF';
+                break;
+            case 'E06':
+                background = '#FF962F'; color = '#FFFFFF';
+                break;
+            case 'E07':
+                background = '#FC5353'; color = '#FFFFFF';
+                break;
+            case 'E08':
+                background = '#085FD2'; color = '#FFFFFF';
+                break;
+            case 'E11':
+                background = '#FC5353'; color = '#FFFFFF';
+                break;
+        }
+
+        var _html = '<div class="divCell" style="max-width:' + width + 'px;width:' + width + 'px;">'
+        _html += '<div class="divCellState" style="background:' + background + ';color:' + color + ';" >';
+        _html += item.GlosaEstado;
+        _html += '</div>';
+        _html += '</div>';
+        return _html;
+    };
+
+    function WriterComPago(value) {
+        var _html = '<div style="width: 49%;display: inline-block;margin: 5px;">'
+        _html += '<div class="divHeader">Comprobantes</div>';
+        _html += '<div class="divHeader">';
+        _html += WriterNode('Tipo Sugerencia', 100);
+        _html += WriterNode('Nº Comprobante', 90);
+        _html += WriterNode('Referencia', 90);
+        _html += WriterNode('Mon', 30);
+        _html += WriterNode('Importe', 60);
+        _html += '</div>';
+        value.forEach(function (item) {
+            _html += '<div style="width:100%;border: 1px solid #D2D2D2;">';
+            _html += WriterNode(item.GlosaTipoSugerencia, 100);
+            _html += WriterNode(item.Transaccion + '-' + item.NumComprobante, 90);
+            _html += WriterNode(item.Referencia, 90);
+            _html += WriterNode(item.Moneda, 30);
+            _html += WriterNodeNumber(item.Importe, 60);
+            _html += '</div>';
+        });
+
+        _html += '</div>';
+        return _html;
+    };
+
+    function WriterVoucher(value) {
+        var _html = '<div style="width: 49%;display: inline-block;margin: 5px;">'
+        _html += '<div class="divHeader">Asiento Contable</div>';
+        _html += '<div class="divHeader">';
+        _html += WriterNode('Cuenta', 80);
+        _html += WriterNode('Descripción de Cuenta', 250);
+        _html += WriterNode('Cargo', 60);
+        _html += WriterNode('Abono', 60);
+        _html += '</div>';
+        value.forEach(function (item) {
+            _html += '<div style="width:100%;border: 1px solid #D2D2D2;">';
+            _html += WriterNode(item.CuentaContable, 80);
+            _html += WriterNode(item.GlosaCuentaContable, 250);
+
+            if (item.CargoAbono == 1) {
+                _html += WriterNodeNumber(item.ImporteSoles, 60);
+                _html += WriterNode('', 60);
+            } else {
+                _html += WriterNode('', 60);
+                _html += WriterNodeNumber(item.ImporteSoles, 60);
+            }
+
+            _html += '</div>';
+        });
+
+        _html += '</div>';
+        return _html;
+    };
+
+
+    function GetSelectedRows() {
+        var dataSource = $('#grdCheques').data("datasource");
+        var rows = [];
+        $('.chkSelectedRow:checked').each(function (index, item) {
+            rows.push(dataSource[item.dataset.id]);
+        });
+        return rows;
+    };
+
+
+    function fn_AddFilterRangoNumResultado(controlini,controlfin,campo,isChoise,descripcion){
+        debugger;
+        if(isChoise){
+            $("#txtFiltro").tokenInput("add", {
+                id: _VARIDFILTER,
+                foperator: false,
+                fvalue: $('#' + controlini).val() + "_" +  $('#' + controlfin).val(),
+                fvaluefin: $('#' + controlfin).val(),
+                fcampo: campo,
+                fconector: ">=",
+                fname: descripcion + " contiene " + $('#' + controlini).val() + " hasta " + $('#' + controlfin).val()
+            });
+        }
+        _VARIDFILTER++;
+        return false;
+    };
+
+    function fn_AddFilterRangoResultado(controlini,controlfin,campo,isChoise,descripcion){
+        debugger;
+        if(isChoise){
+            $("#txtFiltro").tokenInput("add", {
+                id: _VARIDFILTER,
+                foperator: false,
+                fvalue: $('#' + controlini).val() + "_" +  $('#' + controlfin).val(),
+                fvaluefin: $('#' + controlfin).val(),
+                fcampo: campo,
+                fconector: "Between",
+                fname: descripcion + " contiene " + $('#' + controlini).val() + " hasta " + $('#' + controlfin).val()
+            });
+        }
+        _VARIDFILTER++;
+        return false;
+    };
+
+
+    function fn_AddFilterResultado(control,campo,isChoise,descripcion){
+        debugger;
+        if(isChoise){
+            var _Choise = $('#' + control).immybox('getChoice');
+            if(_Choise.toString() == ""){
+                MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un Item.");
+                return false;
+            }
+
+            $("#txtFiltro").tokenInput("add", {
+                id: _VARIDFILTER,
+                foperator: false,
+                fvalue: _Choise[0].value,
+                fcampo: campo,
+                fconector: "=",
+                fname: descripcion + " = " +_Choise[0].text
+
+            });
+
+        }
+        else{
+            
+                $("#txtFiltro").tokenInput("add", {
+                    id: _VARIDFILTER,
+                    foperator: false,
+                    fvalue: $('#' + control).val(),
+                    fcampo: campo,
+                    fconector: "like",
+                    fname: descripcion + " contiene " + $('#' + control).val()
+                });
+            }
+
+            
+
+        
+        _VARIDFILTER++;
+        return false;
+    };
+
+
+    function fn_showHistorial(event,idCheque){
+        event.stopPropagation();
+
+        AppAjaxString('POST','json','@Url.Action("GetHistorial", "ChequePendiFirmar", new { area = "FI" })', {idCheque : idCheque}, "", false, false, function(response){
+            if(response.Status == '@JsonMessageStatus.SUCCESS')
+            {
+                debugger;
+                $("#PopupHistorialContent").timeline("setData",response.Data);
+                $("#PopupHistorial").dialog('open');
+            }
+            else{
+                MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+            }
+
+        });
+
+    };
+
+</script>

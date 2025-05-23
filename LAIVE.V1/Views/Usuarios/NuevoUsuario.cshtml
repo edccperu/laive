@@ -1,0 +1,62 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Usuarios - Directorio Activo";
+}
+<div id="idMenu" class="ContentPageMenuPanel">
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+    <table id="samnetgridUser">
+    </table>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+    jQuery(document).ready(function ($) {
+
+        var heightGrid = getHeightForGrid(100);
+
+        $('#samnetgridUser').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetBandejaNuevoUsuario", "Usuarios")',
+            dataType: 'json',
+            colModel: [
+                         { display: 'Login', name: 'idLogon', width: 100, sortable: true, align: 'left' },
+                         { display: 'Nombres', name: 'dsNombres', width: 200, sortable: true, align: 'left' },
+                         { display: 'Apellidos', name: 'dsApellidos', width: 200, sortable: true, align: 'left' }
+                      ],
+
+            buttons: [
+                         { name: 'Agregar Usuario', bclass: 'addUser', onpress: AddRegister },
+                         { separator: true },
+                         { name: 'Regresar', bclass: 'regresar', onpress: RegresarFunction }
+                     ],
+            singleSelect: true,
+            showTableToggleBtn: true,
+            height: heightGrid
+        });    // flexigrid
+
+        function AddRegister(com, grid) {
+            var items = $('.trSelected', grid);
+            if (items != null && items.length > 0) {
+                var item = items[0];
+                samlinkajaxData('@Url.Action("GetNewUserForEditModel", "Usuarios")',
+                            {
+                                idLogon: item.cells[0].innerText || item.cells[0].textContent,
+                                dsNombres: item.cells[1].innerText || item.cells[1].textContent,
+                                dsApellidos: item.cells[2].innerText || item.cells[2].textContent
+                            },
+                            'idContentPageAjax',true,true);
+            }
+            else {
+                MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            }
+        }
+
+        function RegresarFunction(com, grid) {
+            samlinkajax('@Url.Action("Index", "Usuarios")', null, 'idContentPageAjax',true,true);
+        }
+        showTitleSystem('@ViewBag.Title');
+    });
+//]]>
+</script>

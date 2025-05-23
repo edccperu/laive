@@ -1,0 +1,1135 @@
+﻿@using Laive.Core.Common
+@{
+      ViewBag.Title = "Pago Detracciones";
+      Layout = null;
+}
+
+<style type="text/css">
+    .searchMauc {
+        width: 100%;
+        border: 1px solid #ccc;
+        top: 5px;
+        position: relative;
+        background: #ECECEC;
+        padding: 1px 4px;
+        font-size: 12px;
+    }
+
+    .contentMauc {
+        width: 100%;
+        top: 8px;
+        position: relative;
+        font-family: Tahoma;
+        font-size: 10px;
+    }
+</style>
+<table id="divTblLotePago" style="width:100%;height:100%; font-family:Tahoma; font-size:10px;">
+    <tr>
+        <td>
+            <table cellspacing="0" class="searchMauc">
+                <tr>
+                    <td style="width:58px;">
+                        Ejercicio
+                    </td>
+                    <td style="width:38px;">
+                        <input type="text" class="text-box" id="txtejerciciolt" style=" width:80px" onkeypress="return justNumbers(event);" />
+                    </td>
+                    <td style="width:20px;"></td>
+                    <td>
+                        <a class="urlButtom" href="javascript:void(0)" onclick="fn_FilterLotePago();">
+                            <img src="../../Content/images/MenuClearSearch.png" alt="*" title="Buscar Por Ejercicio" />
+                            <div class="ContentPageMenuPanelText">Buscar</div>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+
+            <div id="ContentPageDetails" class="ContentPageDetailsLT">
+                <table id="GridBandeja"></table>
+            </div>
+        </td>
+
+    </tr>
+ </table>
+    
+<div id="PopupConcilacion">
+    <div class="bodybuscador">
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                Ejercicio
+            </div>
+            <div class="samnetEditor">
+                <input class="text-box" id="txtejercicio" type="text" style="width:140px" maxlength="4" onkeypress="return justNumbers(event);" />
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%;">
+            <div class="samnetLabel">
+                Lote
+            </div>
+            <div class="samnetEditor">
+                <input class="text-box" id="txtlote" type="text" style="width:140px" maxlength="6" onkeypress="return justNumbers(event);" />
+            </div>
+        </div>
+        <div class="HBox" style=" width:100%; height:10px;">
+        </div>
+        <div style=" width:100%;">
+            <table style=" width:100%;">
+
+
+                <tr>
+                    <td style="width:50%; text-align:left;">
+                        <a class="urlButtom" href="javascript:void(0)" onclick="fn_UpdateConcilacion();">
+                            <img src="~/Content/images/correctImport.png" alt="*" title="Actualizar registro" />
+                            <div class="ContentPageMenuPanelText">Aceptar</div>
+                        </a>
+                    </td>
+                    <td style="width:50%;text-align:right;">
+                        <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#PopupConcilacion').dialog('close');" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+    
+    
+    
+
+    <div id="PopupUpload">
+        <div class="HBox" style="height:30px;">
+
+        </div>
+        <div class="HBox" style="height:30px;">
+            <center><input type="file" id="FileUpload" style="width:390px;height:20px;" /></center>
+        </div>
+        <table style=" width:100%;">
+            <tr>
+                <td style=" width:100px;">
+                    <input id="btnAceptaUpload" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+                </td>
+                <td>
+                    &nbsp;
+                </td>
+                <td style=" width:100px;">
+                    <input id="btnCancelarUpload" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#PopupUpload').dialog('close');" />
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="PopupFiltrar">
+        <div class="bodybuscador">
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetLabel">
+                    Ejercicio
+                </div>
+                <div class="samnetEditor">
+                    <input class="text-box" id="txtejerciciolt1" type="text" style="width:140px" maxlength="4" onkeypress="return justNumbers(event);" />
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%; height:10px;">
+            </div>
+            <div style=" width:100%;">
+                <table style=" width:100%;">
+
+                    <tr>
+                        <td style="width:50%; text-align:left;">
+                            <a class="urlButtom" href="javascript:void(0)" onclick="fn_FilterLotePago();">
+                                <img src="~/Content/images/import.png" alt="*" title="Generar Documento Sunat" />
+                                <div class="ContentPageMenuPanelText">Generar</div>
+                            </a>
+                        </td>
+                        <td style="width:50%;text-align:right;">
+                            <input id="btnCancelarlt" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#PopupFiltrar').dialog('close');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="PopupGenerarArchivo">
+        <div class="bodybuscador">
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetLabel">
+                    TraBaanBco
+                </div>
+                <div class="samnetEditor">
+                    <input class="text-box" id="txttrabaanbco" type="text" style="width:140px" maxlength="3" onkeyup="javascript:this.value=this.value.toUpperCase();" />
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetLabel">
+                    NroBaanBco
+                </div>
+                <div class="samnetEditor">
+                    <input class="text-box" id="txtnrobaanbco" type="text" style="width:140px" maxlength="10" onkeypress="return justNumbers(event);" />
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetLabel">
+                    Lote Contable
+                </div>
+                <div class="samnetEditor">
+                    <input class="text-box" id="txtlotecontable" type="text" style="width:140px" maxlength="10" onkeypress="return justNumbers(event);" />
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetLabel">
+                    Nro. Finalizacion
+                </div>
+                <div class="samnetEditor">
+                    <input class="text-box" id="txtnrofinalizacion" type="text" style="width:140px" maxlength="10" onkeypress="return justNumbers(event);" />
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%; height:10px;">
+            </div>
+            <div style=" width:100%;">
+                <table style=" width:100%;">
+
+
+                    <tr>
+                        <td style="width:50%; text-align:left;">
+                            @*<input id="btnActualizarImp" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />*@
+
+                            <a class="urlButtom" href="javascript:void(0)" onclick="getConfirmation();">
+                                <img src="~/Content/images/correctImport.png" alt="*" title="Actualizar registro" />
+                                <div class="ContentPageMenuPanelText">Aceptar</div>
+                            </a>
+                        </td>
+                        <td style="width:50%;text-align:right;">
+                            <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#PopupGenerarArchivo').dialog('close');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="PopupImportarDetracciones">
+        <div class="bodybuscador">
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetLabel">
+                    Ejercicio
+                </div>
+                <div class="samnetEditor">
+                    <input class="text-box" id="txtAnio" type="text" style="width:140px" maxlength="4" onkeypress="return justNumbers(event);" disabled />
+                </div>
+            </div>
+            <div class="HBox" style=" width:100%;">
+                <div class="samnetLabel">
+                    Numero de Lote
+                </div>
+                <div class="samnetEditor">
+                    <input class="text-box" id="txtPeriodo" type="text" style="width:140px" maxlength="4" onkeypress="return justNumbers(event);" />
+                </div>
+            </div>
+            @*<div class="HBox" style=" width:100%;">
+                    <div class="samnetLabel">
+                        Lote Final
+                    </div>
+                    <div class="samnetEditor">
+                        <input class="text-box" id="txtPeriodo1" type="text" style="width:140px" maxlength="4" />
+                    </div>
+                </div>*@
+            <div class="HBox" style=" width:100%; height:10px;">
+            </div>
+            <div style=" width:100%;">
+                <table id="tbimp" style=" width:100%;">
+                    <tr>
+                        <td colspan="2">
+                            <div id="idLoadingImport" style=" display:none; width:100%; text-align:center;">
+                                <img alt="|" src="../../Content/animation/loadingPanel9.GIF" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div id="lblImportMessage" style=" width:100%; text-align:center;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td  style="width:50%; text-align:left;">
+                            <input id="btnAceptarImp" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+
+                            @*<a id="import" class="urlButtom" href="javascript:void(0)" onclick="fn_ImportarDetracciones();">
+                                <img src="~/Content/images/import.png" alt="*" title="Importar Detracciones" />
+                                <div class="ContentPageMenuPanelText">Importar</div>
+                            </a>*@
+                        </td>
+                        <td style="width:50%;text-align:right;">
+                            <input id="btnCancelar" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" onclick="$('#PopupImportarDetracciones').dialog('close');" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+
+
+    var _popupEntityState = SamGetStateUnchanged();
+
+    var _idLotePago = '';
+    var _ejercicioLote = '';
+    var _numeroLote = '';
+    var _TraBaanBco = '';
+    var _LoteContable = '';
+    var _NroFinalizacion = '';
+    var fecha = new Date();
+    var _periodo = fecha.getFullYear();
+    var _pEjercicioLote = '';
+    var _pNumeroLote = '';
+    var _pEstadoLote = '';
+
+    $(document).ready(function () {
+        showTitleSystem('@ViewBag.Title');
+
+        document.getElementById("txtejerciciolt").value = _periodo;
+
+        debugger;
+        var heightGrid = getHeightForGrid(245);
+        var varColumn = [
+                         { display: '', name: 'IdLoteDetraccion', hide: true },
+                         { display: '', name: 'EjercicioLote', hide: true },
+                         { display: 'Lote', name: 'NumeroLote', width: 30, sortable: true },
+                         { display: '<center>Importe</center>', name: 'ImporteLote', width: 70, align: 'right'},
+                         { display: '<center>Fecha</br>Lote</center>', name: 'FechaLote', width: 60, align: 'center' },
+                         { display: '<center>Pago</br>5to. Dia</center>', name: 'PagoQuintoDia', width: 35 },
+                         { display: '<center>Fecha</br>Constancia</center>', name: 'FechaConstancia', width: 57 },
+                         { display: '<center>Importe</br>Sunat</center>', name: 'ImporteDeposito', width: 80, align: 'right'},
+                         { display: '<center>Forma</br>Pago</center>', name: 'FormaPago', width: 40, align: 'center' },
+                         { display: '<center>Transaccion</br>Banco</center>', name: 'TraBaanBco', width: 67 },
+                         { display: '<center>Lote</br>Contable</center>', name: 'LoteContable', width: 50, align: 'center' },
+                         { display: '<center>Nro</br>Finaliz.</center>', name: 'NroFinalizacion', width: 40 },
+                         { display: 'Archivo Depositivo', name: 'ArchivoDeposito', width: 100 },
+                         { display: '<center>Constancia</br>Sunat</center>', name: 'ConstanciaSunat', width: 70 },
+                         { display: '<center>Operacion</br>Deposito</center>', name: 'OperacionDeposito', width: 80 },
+                         { display: '<center>Cantidad</br>Deposito</center>', name: 'CantidadDeposito', width: 45 },
+                         { display: '...', name: 'ArchivoDescarga', width: 30, align: 'center', hide: true },
+                         { display: 'E', name: 'EstadoLote', width: 20, align: 'center' }
+        ];
+        debugger;
+        /*Grilla Almacen*/
+        $('#GridBandeja').flexigrid({
+            onError: function (jqXHR, textStatus, errorThrown) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+            },
+            url:'@Url.Action("GetBandeja", "ImportarDetraccion", new { area = "FI" })',
+            dataType: 'json',
+            colModel: varColumn,
+            singleSelect: true,
+            showTableToggleBtn: true,
+            showToggleBtn: false,
+            resizable: false,
+            height: heightGrid + 90,
+            buttons: [
+                        { name: 'Cargar Pago', bclass: 'add', onpress: AddRegister },
+                        { separator: true },
+                        { name: 'Actualizar Pago', bclass: 'editdocument', onpress: fn_OpenGenerarArchivo },
+                        { separator: true },
+                        { name: 'Generar Pago Sunat', bclass: 'generarSunat', onpress: fn_DownloadFileSunat },
+                        { separator: true },
+                        { name: 'Conciliar Pago', bclass: 'Concilacion', onpress: fn_UploadKdxActual },
+                        { separator: true },
+                        { name: 'Eliminar Lote', bclass: 'delete', onpress: ConfirmarEliminar }
+                                //{ separator: true },
+                        //{ name: 'Cargar Archivo', bclass: 'edit', onpress: fn_UploadKdxActual }
+            ],
+            preProcess: fn_PreCreation_GrdEstado
+        });
+
+
+        $("#PopupImportarDetracciones").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: true,
+            width: 320,
+            height: 140,
+            title: "Cargar Pago Detraccion",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+        $("#PopupConcilacion").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 320,
+            height: 140,
+            title: "Conciliar Pago",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+        $("#PopupGenerarArchivo").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 320,
+            height: 190,
+            title: "Actualizar Registro",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+        /* Iniciar Popup Upload*/
+        $("#PopupUpload").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 420,
+            title: "Conciliar Lote de Pago",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+        /* Iniciar Popup Upload*/
+        $("#PopupFiltrar").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 420,
+            title: "Filtro por Ejercicio",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+
+
+        $("#btnAceptarImp").click(function () {
+            debugger;
+            var vardata = {
+                Ejercicio : document.getElementById("txtAnio").value,
+                NumeroLoteIni : document.getElementById("txtPeriodo").value,
+                //NumeroLoteFin : document.getElementById("txtPeriodo1").value,
+            };
+
+            $("#btnAceptarImp").attr('disabled','disabled');
+            $("#btnCancelar").attr('disabled','disabled');
+
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("ImportarLotePago", "ImportarDetraccion", new { area = "FI" })',
+                data: vardata,
+                dataType: "json",
+                success: function (result) {
+                    debugger;
+                    if (IsLoginRedirect(result))
+                        window.location.href = "/Login";
+                    else {
+                        if(result.Status == '@JsonMessageStatus.SUCCESS'){
+
+                            MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                            $("#btnAceptarImp").removeAttr('disabled');
+                            $("#btnCancelar").removeAttr('disabled');
+                            $('#GridBandeja').flexReload();
+                            $('#PopupImportarDetracciones').dialog('close');
+                        }
+                        else{
+                            MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                            $('#PopupImportarDetracciones').dialog('close');
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+                }
+            });
+        });
+
+
+        $("#btnAceptaUpload").click(function () {
+
+
+            var strname = "";
+            var strsize = "";
+            var strruta = "";
+            var strfile = "";
+            var _vEjercicio = _pEjercicioLote;
+            var _vLote = _pNumeroLote;
+
+
+
+            var formData = new FormData()
+            debugger;
+            var x = document.getElementById("FileUpload").value;
+
+
+
+            var txt = "";
+            var totalFiles = document.getElementById("FileUpload").files.length;
+
+
+            //if (document.getElementById("FileUpload").value ="")
+            //{
+            //    _exist = true;
+            //    _existMensaje = "Debe seleccionar un archivo para conciliar."
+            //}
+
+            var _strRutaHtml = "";
+
+            $('#PopupUpload').dialog('close');
+            debugger;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = document.getElementById("FileUpload").files[i];
+
+                _strRutaHtml = "";
+                //var __filename = file.name;
+                formData.append("FileUpload", file);
+            }
+
+
+            $.ajax({
+                type: "POST",
+                url:'/ImportarDetraccion/UploadFile?EjercicioLote=' + _vEjercicio + '&NumeroLote=' + _vLote + '&Ruta=' + _strRutaHtml,
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (response) {
+
+                    switch(response.Status){
+                        case '@JsonMessageStatus.SUCCESS':
+                            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+                            break;
+                        case '@JsonMessageStatus.INFORMATION':
+                            MsgAlert(@MsgAlertTypeConstant.INFORMATION,response.Message);
+                            break;
+                        case '@JsonMessageStatus.INVALID':
+                            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+                            break;
+                    }
+
+                    $('#GridBandeja').flexReload();
+                    $('#PopupUpload').dialog('close');
+                },
+                error: function (xhr, status, error) {
+                    debugger;
+                    MsgAlert(@MsgAlertTypeConstant.ERROR,"Error al Subir el Archivo");
+                }
+            });
+        });
+
+
+
+    });
+
+
+    function fn_OpenGenerarArchivo(){
+        debugger;
+        var _exist = false;
+
+        var rows = $('#GridBandeja').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            return false;
+        }
+
+
+
+        if (parseInt(rows[0][17].Value) > 2)
+        {
+            _exist = true;
+            _existMensaje = "No podra actualizar el pago, porque se ha generado el Pago Sunat o Conciliado"
+            //return false;
+        }
+
+        if(_exist){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,_existMensaje);
+            return false;
+        }
+
+
+        SamClearControl("txttrabaanbco", false);
+        SamClearControl("txtnrobaanbco", false);
+        SamClearControl("txtlotecontable", false);
+        SamClearControl("txtnrofinalizacion", false);
+        _LoteContable = '';
+        _NroFinalizacion = '';
+        _TraBaanBco = '';
+        _idLotePago = '';
+        _ejercicioLote = '';
+        _numeroLote = '';
+
+        rows.forEach(function (item) {
+            _idLotePago += (_idLotePago == ''?'':'_') + item[0].Value;
+            _ejercicioLote += (_ejercicioLote == ''?'':'_') + item[1].Value;
+            _numeroLote += (_numeroLote == ''?'':'_') + item[2].Value;
+            _TraBaanBco += (_TraBaanBco == ''?'':'_') + item[9].Value;
+            _LoteContable += (_LoteContable == ''?'':'_') + item[10].Value;
+            _NroFinalizacion += (_NroFinalizacion == ''?'':'_') + item[11].Value;
+        });
+
+        document.getElementById("txttrabaanbco").value = _TraBaanBco.substring(0,3);
+        document.getElementById("txtnrobaanbco").value = _TraBaanBco.substring(6,_TraBaanBco.length);
+        document.getElementById("txtlotecontable").value = _LoteContable;
+        document.getElementById("txtnrofinalizacion").value = _NroFinalizacion;
+
+
+
+        $('#PopupGenerarArchivo').dialog('open');
+    };
+
+
+
+    function getConfirmation(valtr){
+        $('#idlblConfirmarAccion').text('Esta Seguro de actualizar el Lote de Pago?');
+
+        $("#btnAceptarCA").one("click",function () {
+            fn_GenerarArchivoSunat();
+            document.getElementById('btnAceptarCA').disabled = true;
+            document.getElementById('btnCancelarCA').disabled = true;
+        });
+
+
+        $("#btnCancelarCA").click(function () {
+            $('#idConfirmarAccion').dialog('close');
+        });
+
+        $('#idConfirmarAccion').dialog('open');
+
+        $('#PopupGenerarArchivo').dialog('close');
+
+    };
+
+    function fn_DownloadFileSunat()
+    {
+        debugger;
+        var _exist = false;
+        var rows = $('#GridBandeja').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            return false;
+        }
+
+        var __EjercicioLote = rows[0][1].Value;
+        var __NumeroLote = rows[0][2].Value;
+        var __IdLoteDetraccion = rows[0][0].Value;
+        var __EstadoLote = rows[0][17].Value;
+
+
+        if (parseInt(rows[0][17].Value) < 2)
+        {
+            _exist = true;
+            _existMensaje = "Debera primero cargar o actualizar el Pago."
+            //return false;
+        }
+
+        //if (parseInt(rows[0][17].Value) == 3)
+        //{
+        //    _exist = true;
+        //    _existMensaje = "Ya se encuentra generado el Pago Sunat para este Lote."
+        //    //return false;
+        //}
+
+        if(_exist){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,_existMensaje);
+            return false;
+        }
+
+
+
+        $.fileDownload('/ImportarDetraccion/GetGenerarPagoSunat?EjercicioLote=' + __EjercicioLote + '&NumeroLote=' + __NumeroLote + '&IdLoteDetraccion=' + __IdLoteDetraccion + '&EstadoLote=' + __EstadoLote)
+             .done(function () {
+                 AlertCorrecto("El Archivo se Descargo Correctamente.");
+             }).fail(function () {
+                 AlertAtencion("Error al Descargar el Archivo.");
+             });
+        $('#GridBandeja').flexReload();
+
+    };
+
+    function fn_GenerarArchivoSunat(){
+        debugger;
+        @*var rows = $('#GridBandeja').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            return false;
+        }*@
+
+
+
+
+        var vardata = {
+            IdLoteDetraccion : _idLotePago,
+            EjercicioLote : _ejercicioLote,
+            NumeroLote : _numeroLote,
+            TraBaanBco : document.getElementById("txttrabaanbco").value,
+            NroBaanBco : document.getElementById("txtnrobaanbco").value,
+            LoteContable : document.getElementById("txtlotecontable").value,
+            NroFinalizacion : document.getElementById("txtnrofinalizacion").value
+        };
+
+
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("GenerarArchivoSunat", "ImportarDetraccion", new { area = "FI" })',
+            data: vardata,
+            dataType: "json",
+            success: function (result) {
+                debugger;
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    if(result.Status == '@JsonMessageStatus.SUCCESS'){
+
+                        $('#GridBandeja').flexReload();
+
+                        MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+
+                    }
+                    else{
+                        MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                    }
+
+                    $("#btnAceptarCA").removeAttr('disabled');
+                    $("#btnCancelarCA").removeAttr('disabled');
+                    $('#idConfirmarAccion').dialog('close');
+
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+
+    };
+
+    function justNumbers(e)
+    {
+        var keynum = window.event ? window.event.keyCode : e.which;
+        if ((keynum == 8) || (keynum == 46))
+            return true;
+
+        return /\d/.test(String.fromCharCode(keynum));
+    };
+
+    function fn_FilterLotePago()
+    {
+
+
+        var vardata = {
+            Ejercicio : document.getElementById("txtejerciciolt").value
+        };
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("GetBandejaEjercicio", "ImportarDetraccion", new { area = "FI" })',
+            data: vardata,
+            dataType: "json",
+            success: function (result) {
+
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    debugger;
+                    $("#GridBandeja").flexAddData(result);
+                    // $('#GridBandeja').flexReload();
+                    //$('#PopupFiltrar').dialog('close');
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+    }
+
+    function fn_PreCreation_GrdEstado(JsonData) {
+        if (JsonData.rows == null)
+            return JsonData;
+        JsonData.rows.forEach(function (item) {
+            switch(item.cell[17])
+            {
+                case '1':
+                    item.cell[17] = '<div class="bgPr" title="PAGO CARGADO"><div class="ValPrA" style="width:100%;">1</div></div>';
+                    break;
+                case '2':
+                    item.cell[17] = '<div class="bgPr" title="PAGO ACTUALIZADO"><div class="ValPrA" style="width:100%;">2</div></div>';
+                    break;
+                case '3':
+                    item.cell[17] = '<div class="bgPr" title="PAGO GENERADO SUNAT"><div class="ValPrA" style="width:100%;">3</div></div>';
+                    break;
+                case '4':
+                    item.cell[17] = '<div class="bgPr" title="CONCILIADO"><div class="ValPrAZUL" style="width:100%;">4</div></div>';
+                    break;
+                case '5':
+                    item.cell[17] = '<div class="bgPr" title="NO CONCILIADO"><div class="ValPrROJO" style="width:100%;">5</div></div>';
+                    break;
+
+            }
+        });
+        return JsonData;
+    };
+
+    function fn_UpdateConcilacion(){
+        var vardata = {
+            Ejercicio : document.getElementById("txtejercicio").value,
+            NumeroLote : document.getElementById("txtlote").value
+        };
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateConcilacion", "ImportarDetraccion", new { area = "FI" })',
+            data: vardata,
+            dataType: "json",
+            success: function (result) {
+                debugger;
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    if(result.Status == '@JsonMessageStatus.SUCCESS'){
+                        $('#GridBandeja').flexReload();
+                        $('#PopupConcilacion').dialog('close');
+                    }
+                    else{
+                        MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        })
+    };
+
+    function fn_ImportarDetracciones(){
+        debugger;
+
+
+        var vardata = {
+            Ejercicio : document.getElementById("txtAnio").value,
+            NumeroLoteIni : document.getElementById("txtPeriodo").value,
+            //NumeroLoteFin : document.getElementById("txtPeriodo1").value,
+        };
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("ImportarLotePago", "ImportarDetraccion", new { area = "FI" })',
+            data: vardata,
+            dataType: "json",
+            success: function (result) {
+                debugger;
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    if(result.Status == '@JsonMessageStatus.SUCCESS'){
+
+                        MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                        $('#GridBandeja').flexReload();
+                        $('#PopupImportarDetracciones').dialog('close');
+                    }
+                    else{
+                        MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                        $('#PopupImportarDetracciones').dialog('close');
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+
+    };
+
+
+    function fn_GenerarPagoSunat()
+    {
+
+        var rows = $('#GridBandeja').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            return false;
+        }
+
+        var vardata = {
+            EjercicioLote : rows[0][1].Value,
+            NumeroLote : rows[0][2].Value,
+            IdLoteDetraccion : rows[0][0].Value
+
+        };
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("GenerarPagoSunat", "ImportarDetraccion", new { area = "FI" })',
+            data: vardata,
+            dataType: "json",
+            success: function (result) {
+                debugger;
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    if(result.Status == '@JsonMessageStatus.SUCCESS'){
+                        //alert("El Archivo Pago Sunat se genero satisfactoriamente.");
+                        MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+                        $('#GridBandeja').flexReload();
+                        //$('#PopupImportarDetracciones').dialog('close');
+                    }
+                    else{
+                        MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                    }
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+
+    };
+
+    function AddRegister() {
+
+        _exist = false;
+        _existMensaje = "";
+
+        var rows = $('#GridBandeja').selectedRows();
+        //var _rowsLotePago = $('#GridBandeja').GetDataRows();
+
+        //if (parseInt(rows[0][17].Value) > 2)
+        //{
+        //    _exist = true;
+        //    _existMensaje = "El Lote No podra ser cargado, porque se ha generado el Pago Sunat o Conciliado"
+        //    //return false;
+        //}
+
+        if(_exist){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,_existMensaje);
+            return false;
+        }
+
+        SamClearControl("txtAnio", false);
+        SamClearControl("txtPeriodo", false);
+        document.getElementById("txtAnio").value = document.getElementById("txtejerciciolt").value;
+        document.getElementById("txtAnio").disabled=true;
+
+
+
+        //$("#PopupImportarDetracciones").dialog({ title: "Exportar Lote Pago" });
+        $('#PopupImportarDetracciones').dialog('open');
+    };
+
+
+    function fn_FiltrosLotesPagos()
+    {
+
+        $('#PopupFiltrar').dialog('open');
+
+    };
+
+    function EditRegister(){
+
+    };
+
+    function ConfirmarEliminar(){
+        debugger;
+
+        var rows = $('#GridBandeja').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            return false;
+        }
+
+
+        $('#idlblConfirmarAccion').text('Esta Seguro de actualizar el Lote de Pago?');
+        $("#btnAceptarCA").one("click",function () {
+            fn_DeleteLotePago();
+            document.getElementById('btnAceptarCA').disabled = true;
+            document.getElementById('btnCancelarCA').disabled = true;
+        });
+
+        $("#btnCancelarCA").click(function () {
+            $('#idConfirmarAccion').dialog('close');
+        });
+
+        $('#idConfirmarAccion').dialog('open');
+
+    }
+
+    function fn_DeleteLotePago(){
+        debugger;
+
+        var _exist = false;
+        var rows = $('#GridBandeja').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            return false;
+        }
+
+        _pEjercicioLote = rows[0][1].Value;
+        _pNumeroLote = rows[0][2].Value;
+        _pEstadoLote = rows[0][17].Value;
+        _IdLotePago = rows[0][0].Value;
+
+
+        if (parseInt(rows[0][17].Value) == 1)
+        {
+            var _vardata = {
+                IdLoteDetraccion : _IdLotePago
+            }
+
+            $.ajax({
+                type: "POST",
+                url:'@Url.Action("DeleteLoteDetraccion", "ImportarDetraccion", new { area = "FI" })',
+                data: _vardata,
+                dataType: "json",
+                success: function (result) {
+                    debugger;
+                    if (IsLoginRedirect(result))
+                        window.location.href = "/Login";
+                    else {
+                        if(result.Status == '@JsonMessageStatus.SUCCESS'){
+
+                            $('#GridBandeja').flexReload();
+
+                            MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+
+
+
+                        }
+                        else{
+                            MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                        }
+
+                        $("#btnAceptarCA").removeAttr('disabled');
+                        $("#btnCancelarCA").removeAttr('disabled');
+                        $('#idConfirmarAccion').dialog('close');
+
+                        //$("#btnAceptarCA").removeAttr('disabled');
+                        //$("#btnCancelarCA").removeAttr('disabled');
+                        //$('#idConfirmarAccion').dialog('close');
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+                }
+            });
+
+        }else{
+
+
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"El lote de pago se encuentra en Carga de pago, no podra ser eliminado.");
+            $("#btnAceptarCA").removeAttr('disabled');
+            $("#btnCancelarCA").removeAttr('disabled');
+            $('#idConfirmarAccion').dialog('close');
+            return false;
+
+            @*_exist = true;
+            var _existMensaje = "El Lote de Pago se encuentra en carga de pago.";
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro."*@
+            //return false;
+        }
+
+    };
+
+    function fn_UploadKdxActual() {
+        var _exist = false;
+        var rows = $('#GridBandeja').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            return false;
+        }
+
+        _pEjercicioLote = rows[0][1].Value;
+        _pNumeroLote = rows[0][2].Value;
+        _pEstadoLote = rows[0][17].Value;
+
+        document.getElementById("FileUpload").value ="";
+
+
+
+
+        if (parseInt(rows[0][17].Value) == 4)
+        {
+            _exist = true;
+            _existMensaje = "El Lote de Pago ya se encuentra conciliado."
+            //return false;
+        }
+
+        if (parseInt(rows[0][17].Value) == 2)
+        {
+            _exist = true;
+            _existMensaje = "Debera antes generar el Pago Sunat."
+            //return false;
+        }
+
+        if (parseInt(rows[0][17].Value) < 2)
+        {
+            _exist = true;
+            _existMensaje = "Debera antes actualizar el pago."
+            //return false;
+        }
+
+        if(_exist){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,_existMensaje);
+            return false;
+        }
+
+
+
+        $('#PopupUpload').dialog('open');
+    };
+
+    function fn_ConciliarPago(){
+        var rows = $('#GridBandeja').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione un registro.");
+            return false;
+        }
+        $('#PopupConcilacion').dialog('open');
+    };
+
+
+</script>

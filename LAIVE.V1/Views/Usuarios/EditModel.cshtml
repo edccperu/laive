@@ -1,0 +1,106 @@
+﻿@using Laive.Entity.Sy;
+@model EUsuario
+@{
+    if (@Model.EntityState == Laive.Core.Data.EntityState.Added)
+    { ViewBag.Title = "Usuarios - Nuevo"; }
+    else
+    { ViewBag.Title = "Usuarios - Modificar"; }
+}
+<div id="idMenu" class="ContentPageMenuPanel">
+    <a href="javascript:void(0)" onclick="javascript:SaveUpdateModel();">
+        <div class="ContentPageMenuPanelImg">
+            <img src="../../Content/images/MenuSave.png" alt="Guardar" title="Guardar" />
+            <div class="ContentPageMenuPanelText">Guardar</div>
+        </div>
+    </a>
+   <a href="javascript:void(0)" onclick="samlinkajaxData('@Url.Action(@ViewBag.BackPage, "Usuarios")', {EntityState:SamGetStateAdded()}, 'idContentPageAjax',true,true);">
+      <div class="ContentPageMenuPanelImg">
+         <img src="../../Content/images/MenuBack.png" alt="Regresar" title="Regresar" />
+         <div class="ContentPageMenuPanelText">Regresar</div>
+      </div>
+   </a>
+</div>
+<div id="ContentPageDetails" class="ContentPageDetails">
+    <div id="EditPanelMaster" class="EditPanelMaster">
+        <table style="width: 100%;">
+            <tr>
+                <td class="tdTable50">
+                    <div class="HBox" style="width: 100%;">
+                        <div class="samnetLabel" style="width: 140px;">
+                            @Html.LabelFor(model => Model.IdUser)
+                        </div>
+                        <div class="samnetEditor">
+                            <input type="text" class="text-box" id="IdUser" value="@Model.IdUser" style=" width:80px" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="HBox" style="width: 100%;">
+                        <div class="samnetLabel">
+                            @Html.LabelFor(model => Model.IdLogon)
+                        </div>
+                        <div class="samnetEditor">
+                            <input type="text" class="text-box" id="IdLogon" value="@Model.IdLogon" style=" width:310px" readonly="true"/>
+                        </div>
+                    </div>
+                    <div class="HBox" style="width: 100%;">
+                        <div class="samnetLabel">
+                            @Html.LabelFor(model => Model.DsNombres)
+                        </div>
+                        <div class="samnetEditor">
+                            <input type="text" class="text-box" id="DsNombres" value="@Model.DsNombres" style=" width:310px" readonly="true" />
+                        </div>
+                    </div>
+                </td>
+                <td class="tdTable50">
+                    <div class="HBox" style="width: 100%;">
+                        <div class="samnetLabel" style="width: 140px;">
+                            @Html.LabelFor(model => Model.StNoExpira)
+                        </div>
+                        <div class="samnetEditor">
+                            @Html.CheckBoxFor(model => Model.StNoExpira, new { @class = "check-box" })
+                        </div>
+                    </div>
+                    <div class="HBox" style="width: 100%;">
+                        <div class="samnetLabel">
+                            @Html.LabelFor(model => Model.FeExpira)
+                        </div>
+                        <div class="samnetEditor">
+                            <input type="text" class="text-box" id="FeExpira" style="width: 180px;" />
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    
+</div>
+<input type="hidden" id="EntityState" value="@ViewBag.EntityState" />
+<script type="text/javascript">
+//<![CDATA[
+    jQuery(document).ready(function ($) {
+        $('#FeExpira').Zebra_DatePicker();
+
+      
+        showTitleSystem('@ViewBag.Title');
+    });
+
+
+
+
+    function SaveUpdateModel()
+    {   
+
+          var DataModel = { 'Usuario':{ IdUser: document.getElementById("IdUser").value,
+                                        IdLogon: document.getElementById("IdLogon").value,
+                                        DsNombres: document.getElementById("DsNombres").value,
+                                        StNoExpira: document.getElementById("StNoExpira").value,
+                                        FeExpira: document.getElementById("FeExpira").value,
+                                        EntityState: document.getElementById("EntityState").value
+                                      }
+                          };
+         
+          samlinkajaxUpdateModel('@Url.Action("UpdateModel", "Usuarios")', DataModel,"IdUser",true,true);
+              
+    }
+//]]>
+</script>

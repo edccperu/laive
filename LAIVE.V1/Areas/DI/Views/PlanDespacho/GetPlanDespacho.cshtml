@@ -1,0 +1,3641 @@
+﻿@using Laive.Entity.Di;
+@using Laive.Core.Common
+@{
+   ViewBag.Title = "Programación";
+}
+<table id="divTblPlanDespacho" style="width:100%; font-family:Tahoma; font-size:10px;">
+   <tr>
+      <td style="background:#ffd800; text-align:center; width:45%;">
+         PEDIDOS
+      </td>
+      <td style="background:#f5e915;text-align:center; width:55%;">
+         CAMION
+      </td>
+   </tr>
+   <tr>
+      <td style="width:45%;" class="lblHead">
+         <div id="lblHeadPedidos" style="min-height: 14px;"></div>
+      </td>
+      <td style="width:55%;" class="lblHead">
+         <div id="lblHeadCamion" style="min-height: 14px;"></div>
+      </td>
+   </tr>
+   <tr>
+      <td>
+         <ul id="tbpedidos" class="tabs">
+            <li class="active" rel="PanelPedido1"> Consolidados</li>
+            <li rel="PanelPedido2"> Frios</li>
+            <li rel="PanelPedido3"> Secos</li>
+            <li rel="PanelPedido4"> Apertura</li>
+         </ul>
+         <div id="divtbpedidos" class="tab_container">
+            <div id="PanelPedido1" class="tab_content">
+               <div style="width: 100%;background: #EBEBEB;border: 1px solid #ccc;">
+                  <div class="samnetEditorEmty">
+                     <input type="text" id="txtBusquedaPedidoCo" class="text-box" style="width: 312px;left: 3px;position: relative;" />
+                  </div>
+                  <div class="samnetLabelEmty" style="min-width:2px;">
+                  </div>
+                  <div class="samnetEditorEmty">
+                     <select id="ddlBusquedaPedidoCo" class="text-box">
+                        <option value="1">Cod Partner</option>
+                        <option value="0">Ruta</option>
+                        <option value="2">Clave Partner</option>
+                        <option value="12">Departamento</option>
+                        <option value="14">Provincia</option>
+                        <option value="16">Distrito</option>
+                        <option value="18">Canal Baan</option>
+                     </select>
+                  </div>
+                  <div class="samnetLabelEmty" style="min-width:2px;">
+                  </div>
+                  <div class="samnetEditorEmty">
+                     <input id="btnBuscaPedidoCo" type="button" value="Buscar" class="btnClassButton" style="width:64px;" />
+                  </div>
+               </div>
+               <div class="HBox" style=" width:100%; height:1px;"></div>
+               <table id="grdPeConso"></table>
+               <table style="width:100%">
+                  <tr>
+                     <td rowspan="3">
+                       @* <input id="btnImportarOrden" type="button" value="Importar Orden"
+                               class="btnClassButton" style="width:100px; height:55px; background:url(Content/images/import.png) 50% 11% no-repeat;" />*@
+                     </td>
+                     <td style="width: 65px;"></td>
+                     <td style="width: 65px;">
+                        Peso Frios
+                     </td>
+                     <td style="width: 80px;">
+                        Importe S/. Frios
+                     </td>
+                     <td style="width: 65px;">
+                        Peso Secos
+                     </td>
+                     <td style="width: 80px;">
+                        Importe S/. Secos
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>
+                        TOTALES
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTPeFrio" style="width: 65px;" value="@ViewBag.PesoFrios" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTImpFrio" style="width: 65px;" value="@ViewBag.ImporteFrios" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTPeSeco" style="width: 65px;" value="@ViewBag.PesoSecos" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTImpSeco" style="width: 65px;" value="@ViewBag.ImporteSecos" readonly="readonly" />
+                     </td>
+                  </tr>
+                  <tr>
+                     <td colspan="3" style=" text-align:right;">
+                        TOTALES GENERAL
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTPeGeneral" style="width: 65px;" value="@ViewBag.TotalPeso" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTImpGeneral" style="width: 65px;" value="@ViewBag.TotalImporte" readonly="readonly" />
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <div id="PanelPedido2" class="tab_content">
+               <table id="grdPeFrios"></table>
+               <div id="divTotalesFrio" style="overflow-x:auto;">
+                  <table cellpadding="0" cellspacing="0" style="width:100%;">
+                     <tr>
+                        <td colspan="10" style="height:10px;"></td>
+                     </tr>
+                     <tr>
+                        <td style="width: 10px;"></td>
+                        <td style="width: 65px;"></td>
+                        <td style="width: 65px;">Kilos Frios</td>
+                        <td style="width: 65px;">Kilos Secos</td>
+                        <td style="width: 65px;">Total</td>
+                        <td colspan="3"></td>
+                        <td>
+                           Paleta
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeFrioPaleta" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Consolidado
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioConso" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoConso" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtConsoTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td rowspan="2" align="center">
+                           <input type="button" value="Marcar Seleccionados" id="btnMarcarFrios" style="white-space: normal; width:98px;" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td>
+                           Empaque
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeFrioEmpa" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Partición
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioParticion" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoParticion" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtParticionTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td style="width: 10px;"></td>
+                        <td>
+                           Unidad
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeFrioUnidad" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Total
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtTotalTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td align="center">
+                           Peso Seleccionado
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td>
+                           Peso Bruto
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeFrioPeso" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td colspan="6"></td>
+                        <td align="center">
+                           <input disabled="disabled" type="text" class="input-samnet-decimal" id="txtPesoFrioSelec" style="width: 92px;" readonly="readonly" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td>
+                           Importe
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeFrioImp" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div id="PanelPedido3" class="tab_content">
+               <table id="grdPeSecos"></table>
+               <div id="divTotalesSecos" style="overflow-x:auto;">
+                  <table cellpadding="0" cellspacing="0" style="width:100%;">
+                     <tr>
+                        <td colspan="10" style="height:10px;"></td>
+                     </tr>
+                     <tr>
+                        <td style="width: 10px;"></td>
+                        <td style="width: 65px;"></td>
+                        <td style="width: 65px;">Kilos Frios</td>
+                        <td style="width: 65px;">Kilos Secos</td>
+                        <td style="width: 65px;">Total</td>
+                        <td colspan="3"></td>
+                        <td>
+                           Paleta
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeSecoPaleta" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Consolidado
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioConso" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoConso" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtConsoTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td rowspan="2" align="center">
+                           <input type="button" value="Marcar Seleccionados" id="btnMarcarSecos" style="white-space: normal; width:98px;" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td>
+                           Empaque
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeSecoEmpa" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Partición
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioParticion" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoParticion" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtParticionTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td style="width: 10px;"></td>
+                        <td>
+                           Unidad
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeSecoUnidad" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Total
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtTotalTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td align="center">
+                           Peso Seleccionado
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td>
+                           Peso Bruto
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeSecoPeso" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                     <tr>
+                        <td colspan="6"></td>
+                        <td align="center">
+                           <input disabled="disabled" type="text" class="input-samnet-decimal" id="txtPesoSecoSelec" style="width: 92px;" readonly="readonly" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td>
+                           Importe
+                        </td>
+                        <td>
+                           <input type="text" class="input-samnet-decimal" id="txtTPeSecoImp" style="width: 65px;" readonly="readonly" />
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div id="PanelPedido4" class="tab_content">
+               <div style="width: 100%;background: #EBEBEB;border: 1px solid #ccc;">
+                  <div id="lblHeadApertura" style="min-height: 14px; padding:4px;"></div>
+               </div>
+               <table id="grdPeApertura"></table>
+               <div id="divTotalesApertura" style="overflow-x:auto;">
+                  <table cellpadding="0" cellspacing="0" style="width:100%;">
+                     <tr>
+                        <td colspan="10" style="height:10px;"></td>
+                     </tr>
+                     <tr>
+                        <td style="width: 10px;"></td>
+                        <td style="width: 65px;"></td>
+                        <td style="width: 65px;">Kilos Frios</td>
+                        <td style="width: 65px;">Kilos Secos</td>
+                        <td style="width: 65px;">Total</td>
+                        <td colspan="3"></td>
+                        <td></td>
+                        <td></td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Consolidado
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioConso" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoConso" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtConsoTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td rowspan="2" align="center" style="width:98px;"></td>
+                        <td style="width: 10px;"></td>
+                        <td></td>
+                        <td></td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Partición
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioParticion" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoParticion" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtParticionTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td style="width: 10px;"></td>
+                        <td></td>
+                        <td></td>
+                     </tr>
+                     <tr>
+                        <td style="width:10px;"></td>
+                        <td style="width: 65px;">
+                           Total
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtFrioTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtSecoTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 65px;">
+                           <input type="text" class="input-samnet-decimal txtTotalTotal" style="width: 65px;" readonly="readonly" value="0.00" />
+                        </td>
+                        <td style="width: 10px;"></td>
+                        <td align="center"></td>
+                        <td style="width: 10px;"></td>
+                        <td></td>
+                        <td></td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+         </div>
+      </td>
+      <td>
+         <ul id="tbcamion" class="tabs">
+            <li class="active" rel="PanelCamion1"> Programación</li>
+            <li rel="PanelCamion2"> Cerrado</li>
+            <li rel="PanelCamion3"> Consolidado Cliente</li>
+            <li rel="PanelCamion4"> Pedido Frios</li>
+            <li rel="PanelCamion5"> Pedido Secos</li>
+         </ul>
+         <div id="divtbcamion" class="tab_container">
+            <div id="PanelCamion1" class="tab_content">
+               <table id="grdCaProgra"></table>
+            </div>
+            <div id="PanelCamion2" class="tab_content">
+               <table id="grdCaCerrado"></table>
+            </div>
+            <div id="PanelCamion3" class="tab_content">
+               <table id="grdCaConso"></table>
+               <table style="width:100%">
+                  <tr>
+                     <td></td>
+                     <td style="width: 65px;"></td>
+                     <td style="width: 65px;">
+                        Peso Frios
+                     </td>
+                     <td style="width: 65px;">
+                        Importe S/. Frios
+                     </td>
+                     <td style="width: 65px;">
+                        Peso Secos
+                     </td>
+                     <td style="width: 65px;">
+                        Importe S/. Secos
+                     </td>
+                  </tr>
+                  <tr>
+                     <td></td>
+                     <td>
+                        TOTALES
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrio" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaImpFrio" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSeco" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaImpSeco" style="width: 65px;" readonly="readonly" />
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <div id="PanelCamion4" class="tab_content">
+               <table id="grdCaFrios"></table>
+               <table style="width:100%">
+                  <tr>
+                     <td></td>
+                     <td style="width: 65px;"></td>
+                     <td style="width: 65px;">
+                        Paleta
+                     </td>
+                     <td style="width: 65px;">
+                        Empaque
+                     </td>
+                     <td style="width: 65px;">
+                        Unidad
+                     </td>
+                     <td style="width: 65px;">
+                        Peso Bruto
+                     </td>
+                     <td style="width: 65px;">
+                        Importe S/.
+                     </td>
+                  </tr>
+                  <tr>
+                     <td></td>
+                     <td>
+                        TOTALES
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioPaleta" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioEmpa" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioUnidad" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioPeso" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaFrioImp" style="width: 65px;" readonly="readonly" />
+                     </td>
+                  </tr>
+               </table>
+            </div>
+            <div id="PanelCamion5" class="tab_content">
+               <table id="grdCaSecos"></table>
+               <table style="width:100%">
+                  <tr>
+                     <td></td>
+                     <td style="width: 65px;"></td>
+                     <td style="width: 65px;">
+                        Paleta
+                     </td>
+                     <td style="width: 65px;">
+                        Empaque
+                     </td>
+                     <td style="width: 65px;">
+                        Unidad
+                     </td>
+                     <td style="width: 65px;">
+                        Peso Bruto
+                     </td>
+                     <td style="width: 65px;">
+                        Importe S/.
+                     </td>
+                  </tr>
+                  <tr>
+                     <td></td>
+                     <td>
+                        TOTALES
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoPaleta" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoEmpa" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoUnidad" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoPeso" style="width: 65px;" readonly="readonly" />
+                     </td>
+                     <td>
+                        <input type="text" class="input-samnet-decimal" id="txtTCaSecoImp" style="width: 65px;" readonly="readonly" />
+                     </td>
+                  </tr>
+               </table>
+            </div>
+         </div>
+      </td>
+   </tr>
+</table>
+
+<div id="PopupUnidad">
+   <div class="HBox">
+      <div class="samnetLabelEmty" style="width:45px;">
+         RUTA :
+      </div>
+      <div class="samnetEditorEmty" style="height: 22px;">
+         @Html.DropDownList("ddlidRuta", new SelectList(ViewBag.Ruta, "value", "text"), new { @class = "text-box", @style = "width:186px;" })
+      </div>
+      <div class="samnetLabelEmty" style="width:138px;">
+      </div>
+      <div id="lblNewCostoFrioSeco" class="samnetLabelEmty" style="width:88px;">
+         COSTO FRIO:
+      </div>
+      <div class="samnetEditorEmty">
+         <input type="text" id="txtNewCostoFrioSeco" value="0.00" style="width: 95px;text-align:right;" />
+      </div>
+   </div>
+   <div class="HBox" style=" width:100%; height:10px;"></div>
+   <div style="width: 554px;background: #EBEBEB;border: 1px solid #ccc;">
+      <div class="samnetEditorEmty">
+         <input type="text" id="txtBusquedaUnidad" class="text-box" style="width: 330px;left: 3px;position: relative;" />
+      </div>
+      <div class="samnetLabelEmty" style="min-width:2px;">
+      </div>
+      <div class="samnetEditorEmty">
+         <select id="ddlBusquedaColum" class="text-box">
+            <option value="2">Placa</option>
+            <option value="4">Transportista</option>
+            <option value="5">Chofer</option>
+         </select>
+      </div>
+      <div class="samnetLabelEmty" style="min-width:2px;">
+      </div>
+      <div class="samnetEditorEmty">
+         <input id="btnBuscaUnidad" type="button" value="Buscar" class="btnClassButton" style="width:82px;" />
+      </div>
+   </div>
+   <div class="HBox" style=" width:100%; height:1px;"></div>
+   <table id="grdUnidad"></table>
+</div>
+<div id="PopupAsigTurnoBox">
+   <table style=" width:100%;">
+      <tr>
+         <td></td>
+         <td>Turno</td>
+         <td>Box</td>
+      </tr>
+      <tr>
+         <td>Frios</td>
+         <td>
+            @Html.DropDownList("ddlidTurnoFrio", new SelectList(ViewBag.Turno, "value", "text"), new { @class = "text-box", @style = "width:116px;" })
+         </td>
+         <td>
+            @Html.DropDownList("ddlidBoxFrio", new SelectList(ViewBag.BFrio, "value", "text"), new { @class = "text-box", @style = "width:160px;" })
+         </td>
+      </tr>
+      <tr>
+         <td>Secos</td>
+         <td>
+            @Html.DropDownList("ddlidTurnoSeco", new SelectList(ViewBag.Turno, "value", "text"), new { @class = "text-box", @style = "width:116px;" })
+         </td>
+         <td>
+            @Html.DropDownList("ddlidBoxSeco", new SelectList(ViewBag.BSeco, "value", "text"), new { @class = "text-box", @style = "width:160px;" })
+         </td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <div class="samnetButton" style=" text-align:right; display:block;">
+               <input id="btnAceptarAsigTB" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+               <input id="btnCancelarAsigTB" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </div>
+         </td>
+      </tr>
+   </table>
+</div>
+
+<div id="PopupImportarOrden">
+   <table id="tblRango" style=" width:100%;">
+      <tr>
+         <td>
+            Almacen
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            Desde: (+1)
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            Hasta:
+         </td>
+      </tr>
+      <tr>
+         <td>
+            @Html.DropDownList("ddlidAlmacen", new SelectList(ViewBag.ListAlmacen, "CodigoAlmacen", "GlosaAlmacen"), new { @class = "text-box", @style = "width:110px;", @onchange = "fn_onChangeIdAlmacen();" })
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input type="text" id="txtOrdenDesde" style="width: 105px;text-transform: uppercase;" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input type="text" id="txtOrdenHasta" style="width: 105px;text-transform: uppercase;" />
+         </td>
+      </tr>
+   </table>
+   <table style=" width:100%;">
+      <tr>
+         <td colspan="3">
+            <div id="idLoadingImport" style=" display:none; width:100%; text-align:center;">
+               <img alt="|" src="../../Content/animation/loadingPanel9.GIF" />
+            </div>
+         </td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <div id="lblImportMessage" style=" width:100%; text-align:center;"></div>
+         </td>
+      </tr>
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptarImpOrden" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelarImpOrden" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+
+
+<div id="PopupDividirLinea">
+   <table id="tblLinea" style=" width:100%;">
+      <tr>
+         <td>
+            CANTIDAD
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            KILOS (Kg)
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            MONTO (S/.)
+         </td>
+         <td style="width:50px;">
+            &nbsp;
+         </td>
+      </tr>
+      <tr>
+         <td>
+            <input id="txtCantADividir" disabled="disabled" type="text" style="width: 65px;" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input id="txtKilosADividir" disabled="disabled" type="text" style="width: 115px;" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input id="txtMontoADividir" disabled="disabled" type="text" style="width: 115px;" />
+         </td>
+         <td style="width:50px;">
+            &nbsp;
+         </td>
+      </tr>
+      <tr class="trSublinea">
+         <td>
+            <input type="text" class="txtDecimal" onblur="fn_blurtxtCanti(0)" id="txtCanti0" style="width: 65px;" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input type="text" class="txtDecimal" disabled="disabled" id="txtKilo0" style="width: 115px;" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input type="text" id="txtMonto0" disabled="disabled" style="width: 115px;" />
+         </td>
+         <td style="width:50px;">
+            &nbsp;
+         </td>
+      </tr>
+      <tr class="trSublinea">
+         <td>
+            <input type="text" class="txtDecimal" onblur="fn_blurtxtCanti(1)" id="txtCanti1" style="width: 65px;" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input type="text" class="txtDecimal" disabled="disabled" id="txtKilo1" style="width: 115px;" />
+         </td>
+         <td style="width:10px;">
+            &nbsp;
+         </td>
+         <td>
+            <input type="text" id="txtMonto1" disabled="disabled" style="width: 115px;" />
+         </td>
+         <td style="width:50px;">
+            <button type="submit" id="btnAddSubLinea" style=" width:28px;" class="btnClassImgButton"><img src="~/Content/images/addDinamic.png"></button>
+         </td>
+      </tr>
+   </table>
+   <table style=" width:100%;">
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptaDivLinea" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelarDivLinea" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+
+<div id="PopupFilesXml">
+   <div style="width:100%;">
+      <button onclick="fn_GenerarZipXML();" style="width:100%;height:30px;">
+         Generar Archivos para Ordenes Agregadas Recientemente.
+      </button>
+   </div>
+   <div style="width:100%;">
+      <div id="ContentFilesXml" style="height: 260px;overflow-y: auto;border: 1px solid #9D9898;top: 4px;position: relative;">
+      </div>
+   </div>
+</div>
+
+<div id="PopupBuscarCliente">
+   <div class="HBox">
+      <div class="samnetEditorEmty">
+         <input type="text" id="txtBuscarCliente" placeholder="Ingrese codigo ó clave de partner" style="width:310px;" />
+      </div>
+      <div class="samnetEditorEmty" style=" width:15px;">
+      </div>
+      <div class="samnetEditorEmty">
+         <input id="btnBuscarCliente" type="button" value="Buscar" class="btnClassButton" style="width:100px;" />
+      </div>
+   </div>
+</div>
+
+<div id="PopupChangeCamion">
+   <table id="grdChangeCamion"></table>
+   <table style=" width:100%;">
+      <tr>
+         <td colspan="3">
+            &nbsp;
+         </td>
+      </tr>
+      <tr>
+         <td style=" width:100px;">
+            <input id="btnAceptaChange" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+         </td>
+         <td>
+            &nbsp;
+         </td>
+         <td style=" width:100px;">
+            <input id="btnCancelarChange" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+         </td>
+      </tr>
+   </table>
+</div>
+
+<div id="PopupPlantillaCamion">
+   <table id="grdPlantillaCamion"></table>
+</div>
+
+
+<div id="PopupNombrePlanilla">
+   <table style=" width:100%;">
+      <tr>
+         <td style="height:10px;"></td>
+      </tr>
+      <tr>
+         <td colspan="3">Ingrese un Nombre para la plantilla.</td>
+      </tr>
+      <tr>
+         <td style="height:10px;"></td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <input id="txtNombrePlanilla" type="text" style="width:100%;" class="text-box" />
+         </td>
+      </tr>
+      <tr>
+         <td style="height:10px;"></td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <div class="samnetButton" style=" text-align:right; display:block;">
+               <input id="btnAceptarNombrePlanilla" type="button" value="Aceptar" class="btnClassButton" style="width:100px;" />
+               <input id="btnCancelarNombrePlanilla" type="button" value="Cancelar" class="btnClassButton" style="width:100px;" />
+            </div>
+         </td>
+      </tr>
+   </table>
+</div>
+
+
+
+<input id="txtPrimeraOrden" type="hidden" />
+
+<script type="text/javascript">
+   /* Variables Generales */
+
+   var _checkStateCaProgra = false;
+   var _checkStateCaCerrado = false;
+   var _checkStateCaConso = false;
+
+   var _varHeadCamion = "";
+   var _varRowsAlmacen = @Html.Raw(ViewBag.ListAlmacenString);
+   var _varDivCodigoPartner = "";
+   var _varDivRuta;
+   var _varOrden;
+   var _varLinea;
+   var _varSubLinea;
+   var _gridSearchClient="";
+   var _varTipoCambioCamion = 0;
+   var _Partner = "";
+   var _EstadoCamion = "";
+   /* -------------------COLUMNAS FOR EXCEL----------------------------------*/
+   var _colgrdPeConso = [
+                        { display: 'Ruta', name: 'IdRuta', width: 20, sortable: true, align: 'left' },
+                        { display: 'Cod Partner', name: 'CodigoPartner', width: 60, sortable: true, align: 'left' },
+                        { display: 'Clave Partner', name: 'GlosaPartner', width: 95, sortable: true, align: 'left' },
+                        { display: '', name: 'estadoCheckFrio', width: 19, sortable: false, align: 'right' ,exportXls:false},
+                        { display: '', name: 'PaletaFrios', hide: true},
+                        { display: 'Kg.Frio', name: 'PesoFrios', width: 65, sortable: true, align: 'right' },
+                        { display: 'S/.Frio', name: 'ImporteFrios', width: 65, sortable: true, align: 'right' },
+                        { display: '', name: 'estadoCheckSeco', width: 19, sortable: false, align: 'right' ,exportXls:false},
+                        { display: '', name: 'PaletaSecos', hide: true },
+                        { display: 'Kg.Seco', name: 'PesoSecos', width: 65, sortable: true, align: 'right' },
+                        { display: 'S/.Seco', name: 'ImporteSecos', width: 65, sortable: true, align: 'right' },
+                        { display: '', name: 'CodigoDpto', hide: true },
+                        { display: '', name: 'GlosaDpto', hide: true },
+                        { display: '', name: 'CodigoProv', hide: true },
+                        { display: '', name: 'GlosaProv', hide: true },
+                        { display: '', name: 'CodigoUbigeo', hide: true },
+                        { display: '', name: 'GlosaDist', hide: true },
+                        { display: '', name: 'CodigoCanalBaan', hide: true },
+                        { display: '', name: 'GlosaCanalBaan', hide: true }
+   ];
+
+   var _colgrdPeFriosSecos = [
+                         { display: 'Ruta', name: 'IdRuta',hide: true },
+                         { display: '', name: 'CodigoPartner', hide: true },
+                         { display: 'Cod. Articulo', name: 'CodigoArticulo', width: 60, sortable: true, align: 'left' },
+                         { display: 'Description Articulo', name: 'GlosaArticulo', width: 110, sortable: true, align: 'left' },
+                         { display: 'Orden', name: 'Orden', hide: true },
+                         { display: '', name: 'Linea', hide: true },
+                         { display: '', name: 'Sublinea', hide: true },
+                         { display: '', name: 'checkboxFrio', width: 38, sortable: false, align: 'center' },
+                         { display: 'Paleta', name: 'Paleta', width: 45, sortable: true, align: 'right' },
+                         { display: 'Empaque', name: 'Empaque', width: 45, sortable: true, align: 'right' },
+                         { display: 'Unidad', name: 'CantidadPedido', width: 45, sortable: true, align: 'right' },
+                         { display: 'Peso Bruto', name: 'KilosPedido', width: 45, sortable: true, align: 'right' },
+                         { display: 'Importe S/.', name: 'ImportePedido', width: 45, sortable: true, align: 'right' },
+                         { display: '', name: 'TipoCarga', hide: true },
+                         { display: '', name: 'UsuarioLock', hide: true },
+                         { display: 'Cant. Ordenes', name: 'CantidadOrdenes', hide: true},
+                         { display: '', name: 'EstadoChecked', hide: true }
+   ];
+
+   var _colgrdPeApertura = [
+                         { display: 'Ruta', name: 'IdRuta',hide: true },
+                         { display: '', name: 'CodigoPartner', hide: true },
+                         { display: 'Cod. Articulo', name: 'CodigoArticulo', width: 60, sortable: true, align: 'left' },
+                         { display: 'Description Articulo', name: 'GlosaArticulo', width: 110, sortable: true, align: 'left' },
+                         { display: 'Orden', name: 'Orden', width: 60 },
+                         { display: '', name: 'Linea', hide: true },
+                         { display: '', name: 'Sublinea', hide: true },
+                         { display: '', name: 'checkboxFrio', width: 38, sortable: false, align: 'center' },
+                         { display: 'Paleta', name: 'Paleta', width: 45, sortable: true, align: 'right' },
+                         { display: 'Empaque', name: 'Empaque', width: 45, sortable: true, align: 'right' },
+                         { display: 'Unidad', name: 'CantidadPedido', width: 45, sortable: true, align: 'right' },
+                         { display: 'Peso Bruto', name: 'KilosPedido', width: 45, sortable: true, align: 'right' },
+                         { display: 'Importe S/.', name: 'ImportePedido', width: 45, sortable: true, align: 'right' },
+                         { display: '', name: 'TipoCarga', hide: true },
+                         { display: '', name: 'UsuarioLock', hide: true }
+   ];
+
+   var _colgrdCaPrograCerrado = [
+                    { display: 'Ruta', name: 'IdRuta', width: 20, sortable: true, align: 'left' },
+                    { display: '', name: 'IdCargaUnidad', hide: true },
+                    { display: '', name: 'IdTransportista', hide: true },
+                    { display: '', name: 'IdUnidad', hide: true },
+                    { display: 'Placa', name: 'Placa', width: 45, sortable: true, align: 'left' },
+                    { display: 'F/S', name: 'TipoCarga', width: 22, sortable: true, align: 'left' },
+                    { display: 'Transportista', name: 'GlosaPartner', width: 85, sortable: true, align: 'left' },
+                    { display: 'Chofer', name: 'NombreChofer', width: 75, sortable: true, align: 'left' },
+                    { display: 'Carga Util', name: 'CargaUtil', width: 48, sortable: true, align: 'right' },
+                    { display: 'Kg. Asig.', name: 'KilosAsignados', width: 48, sortable: true, align: 'right' },
+                    { display: '% Util.', name: 'PorUnidad', width: 45, sortable: true, align: 'center' },
+                    { display: '', name: 'IdTurno_frio', hide: true },
+                    { display: '', name: 'IdTurno_Seco', hide: true },
+                    { display: '', name: 'IdBox_frio', hide: true },
+                    { display: '', name: 'IdBox_Seco', hide: true },
+                    { display: 'Flete/Vta', name: 'FleteVenta', width: 40, sortable: true, align: 'right' },
+                    { display: 'Flete Prom.', name: 'FletePromedio', width: 55, sortable: true, align: 'right' },
+                    { display: '', name: 'KilosFrio', hide: true },
+                    { display: '', name: 'KilosSeco', hide: true },
+                    { display: '', name: 'DsTurno_frio', hide: true},
+                    { display: 'Turno Box F', name: 'DsBox_frio', width: 105, sortable: true, align: 'center' },
+                    { display: '', name: 'DsTurno_Seco', hide: true},
+                    { display: 'Turno Box S', name: 'DsBox_Seco', width: 105, sortable: true, align: 'center' },
+                    { display: '', name: 'Estado', hide: true },
+                    { display: '', name: 'FechaInicio', hide: true },
+                    { display: '', name: 'FechaCierre', hide: true },
+                    { display: '', name: 'SiempreDisponible_Frio', hide: true },
+                    { display: '', name: 'SiempreDisponible_Seco', hide: true }
+   ];
+
+   var _colgrdCaCerrado = [
+                 { display: 'Ruta', name: 'IdRuta', width: 20, sortable: true, align: 'left' },
+                 { display: '', name: 'IdCargaUnidad', hide: true },
+                 { display: '', name: 'IdTransportista', hide: true },
+                 { display: '', name: 'IdUnidad', hide: true },
+                 { display: 'Placa', name: 'Placa', width: 45, sortable: true, align: 'left' },
+                 { display: 'F/S', name: 'TipoCarga', width: 15, sortable: true, align: 'center' },
+                 { display: 'Transportista', name: 'GlosaPartner', width: 90, sortable: true, align: 'left' },
+                 { display: 'Chofer', name: 'NombreChofer', width: 50, sortable: true, align: 'left' },
+                 { display: 'Carga Util', name: 'CargaUtil', width: 48, sortable: true, align: 'right' },
+                 { display: 'Kg. Asig.', name: 'KilosAsignados', width: 48, sortable: true, align: 'right' },
+                 { display: '% Util.', name: 'PorUnidad', width: 45, sortable: true, align: 'center' },
+                 { display: '', name: 'IdTurno_frio', hide: true },
+                 { display: '', name: 'IdTurno_Seco', hide: true },
+                 { display: '', name: 'IdBox_frio', hide: true },
+                 { display: '', name: 'IdBox_Seco', hide: true },
+                 { display: 'Flete/Vta', name: 'FleteVenta', width: 40, sortable: true, align: 'right' },
+                 { display: 'Flete Prom.', name: 'FletePromedio', width: 55, sortable: true, align: 'right' },
+                 { display: '', name: 'KilosFrio', hide: true },
+                 { display: '', name: 'KilosSeco', hide: true },
+                 { display: 'E', name: 'DsEstado', width: 15 },
+                 { display: '', name: 'DsTurno_frio', hide: true},
+                 { display: 'Turno/Box Frio', name: 'DsBox_frio', width: 105, sortable: true, align: 'center' },
+                 { display: '', name: 'DsTurno_Seco', hide: true},
+                 { display: 'Turno/Box Seco', name: 'DsBox_Seco', width: 105, sortable: true, align: 'center' },
+                 { display: '', name: 'Estado', hide: true },
+                 { display: '', name: 'FechaInicio', hide: true },
+                 { display: '', name: 'FechaCierre', hide: true },
+                 { display: '', name: 'SiempreDisponible_Frio', hide: true },
+                 { display: '', name: 'SiempreDisponible_Seco', hide: true }
+   ];
+
+   var _colgrdCaConso = [
+                    { display: 'Ruta', name: 'IdRuta', width: 20, sortable: true, align: 'left' },
+                    { display: 'Cod Partner', name: 'CodigoPartner', width: 60, sortable: true, align: 'left' },
+                    { display: 'Clave Partner', name: 'GlosaPartner', width: 95, sortable: true, align: 'left' },
+                    { display: 'F.Paleta', name: 'PaletaFrios', hide: true},
+                    { display: 'Kg.Frio', name: 'PesoFrios', width: 65, sortable: true, align: 'right' },
+                    { display: 'S/.Frio', name: 'ImporteFrios', width: 65, sortable: true, align: 'right' },
+                    { display: 'S.Paleta', name: 'PaletaSecos', hide: true},
+                    { display: 'Kg.Seco', name: 'PesoSecos', width: 65, sortable: true, align: 'right' },
+                    { display: 'S/.Seco', name: 'ImporteSecos', width: 65, sortable: true, align: 'right' },
+                    { display: '', name: 'IdCargoUnidad', hide: true },
+   ];
+
+   var _colgrdCaFriosSecos = [
+                    { display: 'Ruta', name: 'IdRuta', width: 20, sortable: true, align: 'left', hide: true },
+                    { display: '', name: 'CodigoPartner', hide: true },
+                    { display: 'Cod. Articulo', name: 'CodigoArticulo', width: 60, sortable: true, align: 'left' },
+                    { display: 'Description Articulo', name: 'GlosaArticulo', width: 110, sortable: true, align: 'left' },
+                    { display: 'Orden', name: 'Orden', width: 65, sortable: true, align: 'left' },
+                    { display: '', name: 'Linea', hide: true },
+                    { display: '', name: 'Sublinea', hide: true },
+                    { display: 'Paleta', name: 'Paleta', width: 65, sortable: true, align: 'right' },
+                    { display: 'Empaque', name: 'Empaque', width: 65, sortable: true, align: 'right' },
+                    { display: 'Unidad', name: 'CantidadPedido', width: 65, sortable: true, align: 'right' },
+                    { display: 'Peso Bruto', name: 'KilosPedido', width: 65, sortable: true, align: 'right' },
+                    { display: 'Importe S/.', name: 'ImportePedido', width: 65, sortable: true, align: 'right' },
+                    { display: '', name: 'IdCargoUnidad', hide: true },
+   ];
+
+   function functionOnResize() {
+      $('#PanelPedido1').width(0);
+      $('#PanelPedido2').width(0);
+      $('#PanelPedido3').width(0);
+      $('#PanelPedido4').width(0);
+      $('#PanelCamion1').width(0);
+      $('#PanelCamion2').width(0);
+      $('#PanelCamion3').width(0);
+      $('#PanelCamion4').width(0);
+      $('#PanelCamion5').width(0);
+      var widthGrid = $('#divtbpedidos').width();
+      var widthGridCamion = $('#tbcamion').width();
+      $('#PanelPedido1').width(widthGrid);
+      $('#PanelPedido2').width(widthGrid);
+      $('#PanelPedido3').width(widthGrid);
+      $('#PanelPedido4').width(widthGrid);
+      $('#PanelCamion1').width(widthGridCamion);
+      $('#PanelCamion2').width(widthGridCamion);
+      $('#PanelCamion3').width(widthGridCamion);
+      $('#PanelCamion4').width(widthGridCamion);
+      $('#PanelCamion5').width(widthGridCamion);
+      $('#divTotalesFrio').width(widthGrid);
+   }
+
+   /* Redimencionar Tabs */
+   $(document).ready(function () {
+      /* mostrar titulo*/
+      showTitleSystem('@ViewBag.Title - @ViewBag.fechaDespacho');
+      /* crear Tabs y redimencionar*/
+      CreateTab("tbpedidos", "divtbpedidos");
+      CreateTab("tbcamion", "divtbcamion");
+
+      $('#divtbpedidos').height(getHeightForGrid(90));
+      $('#divtbcamion').height(getHeightForGrid(90));
+
+      /* ------------------- REDIMENCIONAR  TABS----------------------------------*/
+      var heightGrid = getHeightForGrid(245);
+      var widthGrid = $('#divtbpedidos').width();
+      var widthGridCamion = $('#tbcamion').width();
+      $('#PanelPedido1').width(widthGrid);
+      $('#PanelPedido2').width(widthGrid);
+      $('#PanelPedido3').width(widthGrid);
+      $('#PanelPedido4').width(widthGrid);
+      $('#PanelCamion1').width(widthGridCamion);
+      $('#PanelCamion2').width(widthGridCamion);
+      $('#PanelCamion3').width(widthGridCamion);
+      $('#PanelCamion4').width(widthGridCamion);
+      $('#PanelCamion5').width(widthGridCamion);
+      $('#divTotalesFrio').width(widthGrid);
+
+      /* -------------------INICIALIZAR CONTROLES NUMERICOS----------------------------------*/
+
+      $("#txtNewCostoFrioSeco").inputmask('decimal', { rightAlign: false,digits:6});
+      $(".txtDecimal").inputmask('decimal', { rightAlign: false,digits:6 });
+
+      /* ------------------- grdPeConso ----------------------------------*/
+      $('#grdPeConso').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdPeConso", "PlanDespacho", new { area = "DI"})',
+         dataType: 'json',
+         colModel: _colgrdPeConso,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid - 35,
+         resizable: false,
+         preProcess: fn_PreCreation_GrdPeConso,
+         onClickRow: fn_onClickRow_GrdPeConso,
+         onSuccess: function (statusdata) {
+            fn_GetTotalesPedido();
+         },
+         buttons: [
+                     { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdPeConso },
+                     { name: 'Retirar Pedido', bclass: 'regresar', onpress: fn_RetirarPedido }
+         ]
+      });
+
+      /* ------------------- grdPeFrios ----------------------------------*/
+      $('#grdPeFrios').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdPeFrios", "PlanDespacho", new { area = "DI"})',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colgrdPeFriosSecos,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid - 55,
+         resizable: false,
+         buttons: [{ name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdPeFrios }],
+         preProcess: fn_PreCreation_GrdPeFrios,
+         onClickRow: fn_onClickRow_GrdPeFrios,
+         onSuccess: function (statusdata) {
+            fn_GetTotalesPedido();
+         }
+      });
+
+      /* ------------------- grdPeSecos ----------------------------------*/
+      $('#grdPeSecos').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdPeSecos", "PlanDespacho", new { area = "DI"})',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colgrdPeFriosSecos,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid - 55,
+         resizable: false,
+         colResize: false,
+         buttons: [{ name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdPeSecos }],
+         preProcess: fn_PreCreation_GrdPeSecos,
+         onClickRow: fn_onClickRow_GrdPeSecos,
+         onSuccess: function (statusdata) {
+            fn_GetTotalesPedido();
+         }
+      });
+
+      /* ------------------- grdPeSecos ----------------------------------*/
+      $('#grdPeApertura').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdApertura", "PlanDespacho", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colgrdPeApertura,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid - 75,
+         resizable: false,
+         colResize: false,
+         buttons: [
+                    { name: 'Dividir Linea', bclass: 'dividirLinea', onpress: fn_DividirLineaApertura },
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdPeApertura }
+         ],
+         preProcess: fn_PreCreation_GrdPeApertura
+      });
+
+      /* ------------------- grdCaProgra ----------------------------------*/
+      $('#grdCaProgra').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaProgra", "PlanDespacho", new { area = "DI"})',
+         dataType: 'json',
+         colModel: _colgrdCaPrograCerrado,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid + 35,
+         resizable: false,
+         colResize: false,
+         buttons: [
+                    { name: 'Agregar Camion', bclass: 'AddCamion', onpress: fn_ShowPopupUnidad },
+                    { name: 'Retirar Camion', bclass: 'DelCamion', onpress: fn_RetirarCamion },
+                    { separator: true },
+                    { name: 'Cargar Mercaderia', bclass: 'CargarMercaderia', onpress: fn_CargarMercaderia},
+                    { name: 'Asignar Turno/Box', bclass: 'AsignarTurRam', onpress: fn_AsignarTurnoBox },
+                    { name: 'Cerrar Camion', bclass: 'CerrarCamion', onpress: fn_CerrarCamion },
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaProgra },
+                    { name: 'Buscar Cliente', bclass: 'Search', onpress: fn_BuscarClienteCaProga },
+                    { name: 'Cambiar Camion', bclass: 'ChangeCamion', onpress: fn_CambiarCamion },
+                    { name: 'Sel.Mul.', bclass: 'CheckBox', onpress: fn_SelMultiCaProgra }
+         ],
+         preProcess: fn_PreCreation_GrdCaProgra,
+         onClickRow: fn_onClickRow_GrdCaProgra
+      });
+
+      /* ------------------- grdCaCerrado ----------------------------------*/
+      $('#grdCaCerrado').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaCerrado", "PlanDespacho", new { area = "DI"})',
+         dataType: 'json',
+         colModel: _colgrdCaCerrado,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid + 20,
+         resizable: false,
+         buttons: [
+                    { name: 'Abrir Camión', bclass: 'OpenCamion', onpress: fn_OpenCamion },
+                    { name: 'Generar XML', bclass: 'GetXML', onpress: fn_GenerarXML },
+                    { name: 'Expedir Camión', bclass: 'UpdateFactura', onpress: fn_ExpedirCamion },
+                    { name: 'Actualizar Factura', bclass: 'UpdateFactura', onpress: fn_UpdateFactura },
+                    { name: 'Enviar a Historial', bclass: 'SetHistory', onpress: DividirLineaSecos },
+                    { name: 'Buscar Cliente', bclass: 'Search', onpress: fn_BuscarClienteCaCerrado },
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaCerrado },
+                    { name: 'Sel.Mul.', bclass: 'CheckBox', onpress: fn_SelMultiCaCerrado },
+                    { name: 'Rpt. Cons.', bclass: 'FilePdf', onpress: fn_RptConsolidado },
+                    { name: 'Rpt. Det.', bclass: 'FilePdf', onpress: fn_RptDetalle },
+                    { name: 'P/L Cons.', bclass: 'FilePdf', onpress: fn_RptPackinListConsolidado },
+                    { name: 'P/L Det.', bclass: 'FilePdf', onpress: fn_RptPackinListDetallado }
+         ],
+         preProcess: fn_PreCreation_GrdCaCerrado,
+         onClickRow: fn_onClickRow_GrdCaCerrado
+      });
+
+      /* ------------------- grdCaConso (CAMION CONSOLIDADO)----------------------------------*/
+      $('#grdCaConso').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaConso", "PlanDespacho", new { area = "DI" })',
+         dataType: 'json',
+         singleSelect: true,
+         autoload:false,
+         colModel:_colgrdCaConso,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid,
+         resizable: false,
+         buttons: [
+                    { name: 'Retirar Mercaderia', bclass: 'RetirarMercaderia', onpress: fn_RetirarCaPartner },
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaConso },
+                    { name: 'Mover a Camion', bclass: 'ChangeCamion', onpress: fn_MoverClienteToCamion },
+                    { name: 'Sel.Mul.', bclass: 'CheckBox', onpress: fn_SelMultiCaConso }
+         ],
+         onClickRow: fn_onClickRow_GrdCaConso
+      });
+
+      /* ------------------- grdCaFrios ----------------------------------*/
+      $('#grdCaFrios').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaFrios", "PlanDespacho", new { area = "DI"})',
+         dataType: 'json',
+         autoload:false,
+         colModel:_colgrdCaFriosSecos,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid,
+         resizable: false,
+         buttons: [
+                    { name: 'Retirar Mercaderia', bclass: 'RetirarMercaderia', onpress: fn_RetirarCaFrios },
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaFrios },
+                    { name: 'Retirar Mercaderia X Orden', bclass: 'RetirarMercaderia', onpress: fn_RetirarCaFriosPorOrden }
+         ]
+      });
+
+      /* ------------------- grdCaConso ----------------------------------*/
+      $('#grdCaSecos').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaSecos", "PlanDespacho", new { area = "DI"})',
+         dataType: 'json',
+         autoload:false,
+         colModel: _colgrdCaFriosSecos,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid,
+         resizable: false,
+         buttons: [
+                    { name: 'Retirar Mercaderia', bclass: 'RetirarMercaderia', onpress: fn_RetirarCaSecos },
+                    { name: 'Excel', bclass: 'FileExcel', onpress: fn_ExpExcelGrdCaSecos },
+                    { name: 'Retirar Mercaderia X Orden', bclass: 'RetirarMercaderia', onpress: fn_RetirarCaSecosPorOrden }
+         ]
+      });
+
+      /* ------------------- grdChangeCamion ----------------------------------*/
+      $('#grdChangeCamion').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         url:'@Url.Action("GetDataGrdCaProgra", "PlanDespacho", new { area = "DI"})',
+         dataType: 'json',
+         colModel: _colgrdCaPrograCerrado,
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: heightGrid + 15,
+         resizable: false,
+         colResize: false,
+         preProcess: fn_PreCreation_GrdCaProgra
+      });
+
+      $('#grdPlantillaCamion').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         onSuccess: fn_buscarUnidad,
+         url:'@Url.Action("GetDataPlantillaCamion", "PlanDespacho", new { area = "DI" })',
+         dataType: 'json',
+         autoload:true,
+         colModel: [
+                      { display: 'Codigo', name: 'CodigoPlantilla', width: 60},
+                      { display: 'Nombre', name: 'GlosaPlantilla',width: 250},
+                      { display: 'Nº Camiones', name: 'CantidadUnidades', width: 60}
+         ],
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: 300,
+         resizable: false,
+         buttons: [
+                    { name: 'Cargar Plantilla', bclass: 'Plantilla', onpress: fn_CargarPlantilla},
+                    { separator: true },
+                    { name: 'Crear Plantilla', bclass: 'add', onpress: fn_AgregarAplantilla }
+         ]
+      });
+
+
+      /* ------------------------------------------POPUP----------------------------------------*/
+      $("#PopupUnidad").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 580,
+         title: "Unidades Disponibles",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /* GRID UNIDAD */
+
+      /* ------------------- grdUnidad ----------------------------------*/
+      $('#grdUnidad').flexigrid({
+         onError: function (jqXHR, textStatus, errorThrown) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,"No se encuentra el Recurso para mostrar los Datos");
+         },
+         onSuccess: fn_buscarUnidad,
+         url:'@Url.Action("GetDataUnidadesDisponibles", "PlanDespacho", new { area = "DI" })',
+         dataType: 'json',
+         autoload:false,
+         colModel: [
+                      { display: '', name: 'idTransportista', hide:true},
+                      { display: '', name: 'idUnidad', hide: true },
+                      { display: 'Placa', name: 'Placa', width: 55, sortable: true, align: 'left' },
+                      { display: 'F/S', name: 'TipoCarga', width: 22, sortable: true, align: 'left' },
+                      { display: 'Transportista', name: 'DsTransportista', width: 110, sortable: true, align: 'left' },
+                      { display: 'Chofer', name: 'NombreChofer', width: 75, sortable: true, align: 'left' },
+                      { display: 'Carga Util', name: 'CargaUtil', width: 65, sortable: true, align: 'right' },
+                      { display: 'Costo Frios', name: 'CostoFrios', width: 65, sortable: true, align: 'right' },
+                      { display: 'Costo Secos', name: 'CostoSecos', width: 65, sortable: true, align: 'right' }
+         ],
+         singleSelect: true,
+         showTableToggleBtn: true,
+         showToggleBtn: false,
+         height: 300,
+         resizable: false,
+         buttons: [
+                    { name: 'Agregar Camion', bclass: 'AddCamion', onpress: fn_AgregarCamion },
+                    { separator: true },
+                    { name: 'Salir', bclass: 'MenuBack', onpress: fn_ClosePopupUnidad }
+         ]
+      });
+      /* POPUP DIVIDIR SUBLINEA*/
+      $("#PopupDividirLinea").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 400,
+         title: "Dividir Linea",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+
+      /* POPUP ASIGNAR TURNO/BOX*/
+      $("#PopupAsigTurnoBox").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 350,
+         title: "Asignar Turno/Box",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /* POPUP IMPORTAR ORDEN */
+      $("#PopupImportarOrden").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 400,
+         title: "Ingrese los Números de Orden",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      $("#PopupFilesXml").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 480,
+         title: "Archivos Generados",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      $("#PopupBuscarCliente").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 480,
+         height: 75,
+         title: "Buscar Cliente",
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /* POPUP DIVIDIR SUBLINEA*/
+      $("#PopupChangeCamion").dialog({
+         appendTo: "#idContentPageAjax",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 580,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /*POPUP PLANTLLA CAMION*/
+      $("#PopupPlantillaCamion").dialog({
+         appendTo: "#idContentPageAjax",
+         title:"Plantillas",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 450,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+      /*POPUP NOMBRE PLANTILLA*/
+      $("#PopupNombrePlanilla").dialog({
+         appendTo: "#idContentPageAjax",
+         title:"Nombre Planilla",
+         autoOpen: false,
+         modal: true,
+         draggable: true,
+         resizable: false,
+         width: 250,
+         show: {
+            effect: "drop",
+            duration: 250
+         },
+         hide: {
+            effect: "drop",
+            duration: 250,
+            direction: "right"
+         }
+      });
+
+
+      $("#btnAceptarAsigTB").click(function () {
+
+         var _turnoFrio = document.getElementById("ddlidTurnoFrio");
+         var _turnoSeco = document.getElementById("ddlidTurnoSeco");
+         var _boxFrio = document.getElementById("ddlidBoxFrio");
+         var _boxSeco = document.getElementById("ddlidBoxSeco");
+
+
+         if(!_turnoFrio.disabled && stringToInt(_turnoFrio.value) == 0)
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione el Turno para frio.");
+            return false;
+         }
+
+         if(!_turnoSeco.disabled && stringToInt(_turnoSeco.value) == 0)
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione el Turno para Seco.");
+            return false;
+         }
+
+         if(!_boxFrio.disabled && stringToInt(_boxFrio.value) == 0)
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione el Box para frio.");
+            return false;
+         }
+
+         if(!_boxSeco.disabled && stringToInt(_boxSeco.value) == 0)
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Seleccione el Box para Seco.");
+            return false;
+         }
+
+         var rows = $('#grdCaProgra').selectedRows();
+         var _rowsCaProgra = $('#grdCaProgra').GetDataRows();
+         var _rowsCaCerrado = $('#grdCaCerrado').GetDataRows();
+
+         var _exist = false;
+         var _existMensaje = "";
+
+         _rowsCaProgra.forEach(function (item) {
+            debugger;
+            if(rows[0][1].Value != item[1].Value)
+            {
+               if(!_turnoFrio.disabled && item[11].Value == _turnoFrio.value && item[13].Value == _boxFrio.value && item[26].Value == "0")
+               {
+                  _exist = true;
+                  _existMensaje = "El turno box para Frios ya fue asignado a un camion de programación."
+                  return false;
+               }
+
+               if(!_turnoSeco.disabled && item[12].Value == _turnoSeco.value && item[14].Value == _boxSeco.value && item[27].Value == "0")
+               {
+                  _exist = true;
+                  _existMensaje = "El turno box para Secos ya fue asignado a un camion de programación."
+                  return false;
+               }
+            }
+         });
+
+         if(_exist){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,_existMensaje);
+            return false;
+         }
+
+         _exist = false;
+         _existMensaje = "";
+
+         _rowsCaCerrado.forEach(function (item) {
+            debugger;
+            if(!_turnoFrio.disabled && item[11].Value == _turnoFrio.value && item[13].Value == _boxFrio.value && item[27].Value == "0")
+            {
+               _exist = true;
+               _existMensaje = "El turno box para Frios ya fue asignado a un camion de cerrado."
+               return false;
+            }
+
+            if(!_turnoSeco.disabled && item[12].Value == _turnoSeco.value && item[14].Value == _boxSeco.value && item[28].Value == "0")
+            {
+               _exist = true;
+               _existMensaje = "El turno box para Secos ya fue asignado a un camion de cerrado."
+               return false;
+            }
+         });
+
+         if(_exist){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,_existMensaje);
+            return false;
+         }
+
+         var vardata = {
+            IdCargaUnidad: rows[0][1].Value,
+            IdTurnoSeco: document.getElementById("ddlidTurnoSeco").value,
+            IdTurnoFrio: document.getElementById("ddlidTurnoFrio").value,
+            IdBoxSeco: document.getElementById("ddlidBoxSeco").value,
+            IdBoxFrio: document.getElementById("ddlidBoxFrio").value
+         };
+
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("UpdateTurnoBox", "PlanDespacho", new { area = "DI"})',
+            data: vardata,
+            dataType: "json",
+            success: function (result) {
+               debugger;
+               if (IsLoginRedirect(result))
+                  window.location.href = "/Login";
+               else {
+                  if(result.Status == '@JsonMessageStatus.SUCCESS'){
+                     $('#grdCaProgra').flexReload();
+                     $('#PopupAsigTurnoBox').dialog('close');
+                  }
+                  else{
+                     MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+                  }
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+      });
+
+
+      $("#btnBuscarCliente").click(function () {
+         var vardata = {
+            DsBusqueda: document.getElementById("txtBuscarCliente").value
+         };
+
+         $.ajax({
+            type: "GET",
+            url:"@Url.Action("GetBuscarCliente", "PlanDespacho", new { area = "DI" })",
+            data : vardata,
+            dataType: "json",
+            success: function (result) {
+
+               debugger;
+
+               if (IsLoginRedirect(result))
+                  window.location.href = "/Login";
+               else {
+                  if(result.length > 0){
+                     MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Se encontraron " + result.length + " resultados.");
+                     var exist = false;
+                     $('#' + _gridSearchClient).find('tbody').find('tr').each(function () {
+                        $(this).removeClass('foundBusqueda');
+                        exist = false;
+                        var _value = this.cells[1].innerText || this.cells[1].textContent;
+                        result.forEach(function(item){
+                           if(_value == item.IdCargaUnidad)
+                           {
+                              exist = true;
+                              return;
+                           }
+                        })
+                        if(exist)
+                           $(this).addClass('foundBusqueda');
+                     });
+                  }
+                  else
+                  {
+                     MsgAlert(@MsgAlertTypeConstant.INFORMATION,"No se encontraron Resultados");
+                  }
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+      });
+
+
+
+      $("#btnCancelarAsigTB").click(function () {
+         $('#PopupAsigTurnoBox').dialog('close');
+      });
+
+      $("#btnImportarOrden").click(function () {
+         $('#PopupImportarOrden').dialog('open');
+         fn_onChangeIdAlmacen();
+      });
+
+      $("#btnCancelarImpOrden").click(function () {
+         $('#PopupImportarOrden').dialog('close');
+      });
+
+      $("#btnAceptarImpOrden").click(function () {
+
+         var validate = true;
+         validate = validate && SamControlEsValido("txtOrdenDesde", "Se Requiere este dato.");
+         if(validate == false)
+            return false;
+         validate = validate && SamControlEsValido("txtOrdenHasta", "Se Requiere este dato.");
+         if(validate == false)
+            return false;
+
+         var _ordenDesde = document.getElementById("txtOrdenDesde").value;
+         var _ordenHasta = document.getElementById("txtOrdenHasta").value;
+         var _primeraOrden = document.getElementById("txtPrimeraOrden").value;
+
+         if(stringToInt(_ordenDesde.substring(3,9)) < stringToInt(_primeraOrden.substring(3,9)))
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"La primera Orden ingresada (Desde) debe ser posterior a la orden " + _primeraOrden);
+            return false;
+         }
+
+         if(stringToInt(_ordenDesde.substring(3,9)) > stringToInt(_ordenHasta.substring(3,9)))
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"La primera Orden ingresada (Desde) debe ser anterior a la segunda Orden (Hasta).");
+            return false;
+         }
+
+         document.getElementById("idLoadingImport").style.display = 'block';
+         document.getElementById("lblImportMessage").innerHTML = 'Procesando...';
+
+         $("#txtOrdenDesde").attr('disabled','disabled');
+         $("#txtOrdenHasta").attr('disabled','disabled');
+         $("#btnAceptarImpOrden").attr('disabled','disabled');
+         $("#btnCancelarImpOrden").attr('disabled','disabled');
+         $(".ui-dialog-titlebar-close").attr('disabled','disabled');
+
+         var vardata = {
+            IdAlmacen: document.getElementById("ddlidAlmacen").value,
+            IdOrdenDesde: document.getElementById("txtOrdenDesde").value,
+            IdOrdenHasta: document.getElementById("txtOrdenHasta").value
+         };
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("ImportarOrdenVenta", "PlanDespacho", new { area = "DI"})',
+            data: vardata,
+            dataType: "html",
+            success: function (result) {
+               if (IsLoginRedirect(result))
+                  window.location.href = "/Login";
+               else {
+                  MsgAlert(@MsgAlertTypeConstant.SUCCESS,'Carga de Ordenes de Venta, Satisfactoria.');
+                  document.getElementById("idLoadingImport").style.display = 'none';
+                  document.getElementById("lblImportMessage").innerHTML = '';
+
+                  $("#txtOrdenDesde").removeAttr('disabled');
+                  $("#txtOrdenHasta").removeAttr('disabled');
+                  $("#btnAceptarImpOrden").removeAttr('disabled');
+                  $("#btnCancelarImpOrden").removeAttr('disabled');
+                  $(".ui-dialog-titlebar-close").removeAttr('disabled');
+                  document.getElementById("txtOrdenDesde").value = '';
+                  document.getElementById("txtOrdenHasta").value = '';
+
+                  _varRowsAlmacen = JSON.parse(result);
+                  fn_onChangeIdAlmacen();
+                  $('#grdPeConso').flexReload();
+                  $('#grdPeFrios').flexOptions({ query: ''}).flexReload();
+                  $('#grdPeSecos').flexOptions({ query: ''}).flexReload();
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+               document.getElementById("idLoadingImport").style.display = 'none';
+               document.getElementById("lblImportMessage").innerHTML = 'Error al Importar Ordenes';
+               $("#txtOrdenDesde").removeAttr('disabled');
+               $("#txtOrdenHasta").removeAttr('disabled');
+               $("#btnAceptarImpOrden").removeAttr('disabled');
+               $("#btnCancelarImpOrden").removeAttr('disabled');
+               $(".ui-dialog-titlebar-close").removeAttr('disabled');
+            }
+         });
+
+
+      });
+
+      $("#btnAddSubLinea").click(function () {
+
+         var table = document.getElementById("tblLinea");
+         var lastRow = table.rows.length;
+         var row = table.insertRow(lastRow);
+         $(row).addClass("trSublinea");
+         var cell1 = row.insertCell(0);
+         var cell2 = row.insertCell(1);
+         var cell3 = row.insertCell(2);
+         var cell4 = row.insertCell(3);
+         var cell5 = row.insertCell(4);
+         var cell6 = row.insertCell(5);
+         cell1.innerHTML = '<input type="text" class="txtDecimal" onblur="fn_blurtxtCanti(' + (lastRow -2).toString() +')" id="txtCanti' + (lastRow - 2).toString() + '" style="width: 65px;" />';
+         cell3.innerHTML = '<input type="text" id="txtKilo' + (lastRow - 2).toString() + '" disabled="disabled" style="width: 115px;" />';
+         cell5.innerHTML = '<input type="text" id="txtMonto' + (lastRow - 2).toString() + '" disabled="disabled" style="width: 115px;" />';
+         cell6.innerHTML = '<button type="submit" onclick="fn_DelRango(this);" style=" width:28px;" class="btnClassImgButton"><img src="Content/images/GridDelete.png"></button>';
+
+      });
+
+      $("#btnBuscaUnidad").click(function () {
+         fn_buscarUnidad();
+      });
+
+      $("#btnBuscaPedidoCo").click(function () {
+         fn_buscarPedidoCo();
+      });
+
+      $("#btnCancelarDivLinea").click(function () {
+         $('#PopupDividirLinea').dialog('close');
+      });
+
+      $("#btnAceptaDivLinea").click(function () {
+
+         var validate = true;
+         var CantTotalDiv = 0;
+         var list = [];
+         list.push({
+            CodigoPartner :_varDivCodigoPartner,
+            IdRuta : _varDivRuta.trim(),
+            Orden: _varOrden.trim(),
+            Linea: _varLinea.trim(),
+            SubLinea : _varSubLinea.trim(),
+            KilosPedido : 0,
+            ImportePedido :  0,
+            IsLineaPadre : true
+         });
+
+         $('.trSublinea').each(function (i, row) {
+            validate = validate && SamControlEsValido("txtCanti" + i, "Se Requiere este dato.");
+            CantTotalDiv += stringToDecimal(document.getElementById("txtCanti" + i).value);
+
+            list.push({
+               CodigoPartner :_varDivCodigoPartner.trim(),
+               IdRuta : _varDivRuta.trim(),
+               Orden: _varOrden.trim(),
+               Linea: _varLinea.trim(),
+               SubLinea : _varSubLinea.trim(),
+               CantidadPedido : stringToDecimal(document.getElementById("txtCanti" + i).value),
+               KilosPedido : stringToDecimal(document.getElementById("txtKilo" + i).value),
+               ImportePedido :  stringToDecimal(document.getElementById("txtMonto" + i).value),
+               IsLineaPadre : false
+            });
+         });
+
+         if(validate == false)
+            return false;
+         if(CantTotalDiv < stringToDecimal(document.getElementById("txtCantADividir").value))
+         {
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"La CANTIDAD Total es MENOR al Original. " + (stringToDecimal(document.getElementById("txtCantADividir").value) - CantTotalDiv).toFixed(4) + ' sin asignar.');
+            return false;
+         }
+         else if(CantTotalDiv > stringToDecimal(document.getElementById("txtCantADividir").value)){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"La CANTIDAD Total es MAYOR al Original. " + (stringToDecimal(CantTotalDiv - document.getElementById("txtCantADividir").value)).toFixed(4) + ' Adicionales.');
+            return false;
+         }
+
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("DividirLinea", "PlanDespacho", new { area = "DI"})',
+            data: JSON.stringify(list),
+            dataType: "html",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+               if (IsLoginRedirect(result))
+                  window.location.href = "/Login";
+               else {
+                  MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Las Sub-lineas se crearon correctamente.");
+                  $('#PopupDividirLinea').dialog('close');
+                  $('#grdPeFrios').flexReload();
+                  $('#grdPeSecos').flexReload();
+                  $('#grdPeApertura').flexReload();
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+
+      });
+
+      $("#btnMarcarFrios").click(function () {
+         var rows = $('#grdPeFrios').selectedRows();
+         if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un registro");
+            return false;
+         }
+
+         var varData = [];
+
+         rows.forEach(function (item) {
+            varData.push({
+               IdRuta: item[0].Value,
+               CodigoPartner: item[1].Value,
+               Orden: item[4].Value,
+               Linea: item[5].Value,
+               Sublinea: item[6].Value,
+               Stpo: true
+            });
+         });
+
+         var functionParam = function () {
+            $('#grdPeFrios').flexOptions({ query: rows[0][0].Value + ',' + rows[0][1].Value + ',F,' + null + ',false'}).flexReload();
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Las Filas Seleccionadas se marcaron correctamente.");
+            document.getElementById("txtPesoFrioSelec").value = '0.00';
+         };
+
+         samlinkajaxDataFunctionParseJson('@Url.Action("UpdateMarcarSelec", "PlanDespacho", new { area = "DI"})', varData, "", false, false,functionParam);
+
+      });
+
+      $("#btnMarcarSecos").click(function () {
+         var rows = $('#grdPeSecos').selectedRows();
+         if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un registro");
+            return false;
+         }
+         var varData = [];
+
+         rows.forEach(function (item) {
+            varData.push({
+               IdRuta: item[0].Value,
+               CodigoPartner: item[1].Value,
+               Orden: item[4].Value,
+               Linea: item[5].Value,
+               Sublinea: item[6].Value,
+               Stpo: true
+            });
+         });
+
+
+         var functionParam = function () {
+            $('#grdPeSecos').flexOptions({ query: rows[0][0].Value + ',' + rows[0][1].Value + ',S,' + null + ',false'}).flexReload();
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Las Filas Seleccionadas se marcaron correctamente.");
+            document.getElementById("txtPesoSecoSelec").value = '0.00';
+         };
+
+         samlinkajaxDataFunctionParseJson('@Url.Action("UpdateMarcarSelec", "PlanDespacho", new { area = "DI" })', varData, "", false, false,functionParam);
+
+      });
+
+      $("#btnAceptaChange").click(function () {
+         var rows = $('#grdChangeCamion').selectedRows();
+         if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camion");
+            return false;
+         }
+
+         var rowsPartner;
+         var rowsCamion;
+
+         if(_varTipoCambioCamion == 0){
+            rowsPartner = $('#grdCaConso').selectedRows();
+            if(rows[0][1].Value == rowsPartner[0][9].Value)
+            {
+               MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camion Diferente.");
+               return false;
+            }
+         }
+         else
+         {
+            rowsCamion = $('#grdCaProgra').selectedRows();
+            if(rows[0][1].Value == rowsCamion[0][1].Value)
+            {
+               MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camion Diferente.");
+               return false;
+            }
+         }
+
+         var vardata = {};
+         var varUrl = "";
+         if(_varTipoCambioCamion == 0){
+
+            vardata = [];
+
+            rowsPartner.forEach(function (item) {
+               vardata.push({
+                  IdCargaUnidad: item[9].Value,
+                  CodigoPartner:item[1].Value,
+                  NewIdCargaUnidad:rows[0][1].Value
+               });
+            });
+
+            varUrl = '@Url.Action("CambiarPartnerToCamion", "PlanDespacho", new { area = "DI" })';
+         }
+         else
+         {
+            vardata = {
+               idCargaUnidad: rowsCamion[0][1].Value,
+               newIdCargaUnidad:rows[0][1].Value
+            };
+            varUrl = '@Url.Action("CambiarCamion", "PlanDespacho", new { area = "DI"})';
+         }
+
+         $.ajax({
+            type: "POST",
+            url: varUrl,
+            data: JSON.stringify(vardata),
+            dataType: "html",
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+               if (IsLoginRedirect(result))
+                  window.location.href = "/Login";
+               else {
+                  $('#grdCaProgra').flexReload();
+                  $('#grdCaConso').flexReload();
+                  $('#grdPeFrios').flexReload();
+                  $('#grdPeSecos').flexReload();
+                  $('#PopupChangeCamion').dialog('close');
+                  $('#grdChangeCamion').flexReload();
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+      });
+
+      $("#btnCancelarChange").click(function () {
+         $('#PopupChangeCamion').dialog('close');
+      });
+
+      $("#btnAceptarNombrePlanilla").click(function () {
+
+         var validate = true;
+         validate = validate && SamControlEsValido("txtNombrePlanilla", "Ingrese un nombre para la plantilla");
+
+         if (validate == false)
+            return false;
+
+         var vardata = { nombre : $('#txtNombrePlanilla').val()};
+         AppAjax("POST","json",'@Url.Action("CreatePlantilla", "PlanDespacho", new { area = "DI"})', vardata, "", false, false, function(response){
+            if(response.Status == '@JsonMessageStatus.SUCCESS')
+            {
+               MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+               $('#grdPlantillaCamion').flexReload();
+               $('#PopupNombrePlanilla').dialog('close');
+               $('#txtNombrePlanilla').val('');
+            }
+            else
+               MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+         });
+
+
+      });
+
+      $("#btnCancelarNombrePlanilla").click(function () {
+         $('#PopupNombrePlanilla').dialog('close');
+      });
+
+   });
+
+   /*  FUNCIONES */
+
+   function fn_blurtxtCanti(index){
+      if(document.getElementById('txtCanti' + index).value != ''){
+
+         var valKilosUnit = stringToDecimal(document.getElementById('txtKilosADividir').value) / stringToDecimal(document.getElementById('txtCantADividir').value);
+         var valMtUnit = stringToDecimal(document.getElementById('txtMontoADividir').value) / stringToDecimal(document.getElementById('txtKilosADividir').value);
+
+         var valCantidad = stringToDecimal(document.getElementById('txtCanti' + index).value);
+
+         document.getElementById('txtKilo' + index).value = (valKilosUnit * valCantidad).toFixed(2);
+
+         document.getElementById('txtMonto' + index).value = (valKilosUnit * valCantidad * valMtUnit).toFixed(2);
+      }
+   }
+
+   function fn_buscarUnidad()
+   {
+      var valSearch = document.getElementById("txtBusquedaUnidad").value;
+      var valIndex = document.getElementById("ddlBusquedaColum").value;
+      if(valSearch.trim() == ''){
+         $("#grdUnidad .trHiden").removeClass("trHiden");
+      }
+      else{
+         $('#grdUnidad > tbody > tr').each(function (i, row) {
+            if($(row).hasClass("trSelected") == false){
+               if(row.cells[valIndex].childNodes[0].innerHTML.toUpperCase().indexOf(valSearch.trim().toUpperCase()) > -1)
+               {
+                  $(row).removeClass("trHiden");
+               }
+               else
+               {
+                  $(row).addClass("trHiden");
+               }
+            }
+         })
+      }
+
+
+   }
+
+   function fn_buscarPedidoCo()
+   {
+      var valSearch = document.getElementById("txtBusquedaPedidoCo").value;
+      var valIndex = document.getElementById("ddlBusquedaPedidoCo").value;
+      if(valSearch.trim() == ''){
+         $("#grdPeConso .trHiden").removeClass("trHiden");
+      }
+      else{
+         $('#grdPeConso > tbody > tr').each(function (i, row) {
+            debugger;
+            if($(row).hasClass("trSelected") == false){
+               debugger;
+               if(row.cells[valIndex].firstChild.innerText.trim().toUpperCase().indexOf(valSearch.trim().toUpperCase()) > -1)
+               {
+                  $(row).removeClass("trHiden");
+               }
+               else
+               {
+                  $(row).addClass("trHiden");
+               }
+            }
+         })
+      }
+   }
+
+
+   function fn_DelRango(control)
+   {
+      var i = control.parentNode.parentNode.rowIndex;
+      document.getElementById("tblLinea").deleteRow(i);
+   }
+
+   function fn_DividirLineaApertura(com, grid) {
+      var rows = $('#grdPeApertura').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+         return false;
+      }
+
+      document.getElementById("txtCantADividir").value = rows[0][10].Value;
+      document.getElementById("txtKilosADividir").value = rows[0][11].Value;
+      document.getElementById("txtMontoADividir").value = rows[0][12].Value;
+      _varDivCodigoPartner = rows[0][1].Value;
+      _varDivRuta = rows[0][0].Value;
+      _varOrden = rows[0][4].Value;
+      _varLinea = rows[0][5].Value;
+      _varSubLinea = rows[0][6].Value;
+
+      document.getElementById("txtCanti0").value = '';
+      document.getElementById("txtKilo0").value = '';
+      document.getElementById("txtMonto0").value = '';
+      document.getElementById("txtCanti1").value = '';
+      document.getElementById("txtKilo1").value = '';
+      document.getElementById("txtMonto1").value = '';
+      var table = document.getElementById("tblLinea");
+      var lastRow = table.rows.length;
+      for (i = lastRow; i > 4; i--) {
+         document.getElementById("tblLinea").deleteRow(i - 1);
+      }
+
+      $('#PopupDividirLinea').dialog('open');
+   }
+
+
+   function DividirLineaSecos(com, grid) {
+
+   }
+
+   function fn_RetirarCaPartner(com, grid) {
+       var rows = $('#grdCaConso').selectedRows();
+
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+         return false;
+      }
+
+      if(_EstadoCamion == ''){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camión");
+         return false;
+      }
+
+      if(_EstadoCamion != '001'){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Se ejecutaron uno o mas procesos en este camión, no puede ser retirado.");
+         return false;
+      }
+
+      var data = {IdCargoUnidad : rows[0][9].Value , CodigoPartner : rows[0][1].Value}
+
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("RetirarCaXPartner", "PlanDespacho", new { area = "DI"})',
+         data: data,
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Los Productos del Partner seleccionado fueron retirados CORRECTAMENTE.");
+               $('#grdCaProgra').flexReload();
+               $("#lblHeadCamion").html(_varHeadCamion);
+               SetGridXIdCargaUnidad(rows[0][9].Value);
+               $('#grdCaFrios').flexOptions({ query: ''}).flexReload();
+               $('#grdCaSecos').flexOptions({ query: ''}).flexReload();
+
+               $('#grdPeConso').flexReload();
+               $('#grdPeFrios').flexReload();
+               $('#grdPeSecos').flexReload();
+
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+
+
+   }
+
+    function fn_RetirarCaFriosPorOrden(com,grid){
+        var rows = $('#grdCaFrios').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+            return false;
+        }
+
+        if(_EstadoCamion == ''){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camión");
+            return false;
+        }
+
+        if(_EstadoCamion != '001'){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Se ejecutaron uno o mas procesos en este camión , no puede ser retirado.");
+            return false;
+        }
+
+        var data = {IdCargoUnidad : rows[0][12].Value , Orden : rows[0][4].Value}
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("RetirarCaXFrioPorOrden", "PlanDespacho", new { area = "DI" })',
+            data: data,
+            dataType: "html",
+            success: function (result) {
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Los Productos seleccionados fueron retirados CORRECTAMENTE.");
+                    $('#grdCaProgra').flexReload();
+                    SetGridXIdCargaUnidad(rows[0][12].Value);
+                    $('#grdCaFrios').flexOptions({ query: rows[0][12].Value + ',' + rows[0][1].Value}).flexReload();
+                    $('#grdPeConso').flexReload();
+                    $('#grdPeFrios').flexReload();
+                    $('#grdPeSecos').flexReload();
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+    }
+
+   function fn_RetirarCaFrios(com,grid){
+      var rows = $('#grdCaFrios').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+         return false;
+      }
+
+      if(_EstadoCamion == ''){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camión");
+         return false;
+      }
+
+      if(_EstadoCamion != '001'){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Se ejecutaron uno o mas procesos en este camión , no puede ser retirado.");
+         return false;
+      }
+
+      var data = {IdCargoUnidad : rows[0][12].Value , Orden : rows[0][4].Value, Linea : rows[0][5].Value, Sublinea : rows[0][6].Value}
+
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("RetirarCaXFrio", "PlanDespacho", new { area = "DI"})',
+         data: data,
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Los Producto seleccionado fueron retirados CORRECTAMENTE.");
+               $('#grdCaProgra').flexReload();
+               SetGridXIdCargaUnidad(rows[0][12].Value);
+               $('#grdCaFrios').flexOptions({ query: rows[0][12].Value + ',' + rows[0][1].Value}).flexReload();
+               $('#grdPeConso').flexReload();
+               $('#grdPeFrios').flexReload();
+               $('#grdPeSecos').flexReload();
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+   }
+
+    function fn_RetirarCaSecosPorOrden(com,grid)
+    {
+        var rows = $('#grdCaSecos').selectedRows();
+        if (rows.length == 0){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+            return false;
+        }
+
+        if(_EstadoCamion == ''){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camión");
+            return false;
+        }
+
+        if(_EstadoCamion != '001'){
+            MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Se ejecutaron uno o mas procesos en este camión , no puede ser retirado.");
+            return false;
+        }
+
+        var data = {IdCargoUnidad : rows[0][12].Value , Orden : rows[0][4].Value}
+
+        $.ajax({
+            type: "POST",
+            url:'@Url.Action("RetirarCaXFrioPorOrden", "PlanDespacho", new { area = "DI" })',
+            data: data,
+            dataType: "html",
+            success: function (result) {
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+                    MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Los Producto seleccionado fueron retirados CORRECTAMENTE.");
+                    $('#grdCaProgra').flexReload();
+                    SetGridXIdCargaUnidad(rows[0][12].Value);
+                    $('#grdCaSecos').flexOptions({ query: rows[0][12].Value + ',' + rows[0][1].Value}).flexReload();
+                    $('#grdPeConso').flexReload();
+                    $('#grdPeFrios').flexReload();
+                    $('#grdPeSecos').flexReload();
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+    
+    }
+
+   function fn_RetirarCaSecos(com,grid){
+      var rows = $('#grdCaSecos').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+         return false;
+      }
+
+      if(_EstadoCamion == ''){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camión");
+         return false;
+      }
+
+      if(_EstadoCamion != '001'){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Se ejecutaron uno o mas procesos en este camión , no puede ser retirado.");
+         return false;
+      }
+
+      var data = {IdCargoUnidad : rows[0][12].Value , Orden : rows[0][4].Value, Linea : rows[0][5].Value, Sublinea : rows[0][6].Value}
+
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("RetirarCaXFrio", "PlanDespacho", new { area = "DI"})',
+         data: data,
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Los Producto seleccionado fueron retirados CORRECTAMENTE.");
+               $('#grdCaProgra').flexReload();
+               SetGridXIdCargaUnidad(rows[0][12].Value);
+               $('#grdCaSecos').flexOptions({ query: rows[0][12].Value + ',' + rows[0][1].Value}).flexReload();
+               $('#grdPeConso').flexReload();
+               $('#grdPeFrios').flexReload();
+               $('#grdPeSecos').flexReload();
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+   }
+
+   /* MOSTRAR POPUP CON LISTA DE UNIDADES*/
+   function fn_ShowPopupUnidad(com, grid) {
+      $('#PopupUnidad').dialog('open');
+      document.getElementById("ddlidRuta").value = '';
+      document.getElementById("lblNewCostoFrioSeco").innerHTML = '';
+      document.getElementById("txtNewCostoFrioSeco").value = '0.00';
+      $("#txtNewCostoFrioSeco").attr('disabled','disabled');
+      $('#txtNewCostoFrioSeco').removeClass("text-box-error");
+      document.getElementById("txtBusquedaUnidad").value = '';
+      $('#grdUnidad').flexReload();
+   }
+
+   /* CERRAR POPUP CON LISTA DE UNIDADES*/
+   function fn_ClosePopupUnidad(com, grid) {
+      $('#PopupUnidad').dialog('close');
+   }
+
+   /* -AGREGAR CAMION A LA TABLA PROGRAMACION
+      -ACTUALIZA LAS GRILLAS UNIDAD Y PROGRAMACION */
+   function fn_AgregarCamion(com, grid) {
+      var rows = $('#grdUnidad').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+
+      var validate = true;
+      validate = validate && SamControlEsValido("ddlidRuta", "Seleccione una Ruta");
+      if(validate == false)
+         return false;
+
+      if(stringToDecimal(rows[0][7].Value) == 0 && stringToDecimal(rows[0][8].Value) == 0 && stringToDecimal(document.getElementById("txtNewCostoFrioSeco").value) <= 0)
+      {
+         document.getElementById("lblNewCostoFrioSeco").innerHTML = rows[0][3].Value.trim() == 'F'?'COSTO FRIO':'COSTO SECO';
+         $("#txtNewCostoFrioSeco").removeAttr('disabled');
+         $('#txtNewCostoFrioSeco').addClass("text-box-error");
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Ingrese el Costo para la Unidad.");
+         return false;
+      }
+
+      var varMtFrio = 0;
+      var varMtSeco = 0;
+
+      if(stringToDecimal(document.getElementById("txtNewCostoFrioSeco").value) > 0)
+      {
+         if(rows[0][3].Value.trim() == 'F')
+            varMtFrio = stringToDecimal(document.getElementById("txtNewCostoFrioSeco").value);
+         else
+            varMtSeco = stringToDecimal(document.getElementById("txtNewCostoFrioSeco").value);
+      }
+
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("UpdateAddCamion", "PlanDespacho", new { area = "DI"})',
+         data: { IdTrans: rows[0][0].Value, IdUnidad: rows[0][1].Value, IdRuta: document.getElementById("ddlidRuta").value,MtFrio : varMtFrio,MtSeco : varMtSeco},
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               $('#grdCaProgra').flexReload();
+               $('#grdUnidad').flexReload();
+               document.getElementById("lblNewCostoFrioSeco").innerHTML = '';
+               document.getElementById("txtNewCostoFrioSeco").value = '0.00';
+               $("#txtNewCostoFrioSeco").attr('disabled','disabled');
+               $('#txtNewCostoFrioSeco').removeClass("text-box-error");
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+
+   }
+
+   /* ANTES DE RENDEREAR LA GRILLA GrdPeConso - CONSOLIDADO PEDIDOS*/
+   function fn_PreCreation_GrdPeConso(JsonData) {
+
+      if(JsonData.rows == null)
+         return JsonData;
+
+
+      JsonData.rows.forEach(function (item) {
+         if (stringToDecimal(item.cell[5]) > 0)
+         {
+            item.cell[3] = '<button type="button" class="checkBox' + item.cell[3] + '"  onClick="fn_CheckBoxChange_GrdPeConsoFrios(this,\'' + item.cell[0] + '\',\'' + item.cell[1] + '\')"></button>';
+         }
+         else
+         {
+            item.cell[3] = '<button type="button" class="checkBoxDisable" disabled="disabled"></button>';
+            item.cell[5] = '';
+            item.cell[6] = '';
+         }
+
+         if (stringToDecimal(item.cell[9]) > 0)
+            item.cell[7] = '<button type="button" class="checkBox' + item.cell[7] + '"  onClick="fn_CheckBoxChange_GrdPeConsoSecos(this,\'' + item.cell[0] + '\',\'' + item.cell[1] + '\')"></button>';
+         else
+         {
+            item.cell[7] = '<button type="button" class="checkBoxDisable" disabled="disabled"></button>';
+            item.cell[9] = '';
+            item.cell[10] = '';
+         }
+
+      });
+
+      return JsonData;
+   };
+
+   /* ANTES DE RENDEREAR LA GRILLA GrdPeFrios*/
+   function fn_PreCreation_GrdPeFrios(JsonData) {
+      if(JsonData.rows == null || JsonData.rows.length == 0)
+      {
+         return JsonData;
+      }
+
+      JsonData.rows.forEach(function (item) {
+         var usuariolock = item.cell[14] == '' ? '': '<img src="Content/images/padlock.png" title="Seleccionado por ' + item.cell[14] + '"/>';
+         item.cell[7] = usuariolock + '<button type="button" class="checkBox' + item.cell[16] + '" onClick="fn_CheckBoxChange_grdPeFriosSecos(this,\'' + item.cell[0] + '\',\'' + item.cell[1] + '\',\'' + item.cell[4] + '\',\'' + item.cell[5] + '\',\'' + item.cell[6] + '\',\'' + item.cell[13] + '\',\'' + item.cell[2] + '\')"></button>';
+      });
+      return JsonData;
+   };
+
+   /* ANTES DE RENDEREAR LA GRILLA GrdPeSecos */
+   function fn_PreCreation_GrdPeSecos(JsonData) {
+      if(JsonData.rows == null || JsonData.rows.length == 0)
+      {
+         return JsonData;
+      }
+
+      JsonData.rows.forEach(function (item) {
+         var usuariolock = item.cell[14] == '' ? '': '<img src="Content/images/padlock.png" title="Seleccionado por ' + item.cell[14] + '"/>';
+         item.cell[7] = usuariolock + '<button type="button" class="checkBox' + item.cell[16] + '" onClick="fn_CheckBoxChange_grdPeFriosSecos(this,\'' + item.cell[0] + '\',\'' + item.cell[1] + '\',\'' + item.cell[4] + '\',\'' + item.cell[5] + '\',\'' + item.cell[6] + '\',\'' + item.cell[13] +  '\',\'' + item.cell[2] + '\')"></button>';
+      });
+
+      return JsonData;
+   };
+
+   /* ANTES DE RENDEREAR LA GRILLA GrdPeApertura */
+   function fn_PreCreation_GrdPeApertura(JsonData) {
+      if(JsonData.rows == null || JsonData.rows.length == 0)
+      {
+         return JsonData;
+      }
+
+      JsonData.rows.forEach(function (item) {
+         var usuariolock = item.cell[14] == '' ? '': '<img src="Content/images/padlock.png" title="Seleccionado por ' + item.cell[14] + '"/>';
+         item.cell[7] = usuariolock + '<button type="button" class="checkBox' + (item.cell[7].toUpperCase() == 'TRUE' ? '1' : '0') + '" onClick="fn_CheckBoxChange_grdPeApertura(this,\'' + item.cell[0] + '\',\'' + item.cell[1] + '\',\'' + item.cell[4] + '\',\'' + item.cell[5] + '\',\'' + item.cell[6] + '\',\'' + item.cell[13] +  '\',\'' + item.cell[2] + '\')"></button>';
+      });
+
+      return JsonData;
+   };
+
+
+   /* ANTES DE RENDEREAR LA GRILLA PROGRAMACION */
+   function fn_PreCreation_GrdCaProgra(JsonData) {
+      if (JsonData.rows == null)
+         return JsonData;
+      JsonData.rows.forEach(function (item) {
+         if(stringToDecimal(item.cell[10]) > 85)
+         {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrV" style="width:100%;">' + item.cell[10] + '%</div></div>';
+         } else if (stringToDecimal(item.cell[10]) >= 80 &&  stringToDecimal(item.cell[10]) < 85)
+         {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrA" style="width:100%;">' + item.cell[10] + '%</div></div>';
+         } else if (stringToDecimal(item.cell[10]) < 80) {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrR" style="width:100%;">' + item.cell[10] + '%</div></div>';
+         } else {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrV" style="width:100%;">' + item.cell[10] + '%</div></div>';
+         }
+         item.cell[15] = item.cell[15] + ' %';
+         item.cell[16] = 'S/. ' + item.cell[16];
+
+
+
+
+      });
+      return JsonData;
+   };
+
+   function fn_PreCreation_GrdCaCerrado(JsonData) {
+      if (JsonData.rows == null)
+         return JsonData;
+      JsonData.rows.forEach(function (item) {
+         if(stringToDecimal(item.cell[10]) > 85)
+         {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrV" style="width:100%;">' + item.cell[10] + ' %</div></div>';
+         } else if (stringToDecimal(item.cell[10]) >= 80 &&  stringToDecimal(item.cell[10]) < 85)
+         {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrA" style="width:100%;">' + item.cell[10] + ' %</div></div>';
+         } else if (stringToDecimal(item.cell[10]) < 80) {
+            item.cell[10] = '<div class="bgPr"><div class="ValPrR" style="width:100%;">' + item.cell[10] + ' %</div></div>';
+         } else {
+            //item.cell[10] = '<div class="bgPr"><div class="ValPrV" style="width:100%;">' + item.cell[10] + ' %</div></div>';
+         }
+
+         item.cell[15] = item.cell[15] + ' %';
+         item.cell[16] = 'S/. ' + item.cell[16];
+
+         switch(item.cell[24])
+         {
+            case '002'  :
+               item.cell[19] = '<div class="bgPr" title="CERRADO"><div class="ValPrA" style="width:100%;">2</div></div>';
+               break;
+            case '003':
+               item.cell[19] = '<div class="bgPr" title="XML"><div class="Val15a082" style="width:100%;">3</div></div>';
+               break;
+            case '004':
+               item.cell[19] = '<div class="bgPr" title="EXPEDIDO"><div class="ValCELESTE" style="width:100%;">4</div></div>';
+               break;
+            case '005':
+               item.cell[19] = '<div class="bgPr" title="LINEAS PENDIENTES X FACTURAR"><div class="ValPrA" style="width:100%;">5</div></div>';
+               break;
+            case '006':
+               item.cell[19] = '<div class="bgPr" title="FACTURADO"><div class="ValPrAZUL" style="width:100%;">6</div></div>';
+               break;
+         }
+
+      });
+      return JsonData;
+   };
+
+
+   function fn_GetTotalesPedido(){
+      AppAjax('POST','json','@Url.Action("GetTotalesPedidoConsolidado", "PlanDespacho", new { area = "DI" })', {Partner: _Partner || ""}, "", false, false, function(response){
+
+
+         $('#txtTPeFrio').val(response.PesoFrios.toFixed(2));
+         $('#txtTImpFrio').val(response.ImporteFrios.toFixed(2));
+         $('#txtTPeSeco').val(response.PesoSecos.toFixed(2));
+         $('#txtTImpSeco').val(response.ImporteSecos.toFixed(2));
+         $('#txtTPeGeneral').val(response.TotalPeso.toFixed(2));
+         $('#txtTImpGeneral').val(response.TotalImporte.toFixed(2));
+
+
+         $('.txtFrioConso').val(response.FriosKilosDiferentePartner.toFixed(2));
+         $('.txtSecoConso').val(response.SecosKilosDiferentePartner.toFixed(2));
+         $('.txtConsoTotal').val((response.FriosKilosDiferentePartner + response.SecosKilosDiferentePartner).toFixed(2));
+         $('.txtFrioParticion').val(response.FriosPesoBruto.toFixed(2));
+         $('.txtSecoParticion').val(response.SecosPesoBruto.toFixed(2));
+         $('.txtParticionTotal').val((response.FriosPesoBruto + response.SecosPesoBruto).toFixed(2));
+
+         $('.txtFrioTotal').val(response.PesoFrios.toFixed(2));
+         $('.txtSecoTotal').val(response.PesoSecos.toFixed(2));
+         $('.txtTotalTotal').val((response.PesoFrios + response.PesoSecos).toFixed(2));
+
+
+         $('#txtTPeFrioPaleta').val(response.FriosPaleta.toFixed(2));
+         $('#txtTPeFrioEmpa').val(response.FriosEmpaque.toFixed(2));
+         $('#txtTPeFrioUnidad').val(response.FriosUnidad.toFixed(2));
+         $('#txtTPeFrioPeso').val(response.FriosPesoBruto.toFixed(2));
+         $('#txtTPeFrioImp').val(response.FriosImporte.toFixed(2));
+         $('#txtTPeSecoPaleta').val(response.SecosPaleta.toFixed(2));
+         $('#txtTPeSecoEmpa').val(response.SecosEmpaque.toFixed(2));
+         $('#txtTPeSecoUnidad').val(response.SecosUnidad.toFixed(2));
+         $('#txtTPeSecoPeso').val(response.SecosPesoBruto.toFixed(2));
+         $('#txtTPeSecoImp').val(response.SecosImporte.toFixed(2));
+
+
+
+      });
+   }
+
+   /* ANTES DE RENDEREAR LA GRILLA grdPeConso check box para frios */
+    function fn_CheckBoxChange_GrdPeConsoFrios(control,idRuta,idPartner) {
+        debugger;
+      $("#grdPeConso .trSelected").removeClass("trSelected");
+      control.parentNode.parentNode.parentNode.classList.add("trSelected");
+      var varchecked;
+      if($(control).hasClass('checkBox1'))
+      {
+         $(control).removeClass('checkBox1');
+         $(control).addClass('checkBox0');
+         varchecked = false;
+      }
+      else
+      {
+         $(control).removeClass('checkBox0');
+         $(control).removeClass('checkBox2');
+         $(control).addClass('checkBox1');
+         varchecked = true;
+      }
+
+      GetFriosFriosXPartner(idRuta, idPartner, varchecked, null);
+   }
+
+   /* ANTES DE RENDEREAR LA GRILLA grdPeConso check box para Secos */
+   function fn_CheckBoxChange_GrdPeConsoSecos(control,idRuta,idPartner) {
+      $("#grdPeConso .trSelected").removeClass("trSelected");
+      control.parentNode.parentNode.parentNode.classList.add("trSelected");
+      var varchecked;
+      if($(control).hasClass('checkBox1'))
+      {
+         $(control).removeClass('checkBox1');
+         $(control).addClass('checkBox0');
+         varchecked = false;
+      }
+      else
+      {
+         $(control).removeClass('checkBox0');
+         $(control).addClass('checkBox1');
+         varchecked = true;
+      }
+      GetFriosSecosXPartner(idRuta, idPartner, null, varchecked);
+   }
+
+   /* Click al seleccionar una fila en la grilla GrdPeConso*/
+   function fn_onClickRow_GrdPeConso(valtr) {
+      GetFriosFriosXPartner(valtr.cells[0].firstChild.innerHTML, valtr.cells[1].firstChild.innerHTML, null, null);
+      GetFriosSecosXPartner(valtr.cells[0].firstChild.innerHTML, valtr.cells[1].firstChild.innerHTML, null, null);
+
+      _Partner = valtr.cells[1].firstChild.innerHTML;
+
+      debugger;
+      var varLugar;
+      if(valtr.cells[12].firstChild.innerText.trim() == "")
+         varLugar = "NO Registrado";
+      else
+         varLugar = valtr.cells[12].firstChild.innerHTML + ' - ' + valtr.cells[14].firstChild.innerHTML+ ' - ' + valtr.cells[16].firstChild.innerHTML;
+      $("#lblHeadPedidos").html('<b>PARTNER:</b> ' + valtr.cells[1].firstChild.innerHTML + ' - ' + valtr.cells[2].firstChild.innerHTML + ' - <b>LUGAR:</b> ' + varLugar);
+      $('#grdPeApertura').flexOptions({ query: ''}).flexReload();
+   }
+
+   /* Click al seleccionar una fila en la grilla GrdPeFrios*/
+   function fn_onClickRow_GrdPeFrios(valtr) {
+      var rows = $('#grdPeFrios').selectedRows();
+      if (rows.length == 0){
+         document.getElementById("txtPesoFrioSelec").value = '0.00';
+         $('#grdPeApertura').flexOptions({ query: ''}).flexReload();
+         $("#lblHeadApertura").html('');
+         return false;
+      }
+
+      if(rows.length == 1)
+      {
+         var param = "";
+         param += rows[0][0].Value + ",";
+         param += rows[0][1].Value + ",";
+         param += "F,";
+         param += rows[0][2].Value;
+         $("#lblHeadApertura").html('<b>FRIOS - ARTICULO:</b> ' + rows[0][2].Value + ' - ' + rows[0][3].Value);
+         $('#grdPeApertura').flexOptions({ query: param}).flexReload();
+      }
+      else{
+         $('#grdPeApertura').flexOptions({ query: ''}).flexReload();
+      }
+
+
+
+      var varPeso = 0;
+      rows.forEach(function (item) {
+         varPeso += stringToDecimal(item[11].Value);
+      });
+      document.getElementById("txtPesoFrioSelec").value = varPeso.toFixed(4);
+
+   }
+   /* Click al seleccionar una fila en la grilla GrdPeSecos*/
+   function fn_onClickRow_GrdPeSecos(valtr) {
+      var rows = $('#grdPeSecos').selectedRows();
+      if (rows.length == 0){
+         document.getElementById("txtPesoSecoSelec").value = '0.00';
+         $('#grdPeApertura').flexOptions({ query: ''}).flexReload();
+         $("#lblHeadApertura").html('');
+         return false;
+      }
+
+
+      if(rows.length == 1)
+      {
+         var param = "";
+         param += rows[0][0].Value + ",";
+         param += rows[0][1].Value + ",";
+         param += "S,";
+         param += rows[0][2].Value;
+         $("#lblHeadApertura").html('<b>SECO - ARTICULO:</b> ' + rows[0][2].Value + ' - ' + rows[0][3].Value);
+         $('#grdPeApertura').flexOptions({ query: param}).flexReload();
+      }
+      else{
+         $('#grdPeApertura').flexOptions({ query: ''}).flexReload();
+      }
+
+      var varPeso = 0;
+      rows.forEach(function (item) {
+         varPeso += stringToDecimal(item[11].Value);
+      });
+
+      document.getElementById("txtPesoSecoSelec").value = varPeso.toFixed(4);
+
+   }
+
+   /* Click al seleccionar una fila en la grilla GrdCaProgra*/
+   function fn_onClickRow_GrdCaProgra(valtr) {
+      var rows = $('#grdCaProgra').selectedRows();
+      if (rows.length == 1) {
+          _varHeadCamion = '<b>PROGRAMACION > CAMION:</b> ' + valtr.cells[4].firstChild.innerHTML + ' - ' + valtr.cells[6].firstChild.innerHTML;
+          _EstadoCamion = valtr.cells[23].firstChild.innerHTML;
+          $("#lblHeadCamion").html(_varHeadCamion);
+          SetGridXIdCargaUnidad(valtr.cells[1].firstChild.innerHTML);
+          $('#grdCaFrios').flexOptions({ query: ''}).flexReload();
+          $('#grdCaSecos').flexOptions({ query: ''}).flexReload();
+      }
+      else{
+          _varHeadCamion = '';
+          _EstadoCamion = '';
+          $("#lblHeadCamion").html(_varHeadCamion);
+          $('#grdCaConso').flexOptions({ query: ''}).flexReload();
+          $('#grdCaFrios').flexOptions({ query: ''}).flexReload();
+          $('#grdCaSecos').flexOptions({ query: ''}).flexReload();
+      }
+   }
+
+   /* Click al seleccionar una fila en la grilla GrdCaProgra*/
+   function fn_onClickRow_GrdCaCerrado(valtr) {
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 1) {
+         _varHeadCamion = '<b>CERRADO > CAMION:</b> ' + valtr.cells[4].firstChild.innerHTML + ' - ' + valtr.cells[6].firstChild.innerHTML;
+         _EstadoCamion = valtr.cells[24].firstChild.innerHTML;
+         $("#lblHeadCamion").html(_varHeadCamion);
+         SetGridXIdCargaUnidad(valtr.cells[1].firstChild.innerHTML);
+         $('#grdCaFrios').flexOptions({ query: ''}).flexReload();
+         $('#grdCaSecos').flexOptions({ query: ''}).flexReload();
+      }
+      else{
+         _varHeadCamion = '';
+         _EstadoCamion = '';
+         $("#lblHeadCamion").html(_varHeadCamion);
+         $('#grdCaConso').flexOptions({ query: ''}).flexReload();
+         $('#grdCaFrios').flexOptions({ query: ''}).flexReload();
+         $('#grdCaSecos').flexOptions({ query: ''}).flexReload();
+      }
+   }
+
+   /* Click al seleccionar una fila en la grilla GrdCaConso*/
+   function fn_onClickRow_GrdCaConso(valtr) {
+
+      var rows = $('#grdCaConso').selectedRows();
+      if (rows.length == 1) {
+         $("#lblHeadCamion").html(_varHeadCamion + '   <b>PARTNER:</b> ' + valtr.cells[1].firstChild.innerHTML + ' - ' + valtr.cells[2].firstChild.innerHTML);
+         $('#grdCaFrios').flexOptions({ query: valtr.cells[9].firstChild.innerHTML + ',' + valtr.cells[1].firstChild.innerHTML}).flexReload();
+         $('#grdCaSecos').flexOptions({ query: valtr.cells[9].firstChild.innerHTML + ',' + valtr.cells[1].firstChild.innerHTML }).flexReload();
+      }
+      else{
+         $("#lblHeadCamion").html(_varHeadCamion);
+         $('#grdCaFrios').flexOptions({ query: '' }).flexReload();
+         $('#grdCaSecos').flexOptions({ query: '' }).flexReload();
+      }
+   }
+
+
+   /*  FUNCIONES DE CONSULTA AJAX*/
+   /* ACTUALIZAR DATOS DE LAS GRILLAS grdPeFrios*/
+   function GetFriosFriosXPartner(idRuta, idPartner, checkFrios, checkSecos) {
+       debugger;
+      var rows = $('#grdPeConso').selectedRows();
+      if (rows.length > 0) {
+         var varLugar;
+         if(rows[0][12].Value == "")
+            varLugar = "NO Registrado";
+         else
+            varLugar = rows[0][12].Value + ' - ' + rows[0][14].Value + ' - ' + rows[0][16].Value;
+
+         $("#lblHeadPedidos").html('<b>PARTNER:</b> ' + rows[0][1].Value + ' - ' + rows[0][2].Value+ ' - <b>LUGAR:</b> ' + varLugar);
+      }
+      $('#grdPeFrios').flexOptions({ query: idRuta + ',' + idPartner + ',F,' + checkFrios + ',' + (checkFrios == null ? false : true).toString()}).flexReload();
+   }
+   /* ACTUALIZAR DATOS DE LAS GRILLAS grdPeSecos*/
+   function GetFriosSecosXPartner(idRuta, idPartner, checkFrios, checkSecos) {
+      var rows = $('#grdPeConso').selectedRows();
+      if (rows.length > 0) {
+         var varLugar;
+         if(rows[0][12].Value == "")
+            varLugar = "NO Registrado";
+         else
+            varLugar = rows[0][12].Value + ' - ' + rows[0][14].Value + ' - ' + rows[0][16].Value;
+
+         $("#lblHeadPedidos").html('<b>PARTNER:</b> ' + rows[0][1].Value + ' - ' + rows[0][2].Value+ ' - <b>LUGAR:</b> ' + varLugar);
+      }
+
+      $('#grdPeSecos').flexOptions({ query: idRuta + ',' + idPartner + ',S,' + checkSecos + ',' + (checkSecos == null ? false : true).toString()}).flexReload();
+   }
+
+   /* ACTUALIZAR ESTADO EN LA BD DEL REGISTRO Q CONTIENE EL CHECKBOX DE FRIOS O SECOS*/
+   function fn_CheckBoxChange_grdPeFriosSecos(control, idRuta, idPartner, orden, linea, sublinea,tipoCarga,codigoArticulo) {
+
+      var varchecked;
+      if($(control).hasClass('checkBox1'))
+      {
+         $(control).removeClass('checkBox1');
+         $(control).addClass('checkBox0');
+         varchecked = false;
+      }
+      else
+      {
+         $(control).removeClass('checkBox0');
+         $(control).removeClass('checkBox2');
+         $(control).addClass('checkBox1');
+         varchecked = true;
+      }
+
+
+      var data = {
+         IdRuta: idRuta,
+         CodigoPartner: idPartner,
+         Orden: orden,
+         Linea: linea,
+         Sublinea: sublinea,
+         CodigoArticulo : codigoArticulo,
+         Stpo: varchecked
+      }
+
+      samlinkajaxDataFunction('@Url.Action("UpdateStpo", "PlanDespacho", new { area = "DI" })', data, "", false, false,function(result){
+         $('#grdPeConso').flexReload();
+         $('#grdPeApertura').flexReload();
+      });
+
+   }
+
+
+   /* ACTUALIZAR ESTADO EN LA BD DEL REGISTRO Q CONTIENE EL CHECKBOX DE APERTURAS*/
+   function fn_CheckBoxChange_grdPeApertura(control, idRuta, idPartner, orden, linea, sublinea,tipoCarga,codigoArticulo) {
+
+      var varchecked;
+      if($(control).hasClass('checkBox1'))
+      {
+         $(control).removeClass('checkBox1');
+         $(control).addClass('checkBox0');
+         varchecked = false;
+      }
+      else
+      {
+         $(control).removeClass('checkBox0');
+         $(control).removeClass('checkBox2');
+         $(control).addClass('checkBox1');
+         varchecked = true;
+      }
+
+
+      var data = {
+         IdRuta: idRuta,
+         CodigoPartner: idPartner,
+         Orden: orden,
+         Linea: linea,
+         Sublinea: sublinea,
+         Stpo: varchecked
+      }
+
+      samlinkajaxDataFunction('@Url.Action("UpdateStpoApertura", "PlanDespacho", new { area = "DI" })', data, "", false, false,function(result){
+         $('#grdPeConso').flexReload();
+         $('#grdPeFrios').flexReload();
+         $('#grdPeSecos').flexReload();
+      });
+
+   }
+
+   /* CARGAR MERCADERIA, ACTULIZA LAS GRILAS DE PROGRAMACION , PEDIDOS FRIOS , PEDIDOS SECOS, Y PEDIDO CONSOLIDADOS*/
+   function fn_CargarMercaderia() {
+      var rows = $('#grdCaProgra').selectedRows();
+      var message = "";
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+      var vardata = { IdCargaUnidad: rows[0][1].Value };
+
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("CargarMercaderia", "PlanDespacho", new { area = "DI"})',
+         data: vardata,
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               $('#grdPeConso').flexReload();
+               $('#grdPeFrios').flexReload();
+               $('#grdPeSecos').flexReload();
+               $('#grdCaProgra').flexReload();
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+   }
+
+   /* -------CIERRA EL CAMION -----*/
+   function fn_CerrarCamion() {
+
+      var rows = $('#grdCaProgra').selectedRows();
+      var message = "";
+      if (rows.length == 0) {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+
+      var validateRow = true;
+      var existeSinBox = false;
+      var idCargaUnidadLista = "";
+      rows.forEach(function (item) {
+         debugger;
+         validateRow = true;
+         if(stringToInt(item[17].Value) == 0 && stringToInt(item[18].Value) == 0)
+         {
+            validateRow = false;
+         }
+         if(stringToInt(item[17].Value) > 0 && stringToInt(item[13].Value) == 0 && stringToInt(item[11].Value) == 0)
+         {
+            validateRow = false;
+         }
+         if(stringToInt(item[18].Value) > 0 && stringToInt(item[14].Value) == 0 && stringToInt(item[12].Value) == 0)
+         {
+            validateRow = false;
+         }
+         if(validateRow){
+            idCargaUnidadLista += idCargaUnidadLista == ""? item[1].Value : (";" + item[1].Value) ;
+         }
+         else{
+            existeSinBox = true;
+         }
+      });
+
+      if (existeSinBox) {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Existen camiones con Turno Box no asignados, no pueden cerrarse.");
+      }
+
+      if(idCargaUnidadLista != "")
+      {
+         var vardata = { IdCargaUnidad: idCargaUnidadLista };
+         $.ajax({
+            type: "POST",
+            url:'@Url.Action("CerrarCamion", "PlanDespacho", new { area = "DI"})',
+            data: vardata,
+            dataType: "html",
+            success: function (result) {
+               if (IsLoginRedirect(result))
+                  window.location.href = "/Login";
+               else {
+                  $('#grdCaProgra').flexReload();
+                  $('#grdCaCerrado').flexReload();
+                  $('#grdUnidad').flexReload();
+               }
+            },
+            error: function (xhr, status, error) {
+               MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+         });
+      }
+
+
+
+   }
+
+   /* -------ABRIR CAMION -----*/
+   function fn_OpenCamion() {
+      var rows = $('#grdCaCerrado').selectedRows();
+      var message = "";
+      if (rows.length == 0) {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+      var varMensaje = '';
+      debugger;
+      if(rows[0][24].Value != '002')
+      {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Se ejecutaron uno o mas procesos en este camión , no puede ser retirado.");
+         return false;
+      }
+
+      var vardata = { IdCargaUnidad: rows[0][1].Value };
+
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("OpenCamion", "PlanDespacho", new { area = "DI" })',
+         data: vardata,
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               $('#grdCaProgra').flexReload();
+               $('#grdCaCerrado').flexReload();
+               $('#grdUnidad').flexReload();
+               MsgAlert(@MsgAlertTypeConstant.SUCCESS,"El Camion ahora se encuentra en el Panel de Programación.");
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+   }
+
+
+   /* -------ASIGNAR TURNO BOX -----*/
+   function fn_AsignarTurnoBox() {
+      var rows = $('#grdCaProgra').selectedRows();
+      var message = "";
+      if (rows.length == 0) {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+      else if(rows.length > 1){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione solo un camion.");
+         return false;
+      }
+
+      $('#ddlidTurnoFrio').val(rows[0][11].Value);
+      $('#ddlidBoxFrio').val(rows[0][13].Value);
+      $('#ddlidTurnoSeco').val(rows[0][12].Value);
+      $('#ddlidBoxSeco').val(rows[0][14].Value);
+
+
+      $("#ddlidTurnoFrio").attr('disabled','disabled');
+      $("#ddlidBoxFrio").attr('disabled','disabled');
+      $("#ddlidTurnoSeco").attr('disabled','disabled');
+      $("#ddlidBoxSeco").attr('disabled','disabled');
+
+      if(stringToInt(rows[0][17].Value) > 0)
+      {
+         $("#ddlidTurnoFrio").removeAttr('disabled');
+         $("#ddlidBoxFrio").removeAttr('disabled');
+      }
+      if(stringToInt(rows[0][18].Value) > 0)
+      {
+         $("#ddlidTurnoSeco").removeAttr('disabled');
+         $("#ddlidBoxSeco").removeAttr('disabled');
+      }
+
+      $('#PopupAsigTurnoBox').dialog('open');
+   }
+
+
+
+   /*RETIRAR CAMION, REGRESA LOS SALDOS A LA PESTAÑA PEDIDOS*/
+   function fn_RetirarCamion() {
+      var rows = $('#grdCaProgra').selectedRows();
+      var message = "";
+      if (rows.length == 0) {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+      var vardata = { IdCargaUnidad: rows[0][1].Value };
+
+      $.ajax({
+         type: "POST",
+         url:'@Url.Action("RetirarCamion", "PlanDespacho", new { area = "DI"})',
+         data: vardata,
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               $('#grdPeConso').flexReload();
+               $('#grdPeFrios').flexReload();
+               $('#grdPeSecos').flexReload();
+               $('#grdCaProgra').flexReload();
+               $('#grdUnidad').flexReload();
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+   }
+
+   function SetGridXIdCargaUnidad(idCargaUnidad) {
+      $('#grdCaConso').flexOptions({ query: idCargaUnidad }).flexReload();
+   }
+
+   function fn_onChangeIdAlmacen() {
+      _varRowsAlmacen.forEach(function (item) {
+         if(item.CodigoAlmacen.trim() == document.getElementById("ddlidAlmacen").value.trim())
+         {
+            document.getElementById("txtOrdenDesde").value = item.UltimaOrden;
+            document.getElementById("txtPrimeraOrden").value = item.PrimeraOrden;
+
+            var _prefix = item.UltimaOrden.toString().substring(0, 3).replace('9','\\9') + '999999';
+            document.getElementById("txtOrdenHasta").value = '';
+
+            $("#txtOrdenDesde").inputmask({ mask: _prefix, greedy: false });
+            $("#txtOrdenHasta").inputmask({ mask: _prefix, greedy: false });
+            return;
+         }
+      });
+   }
+
+   /* REPORTE CONSOLIDADO*/
+
+   function fn_RptConsolidado(){
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+
+      var idCargaUnidad = '';
+      rows.forEach(function (item) {
+         idCargaUnidad += (idCargaUnidad == ''?'':'_') + item[1].Value;
+      });
+
+      $.fileDownload('/PlanDespacho/DownloadPDF?IdCargaUnidad=' + idCargaUnidad)
+             .done(function () {
+                AlertCorrecto("El Archivo se Descargo Correctamente.");
+             }).fail(function () {
+                AlertAtencion("Error al Descargar el Archivo.");
+             });
+
+   }
+
+   function fn_RptDetalle(){
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+
+      var idCargaUnidad = '';
+      rows.forEach(function (item) {
+         idCargaUnidad += (idCargaUnidad == ''?'':'_') + item[1].Value;
+      });
+
+      $.fileDownload('/PlanDespacho/DownloadPDFDetalle?IdCargaUnidad=' + idCargaUnidad)
+       .done(function () {
+          AlertCorrecto("El Archivo se Descargo Correctamente.");
+       }).fail(function () {
+          AlertAtencion("Error al Descargar el Archivo.");
+       });
+
+   }
+
+   /*ACTUALIZAR FACTURA*/
+   function fn_UpdateFactura(){
+
+
+      $.ajax({
+         beforeSend: function () {
+            $("#samLoading").show("fade", 300);
+         },
+         complete: function () {
+            $("#samLoading").hide("fade", 300);
+         },
+         type: "POST",
+         url:'@Url.Action("UpdateFactura", "PlanDespacho", new { area = "DI"})',
+         dataType: "html",
+         success: function (result) {
+            if (IsLoginRedirect(result))
+               window.location.href = "/Login";
+            else {
+               MsgAlert(@MsgAlertTypeConstant.SUCCESS,"Actualizacion realizada con Exito.");
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+
+   }
+
+   function fn_GenerarXML(){
+
+      $.ajax({
+         beforeSend: function () {
+            $("#samLoading").show("fade", 300);
+         },
+         complete: function () {
+            $("#samLoading").hide("fade", 300);
+         },
+         type: "POST",
+         url:'@Url.Action("GenerateDataXml", "PlanDespacho", new { area = "DI"})',
+         dataType: "json",
+         success: function (result) {
+            if(result.Status == "success" ){
+               MsgAlert(@MsgAlertTypeConstant.SUCCESS,result.Message);
+            }
+            else if(result.Status == "warning"){
+               MsgAlert(@MsgAlertTypeConstant.INFORMATION,result.Message);
+            }
+            else{
+               MsgAlert(@MsgAlertTypeConstant.ERROR,result.Message);
+            }
+         },
+         error: function (xhr, status, error) {
+            MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+         }
+      });
+
+   }
+
+   function fn_BuscarClienteCaProga(valtr) {
+      document.getElementById("txtBuscarCliente").value = "";
+      _gridSearchClient = "grdCaProgra";
+      $('#PopupBuscarCliente').dialog('open');
+   }
+
+   function fn_BuscarClienteCaCerrado(valtr) {
+      document.getElementById("txtBuscarCliente").value = "";
+      _gridSearchClient = "grdCaCerrado";
+      $('#PopupBuscarCliente').dialog('open');
+   }
+
+   function fn_ExpExcelGrdPeConso(valtr) {
+      ExportToExcel(_colgrdPeConso, "grdPeConso");
+   }
+
+   function fn_ExpExcelGrdCaProgra(valtr) {
+      ExportToExcel(_colgrdCaPrograCerrado, "grdCaProgra");
+   }
+
+   function fn_ExpExcelGrdCaCerrado(valtr) {
+      ExportToExcel(_colgrdCaPrograCerrado, "grdCaCerrado");
+   }
+
+   function fn_ExpExcelGrdCaConso(valtr) {
+      ExportToExcel(_colgrdCaConso, "grdCaConso");
+   }
+
+   function fn_ExpExcelGrdCaFrios(valtr) {
+      ExportToExcel(_colgrdCaFriosSecos, "grdCaFrios");
+   }
+
+   function fn_ExpExcelGrdCaSecos(valtr) {
+      ExportToExcel(_colgrdCaFriosSecos, "grdCaSecos");
+   }
+
+   function fn_ExpExcelGrdPeFrios(valtr){
+      ExportToExcel(_colgrdPeFriosSecos, "grdPeFrios");
+   }
+
+   function fn_ExpExcelGrdPeSecos(valtr){
+      ExportToExcel(_colgrdPeFriosSecos, "grdPeSecos");
+   }
+
+   function fn_ExpExcelGrdPeApertura(valtr){
+      ExportToExcel(_colgrdPeApertura, "grdPeApertura");
+   }
+
+   function fn_MoverClienteToCamion(valtr) {
+      var rows = $('#grdCaConso').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Partner");
+         return false;
+      }
+
+      if(_EstadoCamion == ''){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camión");
+         return false;
+      }
+
+      if(_EstadoCamion != '001'){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Se ejecutaron uno o mas procesos en este camión , no puede ser retirado.");
+         return false;
+      }
+
+      _varTipoCambioCamion = 0;
+      $('#grdChangeCamion').flexReload();
+      $("#PopupChangeCamion").dialog({ title: "Cambiar un Partner a un Camion Diferente" }).dialog('open');
+   }
+
+   function fn_CambiarCamion(valtr) {
+      var rows = $('#grdCaProgra').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camion");
+         return false;
+      }
+      _varTipoCambioCamion = 1;
+      $('#grdChangeCamion').flexReload();
+      $("#PopupChangeCamion").dialog({ title: "Cambiar a un Camion Diferente" }).dialog('open');
+   }
+
+   function fn_Plantilla(valtr) {
+      $('#grdPlantillaCamion').flexReload();
+      $('#PopupPlantillaCamion').dialog('open');
+   }
+
+   function fn_CargarPlantilla(valtr){
+      var rows = $('#grdPlantillaCamion').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Plantilla");
+         return false;
+      }
+
+      var vardata = {codigoPlantilla : rows[0][0].Value};
+
+      AppAjax("POST","json",'@Url.Action("CargarPlantilla", "PlanDespacho", new { area = "DI"})', vardata, "", false, false, function(response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdCaProgra').flexReload();
+            $('#grdUnidad').flexReload();
+            $('#PopupPlantillaCamion').dialog('close');
+         }
+         else
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+
+      });
+   }
+
+   function fn_AgregarAplantilla(valtr){
+      if($('#grdCaProgra').find('tr').length == 0)
+      {
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- No tiene camiones agregados para generar una nueva plantilla");
+         return false;
+      }
+
+      $('#PopupNombrePlanilla').dialog('open');
+   }
+
+   function fn_RetirarPedido (valtr){
+
+      var rows = $('#grdPeConso').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Registro");
+         return false;
+      }
+
+      var _data = {
+         idRuta : rows[0][0].Value,
+         codigoPartner : rows[0][1].Value
+      }
+
+      debugger;
+      AppAjax('POST','json','@Url.Action("RetirarPedidoConsolidado", "PlanDespacho", new { area = "DI" })',_data,"",true,true,function (response){
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdPeConso').flexReload();
+            $('#grdPeFrios').flexReload();
+            $('#grdPeSecos').flexReload();
+            $('#grdPeApertura').flexReload();
+         }
+         else{
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+         }
+      });
+
+   }
+
+   function fn_ExpedirCamion(valtr){
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione un Camión");
+         return false;
+      }
+
+      var idCamiones = "";
+      rows.forEach(function (item) {
+
+          if((stringToDecimal(item[17].Value) > 0 || stringToDecimal(item[18].Value) > 0) && item[24].Value == '003')
+            idCamiones += (idCamiones == ''?'':',') + item[1].Value;
+
+      });
+
+      if (idCamiones == ""){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- No se Encontraron Camiones Para Expedir.");
+         return false;
+      }
+
+      var data = { idCargaUnidad : idCamiones };
+
+      AppAjaxString("POST","json",'@Url.Action("ExpedirCamion", "PlanDespacho", new { area = "DI"})', data, "", true, true, function (response){
+
+         if(response.Status == '@JsonMessageStatus.SUCCESS')
+         {
+            MsgAlert(@MsgAlertTypeConstant.SUCCESS,response.Message);
+            $('#grdCaCerrado').flexReload();
+         }
+         else
+            MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+
+      });
+
+   }
+
+   function fn_RptPackinListConsolidado(){
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+
+      var idCargaUnidad = '';
+      var existeCamionNoValido = false;
+      rows.forEach(function (item) {
+         if(item[24].Value == '004' || item[24].Value == '005' || item[24].Value == '006')
+            idCargaUnidad += (idCargaUnidad == ''?'':'_') + item[1].Value;
+         else
+            existeCamionNoValido = true;
+      });
+
+      if (existeCamionNoValido && idCargaUnidad != '' ){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Algunos camiones no se encuentran en estado 4 , 5 ó 6. El Reporte solo contendra datos de los camiones que se encuentran en los estados 4 , 5 ó 6.");
+      }
+
+      if (existeCamionNoValido && idCargaUnidad == '' ){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Todos los camiones no se encuentran en estado 4 , 5 ó 6. No se generó ningun reporte.");
+         return false;
+      }
+
+      $.fileDownload('/PlanDespacho/DownloadPDFPackinLC?IdCargaUnidad=' + idCargaUnidad)
+       .done(function () {
+          AlertCorrecto("El Archivo se Descargo Correctamente.");
+       }).fail(function () {
+          AlertAtencion("Error al Descargar el Archivo.");
+       });
+
+   }
+
+
+   function fn_RptPackinListDetallado(){
+      var rows = $('#grdCaCerrado').selectedRows();
+      if (rows.length == 0){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"- Seleccione una Unidad");
+         return false;
+      }
+
+      var idCargaUnidad = '';
+      var existeCamionNoValido = false;
+      rows.forEach(function (item) {
+         if(item[24].Value == '004' || item[24].Value == '005' || item[24].Value == '006')
+            idCargaUnidad += (idCargaUnidad == ''?'':'_') + item[1].Value;
+         else
+            existeCamionNoValido = true;
+      });
+
+
+      if (existeCamionNoValido && idCargaUnidad != '' ){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Algunos camiones no se encuentran en estado 4 , 5 ó 6. El Reporte solo contendra datos de los camiones que se encuentran en los estados 4 , 5 ó 6.");
+      }
+
+      if (existeCamionNoValido && idCargaUnidad == '' ){
+         MsgAlert(@MsgAlertTypeConstant.INFORMATION,"Todos los camiones no se encuentran en estado 4 , 5 ó 6. No se generó ningun reporte.");
+         return false;
+      }
+
+        
+      $.fileDownload('/PlanDespacho/DownloadPDFPackinLD?IdCargaUnidad=' + idCargaUnidad)
+       .done(function () {
+          AlertCorrecto("El Archivo se Descargo Correctamente.");
+       }).fail(function () {
+          AlertAtencion("Error al Descargar el Archivo.");
+       });
+
+   }
+
+   function fn_SelMultiCaProgra(valtr){
+      if(_checkStateCaProgra){
+         $('#flexigrid-grdCaProgra').find(".UnCheckBox").addClass("CheckBox").removeClass("UnCheckBox");
+         $("#grdCaProgra").flexOptions({singleSelect: true});
+         _checkStateCaProgra = false;
+         $("#grdCaProgra .trSelected").removeClass("trSelected");
+      }else{
+         $('#flexigrid-grdCaProgra').find(".CheckBox").addClass("UnCheckBox").removeClass("CheckBox");
+         $("#grdCaProgra").flexOptions({singleSelect: false});
+         _checkStateCaProgra = true;
+      }
+   }
+
+   function fn_SelMultiCaCerrado(valtr){
+      if(_checkStateCaCerrado){
+         $('#flexigrid-grdCaCerrado').find(".UnCheckBox").addClass("CheckBox").removeClass("UnCheckBox");
+         $("#grdCaCerrado").flexOptions({singleSelect: true});
+         _checkStateCaCerrado = false;
+         $("#grdCaCerrado .trSelected").removeClass("trSelected");
+      }else{
+         $('#flexigrid-grdCaCerrado').find(".CheckBox").addClass("UnCheckBox").removeClass("CheckBox");
+         $("#grdCaCerrado").flexOptions({singleSelect: false});
+         _checkStateCaCerrado = true;
+      }
+   }
+
+   function fn_SelMultiCaConso(valtr){
+      if(_checkStateCaConso){
+         $('#flexigrid-grdCaConso').find(".UnCheckBox").addClass("CheckBox").removeClass("UnCheckBox");
+         $("#grdCaConso").flexOptions({singleSelect: true});
+         _checkStateCaConso = false;
+         $("#grdCaConso .trSelected").removeClass("trSelected");
+      }else{
+         $('#flexigrid-grdCaConso').find(".CheckBox").addClass("UnCheckBox").removeClass("CheckBox");
+         $("#grdCaConso").flexOptions({singleSelect: false});
+         _checkStateCaConso = true;
+      }
+   }
+
+</script> 

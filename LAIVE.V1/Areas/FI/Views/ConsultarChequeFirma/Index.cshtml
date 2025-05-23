@@ -1,0 +1,395 @@
+﻿@using Laive.Core.Common
+@{
+    ViewBag.Title = "Consulta de Registros de Cheques";
+    Layout = null;
+}
+<div id="grdCheques" class="divTable">
+</div>
+<div id="PopupHistorial">
+    <div id="PopupHistorialContent" style=" width:100%; height:100%;">
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    var _heightGrid;
+    var _heightGridCh;
+
+    var _dataListAlcancePoder = [@Html.Raw(ViewBag.AlcancePoder)];  
+    var _newState = "";
+    var _chequeIds = [];
+
+    $(document).ready(function () {
+        /*Titulo*/
+        showTitleSystem('@ViewBag.Title');
+        
+        /*INICIAR VARIABLES*/
+        _heightGrid = getHeightForGrid(60);
+        _heightGridCh = 60; //getHeightForGrid(50);
+
+
+        /* POPUP FILTRO ARTICULO*/
+        $("#PopupHistorial").dialog({
+            appendTo: "#idContentPageAjax",
+            autoOpen: false,
+            modal: true,
+            draggable: true,
+            resizable: false,
+            width: 450,
+            height:  $(window).height() - 200,
+            title: "Historial",
+            show: {
+                effect: "drop",
+                duration: 250
+            },
+            hide: {
+                effect: "drop",
+                duration: 250,
+                direction: "right"
+            }
+        });
+        /*INIT GRILLA*/
+        GetData();
+        $("#PopupHistorialContent").timeline({data:[]});
+
+    });
+
+    function GetData()
+    {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("GetDataGrdCheques", "ConsultarChequeFirma", new { area = "FI" })',
+            dataType: "json",
+            data: {},
+            success: function (result) {
+                if (IsLoginRedirect(result))
+                    window.location.href = "/Login";
+                else {
+
+                    WriterTable(result);
+
+                    $('#chkAllChecked').on('ifChecked', function (event) {
+                        $('.chkSelectedRow').iCheck('check');
+                    }); 
+
+                    $('#chkAllChecked').on('ifUnchecked', function (event) {
+                        $('.chkSelectedRow').iCheck('uncheck');
+                    });
+
+
+                }
+            },
+            error: function (xhr, status, error) {
+                MsgAlert(@MsgAlertTypeConstant.ERROR,error.toString());
+            }
+        });
+    };
+
+    function WriterTable(dataResult) {
+        debugger;
+        var _html = '';
+        _html += '<div class="divHeader">';
+        _html += '<div class="divCell" style="width:22px;">'
+        _html += '<input id="chkAllChecked" type="checkbox" />';
+        _html += '</div>';
+
+        //_html += WriterNode("", 20);
+        _html += WriterNode("Fecha Registro", 130);
+        _html += WriterNode("Banco", 230);
+        _html += WriterNode("Total Cheques", 60);
+        _html += WriterNode("Mon", 30); 
+        _html += WriterNode("Importe Total", 100);
+        _html += '</div>';
+        _html += '<div class="divBody" style="height:' + _heightGrid + 'px;overflow-x: auto;">';
+
+        if (dataResult.length == 0) {
+            _html += '<div class="divBody" style="height:' + _heightGrid + 'px;overflow-x: auto;">';
+            _html += '<div style="border: 1px solid #D3D3D3;border-top: none;height: ' + _heightGrid +'px; width: 100%;font-size: 12px;text-align: center;position: absolute;">';
+            _html += '<div style="top:50%;position: relative;">';
+            _html += '<img src="../../Content/images/gridAlert.png"/><br/>No se encontraron registros.</div>';
+            _html += '</div>';
+        }
+        var index = 0;
+
+        dataResult.forEach(function (item) {
+            _html += '<div class="divRow">';
+            _html += '<div class="divRowHead" onclick="expandircheque(\'' + item.RowNumber + '\')">'
+            _html += '<div class="divCell" style="width:20px;">'
+            _html += '<input type="checkbox" class="chkSelectedRow" data-id="' + index + '"/>';
+            _html += '</div>';
+            //_html += WriterNode("")
+            _html += WriterNode(item.FechaRegistro,130);
+            _html += WriterNode(item.GlosaBanco,230);
+            _html += WriterNodeNumber(item.TotalCheques,60);
+            _html += WriterNode(item.Moneda,30);
+            _html += WriterNodeNumber(item.ImporteTotal,100);
+            _html += '</div>';
+            _html += '<div class="divRowBody" id="divHeader' + item.RowNumber + '">';
+            //_html += '<div class="divCell" style="width:22px;">'
+            //_html += '<input id="chkAllChecked" type="checkbox" />';
+            //_html += '</div>';
+            
+           // _html += WriterCheques(item.ListResumen,item.ListComprobantes,item.ListVoucher);
+  
+            _html += WriterCheques(item.ListResumen)
+            _html += '</div>';
+            _html += '</div>';
+            index++;
+
+        });
+        _html += '</div>';
+
+        $("#grdCheques").html(_html).data("datasource", dataResult);
+
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_minimal-blue'
+        });
+    };
+
+    function expandir(index) {
+        debugger;
+        if ($("#divRowBody" + index).is(":visible"))
+            $("#divRowBody" + index).hide();
+        else
+            $("#divRowBody" + index).show();
+    };
+
+    function expandircheque(index) {
+        //debugger;
+        if ($("#divHeader" + index).is(":visible"))
+            $("#divHeader" + index).hide();
+        else
+            $("#divHeader" + index).show();
+    };
+
+    function WriterNode(value, width) {
+        var _html = '<div class="divCell" style="max-width:' + width + 'px;width:' + width + 'px;">'
+        _html += value;
+        _html += '</div>';
+        return _html;
+    };
+
+    function WriterNodeNumber(value, width) {
+        var _html = '<div class="divCell" style="max-width:' + width + 'px;width:' + width + 'px; text-align: right;">'
+        _html += value;
+        _html += '</div>';
+        return _html;
+    };
+    function WriterNodeStyle(value, Style) {
+        var _html = '<div class="divCell" style="' + Style + '">'
+        _html += value;
+        _html += '</div>';
+        return _html;
+    };
+
+    function WriterEstado(item, width) {
+        var background, color;
+        //debugger;
+        switch (item.CodigoEstado) {
+            case 'E01':
+                background = '#71BD71'; color = '#FFFFFF';
+                break;
+            case 'E02':
+                background = '#008BD7'; color = '#FFFFFF';
+                break;
+            case 'E03':
+                background = '#FFFC00'; color = '#745C1E';
+                break;
+            case 'E04':
+                background = '#1C92B5'; color = '#FFFFFF';
+                break;
+            case 'E05':
+                background = '#FF962F'; color = '#FFFFFF';
+                break;
+            case 'E06':
+                background = '#FF962F'; color = '#FFFFFF';
+                break;
+            case 'E07':
+                background = '#FC5353'; color = '#FFFFFF';
+                break;
+            case 'E08':
+                background = '#085FD2'; color = '#FFFFFF';
+                break;
+            case 'E09':
+                background = '#6ABDB7'; color = '#FFFFFF';
+                break;
+            case 'E10':
+                background = '#8F219C'; color = '#FFFFFF';
+                break;
+            case 'E11':
+                background = '#FC5353'; color = '#FFFFFF';
+                break;
+        }
+
+        var _html = '<div class="divCell" style="max-width:' + width + 'px;width:' + width + 'px;">'
+        _html += '<div class="divCellState" style="background:' + background + ';color:' + color + ';" >';
+        _html += item.GlosaEstado;
+        _html += '</div>';
+        _html += '</div>';
+        return _html;
+    };
+
+    var indexcheque = 0;
+
+    function WriterCheques(value) {
+        var _html = '<div style="width: 100%;display: inline-block;margin: 5px;">';
+        _html += '<div class="divHeader">';
+        _html += '<div class="divCell" style="width:22px;">'
+        _html += '<input id="chkAllChecked" type="checkbox" />';
+        _html += '</div>';
+
+        _html += WriterNode("", 20);
+        _html += WriterNode("Poder", 130);
+        _html += WriterNode("Nº Cheque", 60);
+        _html += WriterNode("Cod.Partner", 80);
+        _html += WriterNode("Beneficiario", 180);
+        _html += WriterNode("Fecha Pago", 80);
+        _html += WriterNode("Nº Transacción", 80);
+        _html += WriterNode("Nº Asiento", 60);
+        _html += WriterNode("Nº Pago", 60);
+        _html += WriterNode("Mon", 30);
+        _html += WriterNode("Importe", 60);
+        _html += WriterNode("Estado", 80);
+        _html += '</div>';
+        _html += '<div class="divBody" style="height:' + _heightGridCh + '%;overflow-x: auto;">';
+
+        if (value.length == 0) {
+            _html += '<div class="divBody" style="height:' + _heightGridCh + 'px;overflow-x: auto;">';
+            _html += '<div style="border: 1px solid #D3D3D3;border-top: none;height: ' + _heightGridCh +'px; width: 100%;font-size: 12px;text-align: center;position: absolute;">';
+            _html += '<div style="top:50%;position: relative;">';
+            _html += '<img src="../../Content/images/gridAlert.png"/><br/>No se encontraron registros.</div>';
+            _html += '</div>';
+        }
+
+        var index = 0;
+
+        value.forEach(function (item) {
+
+            _html += '<div class="divRow">';
+            _html += '<div class="divRowHead" onclick="expandir(\'' + indexcheque + '\')">'
+            _html += '<div class="divCell" style="width:20px;">'
+            _html += '<input type="checkbox" class="chkSelectedRow" data-id="' + index + '"/>';
+            _html += '</div>';
+            _html += WriterNode("<a href=\"javascript:void(0)\" onclick=\"fn_showHistorial(event," + item.IdCheque + ")\" class=\"divgrdButton\"><img src=\"@Url.Content("~/Content/images/History.png")\" alt=\"Hist.\"/></a>",20);
+            _html += WriterNode(item.GlosaPoder,130);
+            _html += WriterNode(item.NumCheque, 60);
+            _html += WriterNode(item.CodigoPartner, 80);
+            _html += WriterNode(item.Beneficiario, 180);
+            _html += WriterNode(item.FechaPago, 80);
+            _html += WriterNode(item.TipoTransaccion + '-' + item.NroTransaccion, 80);
+            _html += WriterNode(item.NroAsiento, 60);
+            _html += WriterNode(item.LotePago, 60);
+            _html += WriterNode(item.Moneda,30);
+            _html += WriterNodeNumber(item.ImporteCheque, 60);
+            _html += WriterEstado(item, 80);
+            _html += '</div>';
+            _html += '<div class="divRowBody" id="divRowBody' + indexcheque + '">';
+
+            _html += '<div style="width: 47%;display: inline-block;margin: 5px;">'
+            _html += '<div class="divHeader">';
+            _html += WriterNodeStyle("1er Firmante",'min-width:100px;');
+            _html += WriterNodeStyle(item.Nombre1erFirmante,'max-width:100%;width:100%;background: #FFF;border-right:none;');
+            _html += '</div></div>';
+
+            _html += '<div style="width: 47%;display: inline-block;margin: 5px;">'
+            _html += '<div class="divHeader">';
+            _html += WriterNodeStyle("2er Firmante",'min-width:100px;');
+            _html += WriterNodeStyle(item.Nombre2doFirmante,'max-width:100%;width:100%;background: #FFF;border-right:none;');
+            _html += '</div></div>';
+
+            _html += WriterComPago(item.ListComprobantes);
+            _html += WriterVoucher(item.ListVoucher);
+
+            _html += '</div>';
+            _html += '</div>';
+            index++;
+            indexcheque++;
+        });
+
+        _html += '</div>';
+        _html += '</div>';
+        return _html;
+    }
+
+    function WriterComPago(value) {
+        var _html = '<div style="width: 47%;display: inline-block;margin: 5px;">'
+        _html += '<div class="divHeader">Comprobantes</div>';
+        _html += '<div class="divHeader">';
+        _html += WriterNode('Tipo Sugerencia', 100);
+        _html += WriterNode('Nº Comprobante', 90);
+        _html += WriterNode('Referencia', 90);
+        _html += WriterNode('Mon', 30);
+        _html += WriterNode('Importe', 60);
+        _html += '</div>';
+        value.forEach(function (item) {
+            _html += '<div style="width:100%;border: 1px solid #D2D2D2;">';
+            _html += WriterNode(item.GlosaTipoSugerencia, 100);
+            _html += WriterNode(item.Transaccion + '-' + item.NumComprobante, 90);
+            _html += WriterNode(item.Referencia, 90);
+            _html += WriterNode(item.Moneda, 30);
+            _html += WriterNodeNumber(item.Importe, 60);
+            _html += '</div>';
+        });
+
+        _html += '</div>';
+        return _html;
+    };
+
+    function WriterVoucher(value) {
+        var _html = '<div style="width: 47%;display: inline-block;margin: 5px;">'
+        _html += '<div class="divHeader">Asiento Contable</div>';
+        _html += '<div class="divHeader">';
+        _html += WriterNode('Cuenta', 80);
+        _html += WriterNode('Descripción de Cuenta', 250);
+        _html += WriterNode('Cargo', 60);
+        _html += WriterNode('Abono', 60);
+        _html += '</div>';
+        value.forEach(function (item) {
+            _html += '<div style="width:100%;border: 1px solid #D2D2D2;">';
+            _html += WriterNode(item.CuentaContable, 80);
+            _html += WriterNode(item.GlosaCuentaContable, 250);
+
+            if (item.CargoAbono == 1) {
+                _html += WriterNodeNumber(item.ImporteSoles, 60);
+                _html += WriterNode('', 60);
+            } else {
+                _html += WriterNode('', 60);
+                _html += WriterNodeNumber(item.ImporteSoles, 60);
+            }
+
+            _html += '</div>';
+        });
+
+        _html += '</div>';
+        return _html;
+    };
+
+    function GetSelectedRows() {
+        var dataSource = $('#grdCheques').data("datasource");
+        var rows = [];
+        $('.chkSelectedRow:checked').each(function (index, item) {
+            rows.push(dataSource[item.dataset.id]);
+        });
+        return rows;
+    };
+
+    function fn_showHistorial(event,idCheque){
+        event.stopPropagation();
+
+        AppAjaxString('POST','json','@Url.Action("GetHistorial", "ConsultarChequeFirma", new { area = "FI" })', {idCheque : idCheque}, "", false, false, function(response){
+            if(response.Status == '@JsonMessageStatus.SUCCESS')
+            {
+                debugger;
+                $("#PopupHistorialContent").timeline("setData",response.Data);
+                $("#PopupHistorial").dialog('open');
+            }
+            else{
+                MsgAlert(@MsgAlertTypeConstant.ERROR,response.Message);
+            }
+
+        });
+
+    };
+</script>
+
+
